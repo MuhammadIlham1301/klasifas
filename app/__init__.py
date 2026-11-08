@@ -10,6 +10,7 @@ from app.routes.auth import auth_bp
 from app.routes.dashboard import dashboard_bp
 from app.routes.report import report_bp
 from app.routes.technician import technician_bp
+from app.utils.error_handlers import register_error_handlers
 from app.utils.security_headers import apply_security_headers
 
 
@@ -62,6 +63,9 @@ def create_app(config_name=None):
     @app.get("/favicon.ico")
     def favicon():
         return redirect(url_for("static", filename="favicon.svg"), code=308)
+
+    # 6c. Halaman error bernuansa aplikasi (403/404/500) dengan status HTTP tetap
+    register_error_handlers(app)
 
     # 7. Terapkan header keamanan pada seluruh respons
     app.after_request(apply_security_headers)

@@ -253,6 +253,20 @@ a {
     margin: var(--kf-space-lg) 0;
 }
 
+/* VQ-21: ikon halaman error 403/404/500 */
+.kf-error-icon {
+    align-items: center;
+    background-color: var(--kf-surface-subtle);
+    border: 1px solid var(--kf-border);
+    border-radius: 50%;
+    color: var(--kf-primary);
+    display: inline-flex;
+    font-size: 1.75rem;
+    height: 3.25rem;
+    justify-content: center;
+    width: 3.25rem;
+}
+
 .kf-receipt-note {
     align-items: flex-start;
     color: var(--kf-text-muted);

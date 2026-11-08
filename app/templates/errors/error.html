@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}{{ status_code }} — {{ heading }} — KlasiFas{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8 col-xl-7">
+        <div class="card border-0 shadow-sm kf-form-card">
+            <div class="card-body p-4 p-lg-5 text-center">
+                <div class="kf-error-icon mb-3" aria-hidden="true">
+                    <i class="bi {{ icon }}"></i>
+                </div>
+
+                <div class="kf-page-heading text-center">
+                    <p class="kf-page-heading__eyebrow mb-2">{{ status_code }} &middot; {{ eyebrow }}</p>
+                    <h1 class="kf-page-heading__title">{{ heading }}</h1>
+                    <p class="kf-page-heading__sub mx-auto mb-0">{{ message }}</p>
+                </div>
+
+                <div class="d-flex flex-column flex-sm-row justify-content-center gap-2 mt-4">
+                    {% if back_href %}
+                    <a class="btn kf-btn-primary px-4" href="{{ back_href }}">
+                        <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>
+                        {{ back_label }}
+                    </a>
+                    {% endif %}
+                    <a class="btn btn-outline-secondary px-4" href="{{ url_for('report.report_form') }}">
+                        Portal Pengaduan Publik
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
