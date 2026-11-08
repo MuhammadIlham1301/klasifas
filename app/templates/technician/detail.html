@@ -15,17 +15,18 @@
 </nav>
 
 <!-- Header Rincian Tiket -->
-<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-4 pb-2 border-bottom">
-    <div>
-        <div class="d-flex align-items-center gap-2">
-            <h1 class="h3 fw-bold mb-0">{{ ticket.ticket_code }}</h1>
-            {{ status_badge(ticket.status) }}
+<div class="row align-items-sm-center g-2 mb-4">
+    <div class="col-12 col-md-8">
+        <div class="kf-page-heading">
+            <p class="kf-page-heading__eyebrow mb-2">Portal Teknisi</p>
+            <h1 class="kf-page-heading__title">Rincian Tugas {{ ticket.ticket_code }}</h1>
+            <p class="kf-page-heading__sub mb-0">
+                Dilaporkan pada: {{ ticket.created_at.strftime('%d/%m/%Y %H:%M') if ticket.created_at else '-' }} WIB
+            </p>
         </div>
-        <p class="text-secondary small mb-0 mt-1">
-            Dilaporkan pada: {{ ticket.created_at.strftime('%d/%m/%Y %H:%M') if ticket.created_at else '-' }} WIB
-        </p>
     </div>
-    <div>
+    <div class="col-12 col-md-4 d-flex flex-wrap align-items-center justify-content-md-end gap-2">
+        {{ status_badge(ticket.status) }}
         <a href="{{ url_for('technician.ticket_queue') }}" class="btn btn-sm btn-outline-secondary">
             &larr; Kembali ke Papan Tugas
         </a>
@@ -128,9 +129,8 @@
 
         <!-- Status Pengerjaan & Tindakan Perbaikan (FR-06) -->
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <div class="card-header bg-white py-3">
                 <h2 class="h6 fw-semibold mb-0">Status Pengerjaan Fisik</h2>
-                {{ status_badge(ticket.status) }}
             </div>
             <div class="card-body">
             {% if ticket.status == 'Terverifikasi' %}
