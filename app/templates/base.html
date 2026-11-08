@@ -11,8 +11,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/klasifas.css') }}">
 </head>
 
-<body class="d-flex flex-column min-vh-100">
-    {%- set kf_container = self.container_class() -%}
+    <body class="d-flex flex-column min-vh-100">
+    {%- set kf_container -%}{% block container_class %}kf-container{% endblock %}{%- endset -%}
     <a class="visually-hidden-focusable kf-skip-link" href="#main-content">Lewati ke konten utama</a>
 
     <header class="kf-header">
@@ -30,12 +30,6 @@
 
                 <div class="collapse navbar-collapse" id="kf-main-nav">
                     <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('report.report_form') }}">Buat Laporan</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('report.track') }}">Lacak Keluhan</a>
-                        </li>
                         {% if g.current_user and g.current_user.role in ['admin_sarpras', 'pimpinan'] %}
                         <li class="nav-item">
                             <a class="nav-link kf-nav-emphasis" href="{{ url_for('dashboard.dashboard_view') }}">Dasbor</a>
@@ -62,10 +56,6 @@
                                     class="btn btn-link nav-link kf-nav-danger border-0 bg-transparent">Keluar</button>
                             </form>
                         </li>
-                        {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('auth.login') }}">Masuk Staf</a>
-                        </li>
                         {% endif %}
                     </ul>
                     <span class="kf-header-note ms-md-3 d-none d-md-inline">FTII UHAMKA</span>
@@ -87,7 +77,6 @@
 
     <script src="{{ url_for('static', filename='vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
     {% block scripts %}{% endblock %}
-    {% block container_class %}kf-container{% endblock %}
 </body>
 
 </html>

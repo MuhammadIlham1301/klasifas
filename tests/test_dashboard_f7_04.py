@@ -537,7 +537,8 @@ def test_f7_04_navbar_ui_strict_role_isolation(client):
     1. Admin Sarpras -> Melihat Dasbor, Antrean Sarpras, Log Audit. Tidak melihat Tugas Saya.
     2. Pimpinan -> Hanya melihat Dasbor. Tidak melihat Antrean Sarpras, Log Audit, Tugas Saya.
     3. Teknisi -> Hanya melihat Tugas Saya. Tidak melihat Dasbor, Antrean Sarpras, Log Audit.
-    4. Anonim / Publik -> Hanya melihat Buat Laporan, Lacak Keluhan, Masuk Staf.
+    4. Anonim / Publik -> Menjalankan navigasi internal saja; tautan publik (Buat Laporan,
+       Lacak Keluhan, Masuk Staf) sudah dihapus dari navbar seluruh halaman.
     """
     # 1. Admin Sarpras
     client_admin = client.application.test_client()
@@ -579,9 +580,9 @@ def test_f7_04_navbar_ui_strict_role_isolation(client):
     resp_anon = client_anon.get("/lapor")
     assert resp_anon.status_code == 200
     html_anon = resp_anon.get_data(as_text=True)
-    assert ">Buat Laporan<" in html_anon
-    assert ">Lacak Keluhan<" in html_anon
-    assert ">Masuk Staf<" in html_anon
+    assert ">Buat Laporan<" not in html_anon
+    assert ">Lacak Keluhan<" not in html_anon
+    assert ">Masuk Staf<" not in html_anon
     assert ">Dasbor<" not in html_anon
     assert ">Antrean Sarpras<" not in html_anon
     assert ">Log Audit<" not in html_anon
