@@ -200,6 +200,33 @@ python -m venv venv
 
 Perintah instalasi dependensi, migrasi, dan provisioning akan ditambahkan setelah implementasinya tersedia dan diverifikasi.
 
+### 7.1 Provisioning Akun Staf (CLI)
+
+Akun staf (`admin_sarpras`, `teknisi`, `pimpinan`) dibuat melalui perintah CLI lokal, bukan melalui halaman pengelolaan akun. Referensi aturan: `docs/SECURITY.md` §4.4.
+
+```powershell
+$env:FLASK_APP = "app"
+$env:FLASK_CONFIG = "development"
+
+python -m flask create-staff `
+  --username nama.staf `
+  --role admin_sarpras `
+  --full-name "Nama Lengkap Staf"
+```
+
+Ketentuan yang berlaku:
+
+- Password **tidak** dapat diberikan sebagai argumen. Perintah menampilkan prompt tersembunyi dan meminta konfirmasi ulang.
+- Panjang password minimal 12 karakter. Password tidak boleh sama dengan username.
+- Username wajib huruf kecil dengan format `^[a-z0-9._-]{3,64}$`; input huruf besar otomatis dinormalisasi ke huruf kecil.
+- Role yang diterima hanya `admin_sarpras`, `teknisi`, dan `pimpinan`.
+- Username duplikat ditolak dan perintah keluar dengan status non-zero.
+- Perintah hanya menampilkan `Akun staf dibuat: <username> (role=<role>)`. Password maupun hash tidak pernah dicetak atau dicatat ke log.
+- Tidak ada akun default yang dibuat otomatis saat aplikasi start, migrasi, atau impor modul.
+
+Verifikasi cepat setelah pembuatan akun: masuk melalui `/auth/login` dengan akun tersebut.
+
+
 ## 8. Panduan Menjalankan Aplikasi dan Pengujian
 
 > [!WARNING]

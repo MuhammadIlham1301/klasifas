@@ -247,7 +247,7 @@ klasifas/
 ├── scripts/                        # Skrip Utilitas Offline & Otomasi
 │   ├── train_model.py              # Pelatihan Offline Model & Serialisasi .joblib
 │   ├── evaluate_model.py           # Kalkulasi Metrik Evaluasi & Confusion Matrix
-│   └── seed_users.py               # Inisialisasi Data Master Pengguna Awal
+│   └── cli.py                      # Perintah CLI lokal: provisioning akun staf
 ├── tests/                          # Paket Pengujian Perangkat Lunak (pytest)
 │   ├── conftest.py                 # Fixture Pengujian & Koneksi Database Test
 │   ├── test_preprocessing.py       # Unit Test Case Folding, Stopwords, Stemming, Regex
@@ -264,6 +264,20 @@ klasifas/
 
 ---
 
+### 5.1 Provisioning Akun Staf (CLI)
+
+Akun staf internal dibuat melalui perintah Flask CLI lokal, bukan halaman pengelolaan akun:
+
+```
+python -m flask create-staff --username <username> --role <role> --full-name "<nama>"
+```
+
+- Implementasi berada di `app/cli.py` dan didaftarkan pada `app.cli` di dalam `create_app()`.
+- Password dimasukkan melalui prompt tersembunyi dengan konfirmasi; password tidak pernah menjadi argumen CLI dan tidak dicetak.
+- Hash password menggunakan `app.utils.password.hash_password` (Werkzeug scrypt).
+- Role yang diterima: `admin_sarpras`, `teknisi`, `pimpinan` (sumber: `app.utils.decorators.STAFF_ROLES`).
+- Tidak ada akun default yang dibuat otomatis saat aplikasi start, migrasi, atau impor modul.
+- Cakupan perintah ini hanya pembuatan akun; reset password, penonaktifan, dan perubahan role belum diimplementasikan.
 ## 6. Spesifikasi Dependensi (`requirements.txt`)
 
 Versi pustaka yang dicantumkan merupakan **batas versi rekomendasi awal**. Dependensi dibatasi secara ketat hanya pada pustaka yang benar-benar dibutuhkan oleh sistem. Pengujian kompatibilitas aktual dilakukan saat penyiapan lingkungan pengembangan, dan versi final akan dikunci (*pinned*) setelah seluruh pengujian lulus:
