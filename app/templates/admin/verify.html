@@ -181,19 +181,23 @@
                         <label for="official_category_id" class="form-label fw-semibold">
                             Kategori Resmi (K1–K7) <span class="text-danger">*</span>
                         </label>
-                        <select id="official_category_id" name="official_category_id" class="form-select" required>
-                            <option value="">-- Pilih Kategori Resmi --</option>
-                            {% for cat in categories %}
-                            {% set is_selected = (ticket.official_category_id == cat.id) or
-                            (not ticket.official_category_id and ticket.predicted_category_id == cat.id) or
-                            (not ticket.official_category_id and not ticket.predicted_category_id and
-                            ticket.reporter_category_id == cat.id) %}
-                            <option value="{{ cat.id }}" {{ 'selected' if is_selected else '' }}>
-                                {{ cat.code }} &mdash; {{ cat.name }}
-                            </option>
-                            {% endfor %}
-                        </select>
-                        <div class="form-text small">
+                        <div class="kf-input-icon">
+                            <i class="bi bi-tags kf-input-icon__glyph" aria-hidden="true"></i>
+                            <select id="official_category_id" name="official_category_id" class="form-select" required
+                                aria-describedby="official-category-help">
+                                <option value="">-- Pilih Kategori Resmi --</option>
+                                {% for cat in categories %}
+                                {% set is_selected = (ticket.official_category_id == cat.id) or
+                                (not ticket.official_category_id and ticket.predicted_category_id == cat.id) or
+                                (not ticket.official_category_id and not ticket.predicted_category_id and
+                                ticket.reporter_category_id == cat.id) %}
+                                <option value="{{ cat.id }}" {{ 'selected' if is_selected else '' }}>
+                                    {{ cat.code }} &mdash; {{ cat.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div id="official-category-help" class="form-text small">
                             Kategori resmi ini menentukan unit penanggung jawab penanganan fasilitas (FR-04).
                         </div>
                     </div>
@@ -201,8 +205,9 @@
                     <div class="mb-3">
                         <label for="note" class="form-label fw-semibold">Catatan Verifikasi / Alasan Koreksi</label>
                         <textarea id="note" name="note" class="form-control" rows="3"
+                            aria-describedby="note-help"
                             placeholder="Contoh: Dikonfirmasi sesuai temuan AC bocor di lab, dialihkan ke K5."></textarea>
-                        <div class="form-text small">
+                        <div id="note-help" class="form-text small">
                             Catatan ini akan tersimpan ke dalam Audit Log operasional sistem (FR-09).
                         </div>
                     </div>
@@ -242,15 +247,19 @@
                             <label for="technician_id" class="form-label fw-semibold">
                                 Pilih Teknisi <span class="text-danger">*</span>
                             </label>
-                            <select id="technician_id" name="technician_id" class="form-select" required>
-                                <option value="">-- Pilih Teknisi Aktif --</option>
-                                {% for tech in technicians %}
-                                    <option value="{{ tech.id }}" {{ 'selected' if ticket.assigned_technician_id == tech.id else '' }}>
-                                        {{ tech.full_name }} ({{ tech.username }})
-                                    </option>
-                                {% endfor %}
-                            </select>
-                            <div class="form-text small">
+                            <div class="kf-input-icon">
+                                <i class="bi bi-person-gear kf-input-icon__glyph" aria-hidden="true"></i>
+                                <select id="technician_id" name="technician_id" class="form-select" required
+                                    aria-describedby="technician-help">
+                                    <option value="">-- Pilih Teknisi Aktif --</option>
+                                    {% for tech in technicians %}
+                                        <option value="{{ tech.id }}" {{ 'selected' if ticket.assigned_technician_id == tech.id else '' }}>
+                                            {{ tech.full_name }} ({{ tech.username }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div id="technician-help" class="form-text small">
                                 Hanya teknisi dengan akun aktif yang tersedia untuk penugasan baru.
                             </div>
                         </div>
@@ -258,7 +267,11 @@
                         <div class="mb-3">
                             <label for="tech_note" class="form-label fw-semibold">Catatan Penugasan</label>
                             <textarea id="tech_note" name="note" class="form-control" rows="2"
+                                      aria-describedby="tech-note-help"
                                       placeholder="Instruksi atau catatan penugasan untuk teknisi..."></textarea>
+                            <div id="tech-note-help" class="form-text small">
+                                Catatan ini tersimpan pada log penugasan teknisi (FR-09).
+                            </div>
                         </div>
 
                         <div class="d-grid">

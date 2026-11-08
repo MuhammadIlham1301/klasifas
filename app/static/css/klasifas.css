@@ -589,6 +589,10 @@ a {
     padding-left: 2.55rem;
 }
 
+.kf-input-icon > .form-select {
+    padding-left: 2.55rem;
+}
+
 /* VQ-16 B2: metadata hasil pelacakan berikon */
 .kf-meta-grid {
     background-color: var(--kf-surface-subtle);
