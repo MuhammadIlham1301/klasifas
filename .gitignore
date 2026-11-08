@@ -1,0 +1,28 @@
+# Environment & Secrets (Wajib dilindungi)
+.env
+.env.*
+!.env.example
+
+# Direktori Media Unggahan (Non-publik & PII)
+uploads/
+
+# Data Mentah & PII
+data/raw/
+data/private/
+
+# Artefak Model & Database Lokal
+*.joblib
+*.sqlite
+*.db
+
+# Python & Virtual Environment
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+
+# Pengujian & Coverage
+.pytest_cache/
+.coverage
+htmlcov/

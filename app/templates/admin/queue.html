@@ -1,0 +1,299 @@
+{% extends "base.html" %}
+{% from "components/_macros.html" import status_badge, manual_verification_badge %}
+
+{% block title %}Antrean Tiket Sarpras — KlasiFas{% endblock %}
+
+{% block content %}
+<div class="kf-page-heading mb-4">
+    <p class="kf-page-heading__eyebrow mb-2">Portal Admin Sarpras</p>
+    <h1 class="kf-page-heading__title">Antrean Keluhan Fasilitas</h1>
+    <p class="kf-page-heading__sub mb-0">Verifikasi kategori keluhan fasilitas dan transisi status operasional (FR-04).</p>
+</div>
+
+<!-- KPI Agregat Status (data nyata dari basis data) -->
+<div class="row row-cols-2 row-cols-md-3 row-cols-xl-5 g-2 g-md-3 mb-4">
+    {% set kpi_items = [
+        ('Total Tiket', status_counts.total, 'Seluruh laporan tercatat', 'kpi-total', 'bi-inbox'),
+        ('Baru', status_counts['Baru'], 'Perlu verifikasi awal', 'kpi-new', 'bi-plus-circle'),
+        ('Terverifikasi', status_counts['Terverifikasi'], 'Menunggu penugasan', 'kpi-verified', 'bi-clipboard-check'),
+        ('Diproses', status_counts['Diproses'], 'Sedang ditangani teknisi', 'kpi-progress', 'bi-tools'),
+        ('Selesai', status_counts['Selesai'], 'Pekerjaan tuntas', 'kpi-done', 'bi-check2-circle')
+    ] %}
+    {% for label, value, caption, tone, kpi_icon in kpi_items %}
+    <div class="col">
+        <div class="card border-0 shadow-sm h-100 kf-kpi kf-kpi--{{ tone }}">
+            <div class="card-body p-3 pb-2">
+                <div class="kf-kpi__header">
+                    <span class="kf-kpi__icon" aria-hidden="true"><i class="bi {{ kpi_icon }}"></i></span>
+                    <div class="small text-secondary fw-semibold text-uppercase kf-kpi__label">{{ label }}</div>
+                </div>
+                <div class="fs-3 fw-bold kf-kpi__value">{{ value }}</div>
+            </div>
+            <div class="kf-kpi__footer">{{ caption }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Panel Pencarian dan Filter Multi-Kriteria -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white border-bottom-0 py-3 d-flex justify-content-between align-items-center">
+        <h6 class="fw-bold mb-0 text-dark">
+            <i class="bi bi-funnel me-1"></i> Filter & Pencarian Tiket
+        </h6>
+        <span class="small text-secondary">
+            Total: <strong>{{ pagination.total if pagination else tickets|length }}</strong> tiket ditemukan
+        </span>
+    </div>
+    <div class="card-body pt-0 pb-3">
+        <form method="GET" action="{{ url_for('admin.ticket_queue') }}" class="row g-2 align-items-end">
+            <!-- Kata Kunci -->
+            <div class="col-12 col-md-4">
+                <label for="filter_keyword" class="form-label small text-secondary mb-1">Kata Kunci (Kode / Deskripsi)</label>
+                <input type="text" class="form-control form-control-sm" id="filter_keyword" name="keyword"
+                       value="{{ active_filters.keyword if active_filters else '' }}"
+                       placeholder="Misal: KF-2A3B4C atau AC bocor">
+            </div>
+
+            <!-- Status Tiket -->
+            <div class="col-6 col-md-2">
+                <label for="filter_status" class="form-label small text-secondary mb-1">Status</label>
+                <select class="form-select form-select-sm" id="filter_status" name="status">
+                    <option value="all" {{ 'selected' if current_status in ['all', 'semua'] else '' }}>Semua Status</option>
+                    {% for s in statuses %}
+                    <option value="{{ s }}" {{ 'selected' if current_status == s else '' }}>{{ s }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Kategori Resmi -->
+            <div class="col-6 col-md-3">
+                <label for="filter_category" class="form-label small text-secondary mb-1">Kategori Resmi</label>
+                <select class="form-select form-select-sm" id="filter_category" name="category_id">
+                    <option value="">Semua Kategori</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.id }}" {{ 'selected' if active_filters and active_filters.category_id == cat.id|string else '' }}>
+                        {{ cat.code }} - {{ cat.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Lantai Gedung -->
+            <div class="col-6 col-md-3">
+                <label for="filter_floor" class="form-label small text-secondary mb-1">Lantai Gedung FTII</label>
+                <select class="form-select form-select-sm" id="filter_floor" name="floor_number">
+                    <option value="">Semua Lantai</option>
+                    <option value="1" {{ 'selected' if active_filters and active_filters.floor_number == '1' else '' }}>Lantai 1</option>
+                    <option value="2" {{ 'selected' if active_filters and active_filters.floor_number == '2' else '' }}>Lantai 2</option>
+                    <option value="3" {{ 'selected' if active_filters and active_filters.floor_number == '3' else '' }}>Lantai 3</option>
+                    <option value="4" {{ 'selected' if active_filters and active_filters.floor_number == '4' else '' }}>Lantai 4</option>
+                </select>
+            </div>
+
+            <!-- Nama Ruangan -->
+            <div class="col-6 col-md-3">
+                <label for="filter_room" class="form-label small text-secondary mb-1">Nama / Nomor Ruangan</label>
+                <input type="text" class="form-control form-control-sm" id="filter_room" name="room_name"
+                       value="{{ active_filters.room_name if active_filters else '' }}"
+                       placeholder="Misal: Lab 301, R. Dosen">
+            </div>
+
+            <!-- Tanggal Awal -->
+            <div class="col-6 col-md-3">
+                <label for="filter_date_from" class="form-label small text-secondary mb-1">Dari Tanggal</label>
+                <input type="date" class="form-control form-control-sm" id="filter_date_from" name="date_from"
+                       value="{{ active_filters.date_from if active_filters else '' }}">
+            </div>
+
+            <!-- Tanggal Akhir -->
+            <div class="col-6 col-md-3">
+                <label for="filter_date_to" class="form-label small text-secondary mb-1">Sampai Tanggal</label>
+                <input type="date" class="form-control form-control-sm" id="filter_date_to" name="date_to"
+                       value="{{ active_filters.date_to if active_filters else '' }}">
+            </div>
+
+            <!-- Tombol Aksi -->
+            <div class="col-6 col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-sm btn-primary flex-grow-1">
+                    <i class="bi bi-search me-1"></i> Terapkan
+                </button>
+                <a href="{{ url_for('admin.ticket_queue') }}" class="btn btn-sm btn-outline-secondary" title="Kembalikan ke antrean awal">
+                    Reset
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Quick Status Tabs -->
+    <div class="card-footer bg-light border-top p-2 d-flex flex-wrap align-items-center justify-content-between gap-2">
+        <div class="btn-group btn-group-sm flex-wrap" role="group" aria-label="Filter Status Tiket">
+            <a href="{{ url_for('admin.ticket_queue', status='Baru') }}"
+               class="btn {{ 'btn-primary' if current_status == 'Baru' else 'btn-outline-secondary' }}">
+               Baru (Antrean)
+            </a>
+            <a href="{{ url_for('admin.ticket_queue', status='Terverifikasi') }}"
+               class="btn {{ 'btn-primary' if current_status == 'Terverifikasi' else 'btn-outline-secondary' }}">
+               Terverifikasi
+            </a>
+            <a href="{{ url_for('admin.ticket_queue', status='Diproses') }}"
+               class="btn {{ 'btn-primary' if current_status == 'Diproses' else 'btn-outline-secondary' }}">
+               Diproses
+            </a>
+            <a href="{{ url_for('admin.ticket_queue', status='Selesai') }}"
+               class="btn {{ 'btn-primary' if current_status == 'Selesai' else 'btn-outline-secondary' }}">
+               Selesai
+            </a>
+            <a href="{{ url_for('admin.ticket_queue', status='all') }}"
+               class="btn {{ 'btn-primary' if current_status in ['all', 'semua'] else 'btn-outline-secondary' }}">
+               Semua Status
+            </a>
+        </div>
+        {% if pagination and pagination.pages > 1 %}
+        <div class="small text-secondary">
+            Halaman <strong>{{ pagination.page }}</strong> dari <strong>{{ pagination.pages }}</strong>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if not tickets %}
+<div class="card border-0 shadow-sm p-5 text-center">
+    <i class="bi bi-inbox fs-1 text-secondary d-block mb-2" aria-hidden="true"></i>
+    <h2 class="h6 fw-semibold">Tidak ada tiket ditemukan</h2>
+    <p class="text-secondary small mb-3">Tidak ada tiket pada status yang dipilih atau filter yang diterapkan.</p>
+    <div>
+        <a href="{{ url_for('admin.ticket_queue') }}" class="btn btn-sm btn-outline-secondary">Kembalikan Filter Default</a>
+    </div>
+</div>
+{% else %}
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col" class="kf-table-col-min-110">Kode Tiket</th>
+                    <th scope="col" class="kf-table-col-min-140">Tanggal</th>
+                    <th scope="col" class="kf-table-col-min-200">Keluhan</th>
+                    <th scope="col" class="kf-table-col-min-180">Lokasi</th>
+                    <th scope="col" class="kf-table-col-min-140">Kategori Pelapor</th>
+                    <th scope="col" class="kf-table-col-min-200">Rekomendasi ML</th>
+                    <th scope="col" class="kf-table-col-min-180">Kategori Resmi</th>
+                    <th scope="col" class="kf-table-col-min-140">Teknisi</th>
+                    <th scope="col" class="kf-table-col-min-110">Status</th>
+                    <th scope="col" class="text-end kf-table-col-min-120">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in tickets %}
+                <tr>
+                    <td class="fw-semibold">
+                        <code>{{ t.ticket_code }}</code>
+                    </td>
+                    <td class="small text-secondary">
+                        {{ t.created_at.strftime('%d/%m/%Y %H:%M') if t.created_at else '-' }}
+                    </td>
+                    <td class="small">
+                        <span class="d-block kf-text-clamp-2" title="{{ t.description }}">{{ t.description }}</span>
+                    </td>
+                    <td class="small">
+                        <strong>{{ t.room_name }}</strong><br>
+                        <span class="text-secondary">{{ t.building_name }}, Lt. {{ t.floor_number }}</span>
+                    </td>
+                    <td class="small">
+                        {% if t.reporter_category %}
+                            <span class="badge bg-light text-dark border">{{ t.reporter_category.code }} - {{ t.reporter_category.name }}</span>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td class="small">
+                        {% if t.needs_manual_verification %}
+                            {% if t.predicted_category %}
+                                <div class="d-flex flex-column align-items-start gap-1">
+                                    <span class="badge bg-info text-dark" title="Keyakinan rendah, perlu verifikasi manusia">
+                                        {{ t.predicted_category.code }} ({{ "%.1f"|format(t.confidence_score * 100) }}%)
+                                    </span>
+                                    {{ manual_verification_badge() }}
+                                </div>
+                            {% else %}
+                                <span class="badge bg-secondary" title="Model ML belum aktif / gagal inferensi">
+                                    Verifikasi Manual (Fallback)
+                                </span>
+                            {% endif %}
+                        {% elif t.predicted_category %}
+                            <span class="badge bg-info text-dark">
+                                {{ t.predicted_category.code }} - {{ t.predicted_category.name }}
+                                {% if t.confidence_score is not none %}
+                                    ({{ "%.1f"|format(t.confidence_score * 100) }}%)
+                                {% endif %}
+                            </span>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td class="small">
+                        {% if t.official_category %}
+                            <span class="fw-semibold text-success">{{ t.official_category.code }} - {{ t.official_category.name }}</span>
+                        {% else %}
+                            <em class="text-muted">Belum ditetapkan</em>
+                        {% endif %}
+                    </td>
+                    <td class="small">
+                        {% if t.assigned_technician %}
+                            <span class="badge bg-light text-dark border">
+                                {{ t.assigned_technician.full_name }}
+                                {% if not t.assigned_technician.is_active %}
+                                    <span class="text-danger small">(Nonaktif)</span>
+                                {% endif %}
+                            </span>
+                        {% else %}
+                            <span class="text-muted fst-italic">Belum ditugaskan</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{ status_badge(t.status) }}
+                    </td>
+                    <td class="text-end">
+                        {% if t.status == 'Baru' %}
+                            <a href="{{ url_for('admin.verify_ticket_form', ticket_id=t.id) }}"
+                               class="btn btn-sm btn-primary">Verifikasi</a>
+                        {% elif t.status == 'Terverifikasi' %}
+                            <a href="{{ url_for('admin.verify_ticket_form', ticket_id=t.id) }}"
+                               class="btn btn-sm btn-primary">Disposisi</a>
+                        {% else %}
+                            <a href="{{ url_for('admin.verify_ticket_form', ticket_id=t.id) }}"
+                               class="btn btn-sm btn-outline-primary">Detail</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% if pagination and pagination.pages > 1 %}
+<nav aria-label="Paginasi Antrean Tiket" class="mt-4">
+    <ul class="pagination pagination-sm justify-content-center mb-0">
+        <li class="page-item {{ 'disabled' if not pagination.has_prev else '' }}">
+            <a class="page-link" href="{{ url_for('admin.ticket_queue', page=pagination.prev_num, keyword=active_filters.keyword if active_filters else '', status=active_filters.status if active_filters else current_status, category_id=active_filters.category_id if active_filters else '', floor_number=active_filters.floor_number if active_filters else '', room_name=active_filters.room_name if active_filters else '', date_from=active_filters.date_from if active_filters else '', date_to=active_filters.date_to if active_filters else '', per_page=active_filters.per_page if active_filters else 15) if pagination.has_prev else '#' }}">Sebelumnya</a>
+        </li>
+        {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+            {% if p %}
+                <li class="page-item {{ 'active' if p == pagination.page else '' }}">
+                    <a class="page-link" href="{{ url_for('admin.ticket_queue', page=p, keyword=active_filters.keyword if active_filters else '', status=active_filters.status if active_filters else current_status, category_id=active_filters.category_id if active_filters else '', floor_number=active_filters.floor_number if active_filters else '', room_name=active_filters.room_name if active_filters else '', date_from=active_filters.date_from if active_filters else '', date_to=active_filters.date_to if active_filters else '', per_page=active_filters.per_page if active_filters else 15) }}">{{ p }}</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">&hellip;</span></li>
+            {% endif %}
+        {% endfor %}
+        <li class="page-item {{ 'disabled' if not pagination.has_next else '' }}">
+            <a class="page-link" href="{{ url_for('admin.ticket_queue', page=pagination.next_num, keyword=active_filters.keyword if active_filters else '', status=active_filters.status if active_filters else current_status, category_id=active_filters.category_id if active_filters else '', floor_number=active_filters.floor_number if active_filters else '', room_name=active_filters.room_name if active_filters else '', date_from=active_filters.date_from if active_filters else '', date_to=active_filters.date_to if active_filters else '', per_page=active_filters.per_page if active_filters else 15) if pagination.has_next else '#' }}">Selanjutnya</a>
+        </li>
+    </ul>
+</nav>
+{% endif %}
+{% endif %}
+{% endblock %}
+

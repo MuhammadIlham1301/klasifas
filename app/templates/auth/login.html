@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Login Staf - KlasiFas{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-3 py-lg-5">
+    <div class="col-12">
+        <div class="kf-auth-card">
+            <div class="text-center mb-4">
+                <p class="text-uppercase small fw-semibold kf-eyebrow mb-2">Akses Staf</p>
+                <h1 class="h2 mb-2">Login Staf KlasiFas</h1>
+                <p class="text-secondary mb-0">
+                    Masuk untuk mengelola verifikasi, penugasan, dan tindak lanjut keluhan fasilitas.
+                </p>
+            </div>
+
+            {% if current_user %}
+            <div class="card border-0 shadow-sm kf-form-card">
+                <div class="card-body p-4 text-center">
+                    <i class="bi bi-person-check fs-1 text-primary" aria-hidden="true"></i>
+                    <p class="mt-3 mb-1">Anda sudah login sebagai</p>
+                    <p class="fw-semibold mb-1">{{ current_user.full_name }}</p>
+                    <p class="text-secondary small mb-4">({{ current_user.role }})</p>
+                    <form method="post" action="{{ url_for('auth.logout') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn kf-btn-primary w-100">Logout</button>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+            <div class="card border-0 shadow-sm kf-form-card">
+                <div class="kf-auth-topbar">
+                    <span class="kf-auth-badge">
+                        <i class="bi bi-shield-lock" aria-hidden="true"></i>
+                        Portal Internal
+                    </span>
+                    <span class="kf-auth-brand">
+                        <span class="kf-auth-brand__dot" aria-hidden="true"></span>
+                        FTII UHAMKA
+                    </span>
+                </div>
+
+                <div class="card-body p-4">
+                    <p class="kf-auth-note">
+                        <i class="bi bi-info-circle" aria-hidden="true"></i>
+                        <span>Gunakan akun staf resmi yang dikelola sistem KlasiFas FTII UHAMKA.</span>
+                    </p>
+
+                    <form method="post" action="{{ url_for('auth.login') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label fw-semibold">Username</label>
+                            <div class="kf-input-icon">
+                                <i class="bi bi-person-badge kf-input-icon__glyph" aria-hidden="true"></i>
+                                <input id="username" name="username" type="text"
+                                       autocomplete="username" required
+                                       class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <label for="password" class="form-label fw-semibold">Password</label>
+                            <div class="kf-input-icon kf-input-icon--toggle">
+                                <i class="bi bi-key kf-input-icon__glyph" aria-hidden="true"></i>
+                                <input id="password" name="password" type="password"
+                                       autocomplete="current-password" required
+                                       class="form-control">
+                                <button type="button"
+                                        class="kf-input-toggle"
+                                        data-token-toggle
+                                        aria-controls="password"
+                                        aria-pressed="false"
+                                        aria-label="Tampilkan atau sembunyikan kata sandi">
+                                    <i class="bi bi-eye" data-token-toggle-icon aria-hidden="true"></i>
+                                </button>
+                            </div>
+                            <p class="kf-auth-hint mb-0">
+                                <i class="bi bi-lock" aria-hidden="true"></i>
+                                Pastikan kerahasiaan kata sandi Anda.
+                            </p>
+                        </div>
+
+                        <button type="submit" class="btn kf-btn-primary w-100 mt-3">
+                            <i class="bi bi-box-arrow-in-right me-2" aria-hidden="true"></i>
+                            Login
+                        </button>
+                    </form>
+                </div>
+
+                <div class="kf-auth-card__footer">
+                    <span class="kf-auth-card__footer-note">
+                        <i class="bi bi-shield-lock" aria-hidden="true"></i>
+                        Akses khusus staf &amp; petugas FTII UHAMKA
+                    </span>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="kf-auth-below mx-auto text-center mt-4">
+            <a class="kf-auth-backlink" href="{{ url_for('report.report_form') }}">
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                Kembali ke Portal Pengaduan Publik
+            </a>
+            <p class="kf-auth-helpbox">
+                Kendala akses akun? Hubungi pengelola sistem melalui jalur resmi institusi.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/portal.js') }}"></script>
+{% endblock %}

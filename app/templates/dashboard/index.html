@@ -1,0 +1,309 @@
+{% extends "base.html" %}
+
+{% block title %}Dasbor Pemantauan Manajerial — KlasiFas{% endblock %}
+
+{% block content %}
+<!-- Header Halaman Dasbor -->
+<div class="row align-items-center mb-4">
+    <div class="col-12 col-md-8">
+        <div class="kf-page-heading">
+            <p class="kf-page-heading__eyebrow mb-2">Portal Manajerial</p>
+            <h1 class="kf-page-heading__title">Dasbor Pemantauan Manajerial</h1>
+            <p class="kf-page-heading__sub mb-0">
+                Visualisasi analitik volume keluhan, tren penanganan, distribusi kategori, dan sebaran lokasi fasilitas FTII UHAMKA (FR-07).
+            </p>
+        </div>
+    </div>
+    <div class="col-12 col-md-4 text-md-end mt-2 mt-md-0">
+        {% if g.current_user and g.current_user.role == 'admin_sarpras' %}
+        <span class="badge bg-primary px-3 py-2 fs-7 fw-semibold">
+            <i class="bi bi-shield-check me-1"></i> Peran: Admin Sarpras
+        </span>
+        {% elif g.current_user and g.current_user.role == 'pimpinan' %}
+        <span class="badge bg-secondary px-3 py-2 fs-7 fw-semibold">
+            <i class="bi bi-eye me-1"></i> Peran: Pimpinan (Read-Only)
+        </span>
+        {% endif %}
+        <p class="small text-secondary mb-0 mt-2">
+            <i class="bi bi-shield-lock me-1"></i> Data agregat anonim — tanpa identitas pelapor
+        </p>
+    </div>
+</div>
+
+<!-- Panel Filter Agregat -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white border-bottom-0 py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <h6 class="fw-bold mb-0 text-dark">
+            Filter Visualisasi Dasbor
+        </h6>
+        <div id="filter-active-indicator" class="small text-secondary">
+            Menampilkan data: <strong id="filter-summary-text">30 hari terakhir</strong>
+        </div>
+    </div>
+    <div class="card-body pt-0 pb-3">
+        <form id="dashboard-filter-form" class="row g-2 align-items-end">
+            <!-- Filter Periode Waktu -->
+            <div class="col-12 col-sm-6 col-md-3">
+                <label for="filter_days" class="form-label small text-secondary mb-1">Rentang Waktu</label>
+                <select class="form-select form-select-sm" id="filter_days" name="days">
+                    <option value="7">7 Hari Terakhir</option>
+                    <option value="30" selected>30 Hari Terakhir (Default)</option>
+                    <option value="90">90 Hari (Triwulan)</option>
+                    <option value="180">180 Hari (Semester)</option>
+                    <option value="365">365 Hari (1 Tahun)</option>
+                </select>
+            </div>
+
+            <!-- Filter Kategori Fasilitas -->
+            <div class="col-12 col-sm-6 col-md-4">
+                <label for="filter_category" class="form-label small text-secondary mb-1">Kategori Fasilitas</label>
+                <select class="form-select form-select-sm" id="filter_category" name="category">
+                    <option value="" selected>Semua Kategori (K1–K7)</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.code }}">{{ cat.code }} - {{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Filter Lantai Gedung -->
+            <div class="col-12 col-sm-6 col-md-3">
+                <label for="filter_floor" class="form-label small text-secondary mb-1">Lantai Gedung FTII</label>
+                <select class="form-select form-select-sm" id="filter_floor" name="floor">
+                    <option value="" selected>Semua Lantai (1–4)</option>
+                    {% for fl in floors %}
+                    <option value="{{ fl }}">Lantai {{ fl }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Tombol Aksi -->
+            <div class="col-12 col-sm-6 col-md-2 d-flex gap-2">
+                <button type="submit" id="btn-apply-filter" class="btn btn-sm btn-primary flex-grow-1">
+                    Terapkan
+                </button>
+                <button type="button" id="btn-reset-filter" class="btn btn-sm btn-outline-secondary" title="Kembalikan ke filter awal">
+                    Reset
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Alert State: Error Notification -->
+<div id="dashboard-error-alert" class="alert alert-danger d-none mb-4" role="alert">
+    <div class="d-flex align-items-center justify-content-between">
+        <div>
+            <strong>Gagal Memuat Data:</strong> <span id="dashboard-error-message">Terjadi kesalahan pada server saat memuat data agregat.</span>
+        </div>
+        <button type="button" id="btn-retry-load" class="btn btn-sm btn-outline-danger">Coba Lagi</button>
+    </div>
+</div>
+
+<!-- Alert State: Empty Data Notification -->
+<div id="dashboard-empty-alert" class="alert alert-info d-none mb-4" role="alert">
+    Tidak ada keluhan fasilitas yang tercatat untuk filter dan periode waktu yang dipilih. Grafik menampilkan nilai 0.
+</div>
+
+<!-- Loading State Overlay -->
+<div id="dashboard-loading-spinner" class="text-center py-4 d-none">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Memuat data visualisasi...</span>
+    </div>
+    <div class="small text-secondary mt-2">Memuat data visualisasi agregat...</div>
+</div>
+
+<!-- Konten Utama Dasbor -->
+<div id="dashboard-main-content" aria-busy="false">
+    <p id="dashboard-chart-summary" class="visually-hidden" aria-live="polite"></p>
+
+    <!-- Baris 1: Empat Kartu KPI Ringkasan (VQ-16 A1) -->
+    <div class="row g-3 mb-4">
+        <!-- Kartu 1: Total Keluhan -->
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100 kf-kpi kf-kpi--kpi-total">
+                <div class="card-body p-3 pb-2">
+                    <div class="kf-kpi__header">
+                        <span class="kf-kpi__icon" aria-hidden="true"><i class="bi bi-inbox"></i></span>
+                        <span class="text-secondary small fw-semibold text-uppercase kf-kpi__label">Total Keluhan</span>
+                    </div>
+                    <h2 id="kpi-total-tickets" class="h2 fw-bold text-dark mt-2 mb-1 kf-kpi__value">0</h2>
+                </div>
+                <div class="kf-kpi__footer">Semua status terdaftar</div>
+            </div>
+        </div>
+
+        <!-- Kartu 2: Tiket Aktif -->
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100 kf-kpi kf-kpi--kpi-progress">
+                <div class="card-body p-3 pb-2">
+                    <div class="kf-kpi__header">
+                        <span class="kf-kpi__icon" aria-hidden="true"><i class="bi bi-hourglass-split"></i></span>
+                        <span class="text-secondary small fw-semibold text-uppercase kf-kpi__label">Tiket Berjalan</span>
+                    </div>
+                    <h2 id="kpi-active-tickets" class="h2 fw-bold text-primary mt-2 mb-1 kf-kpi__value">0</h2>
+                </div>
+                <div class="kf-kpi__footer">Baru + Terverifikasi + Diproses</div>
+            </div>
+        </div>
+
+        <!-- Kartu 3: Tiket Selesai -->
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100 kf-kpi kf-kpi--kpi-done">
+                <div class="card-body p-3 pb-2">
+                    <div class="kf-kpi__header">
+                        <span class="kf-kpi__icon" aria-hidden="true"><i class="bi bi-check2-circle"></i></span>
+                        <span class="text-secondary small fw-semibold text-uppercase kf-kpi__label">Tiket Selesai</span>
+                    </div>
+                    <h2 id="kpi-completed-tickets" class="h2 fw-bold text-success mt-2 mb-1 kf-kpi__value">0</h2>
+                </div>
+                <div class="kf-kpi__footer">Tindakan perbaikan tuntas</div>
+            </div>
+        </div>
+
+        <!-- Kartu 4: Tingkat Penyelesaian -->
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100 kf-kpi kf-kpi--kpi-verified">
+                <div class="card-body p-3 pb-2">
+                    <div class="kf-kpi__header">
+                        <span class="kf-kpi__icon" aria-hidden="true"><i class="bi bi-speedometer2"></i></span>
+                        <span class="text-secondary small fw-semibold text-uppercase kf-kpi__label">Rasio Penyelesaian</span>
+                    </div>
+                    <h2 id="kpi-completion-rate" class="h2 fw-bold text-dark mt-2 mb-1 kf-kpi__value">0.0%</h2>
+                </div>
+                <div class="kf-kpi__footer">Persentase terhadap total</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rincian Status Tiket (Pills) -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body py-3">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                <span class="small fw-semibold text-secondary">Rincian 4 Status Resmi:</span>
+                <div id="kpi-status-counts" class="d-flex flex-wrap gap-2">
+                    <span class="badge kf-status kf-status-new px-2 py-1">
+                        Baru: <strong id="kpi-count-baru">0</strong>
+                        (<span class="kf-status-pct" id="kpi-pct-baru">0.0%</span>)
+                    </span>
+                    <span class="badge kf-status kf-status-verified px-2 py-1">
+                        Terverifikasi: <strong id="kpi-count-terverifikasi">0</strong>
+                        (<span class="kf-status-pct" id="kpi-pct-terverifikasi">0.0%</span>)
+                    </span>
+                    <span class="badge kf-status kf-status-in-progress px-2 py-1">
+                        Diproses: <strong id="kpi-count-diproses">0</strong>
+                        (<span class="kf-status-pct" id="kpi-pct-diproses">0.0%</span>)
+                    </span>
+                    <span class="badge kf-status kf-status-done px-2 py-1">
+                        Selesai: <strong id="kpi-count-selesai">0</strong>
+                        (<span class="kf-status-pct" id="kpi-pct-selesai">0.0%</span>)
+                    </span>
+                </div>
+            </div>
+            <div id="kpi-status-progress" class="kf-status-progress mt-3" aria-hidden="true">
+                <span id="kpi-progress-baru" class="kf-status-progress__seg kf-status-progress__seg--new"></span>
+                <span id="kpi-progress-terverifikasi" class="kf-status-progress__seg kf-status-progress__seg--verified"></span>
+                <span id="kpi-progress-diproses" class="kf-status-progress__seg kf-status-progress__seg--in-progress"></span>
+                <span id="kpi-progress-selesai" class="kf-status-progress__seg kf-status-progress__seg--done"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Baris 2: Grafik Tren Waktu (Line) dan Sebaran Lantai (Bar) -->
+    <div class="row g-3 mb-4">
+        <!-- Grafik Tren Laporan Waktu -->
+        <div class="col-12 col-lg-8">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-bottom-0 py-3">
+                    <h6 class="fw-bold mb-0 text-dark">
+                        Tren Keluhan Fasilitas Masuk
+                    </h6>
+                    <span class="small text-secondary">Frekuensi keluhan harian sepanjang periode waktu aktif</span>
+                </div>
+                <div class="card-body pt-0">
+                    <div class="kf-chart-frame">
+                        <canvas id="trendChart" role="img" aria-label="Grafik garis tren keluhan fasilitas masuk per hari" aria-describedby="dashboard-chart-summary"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grafik Sebaran Lokasi per Lantai -->
+        <div class="col-12 col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-bottom-0 py-3">
+                    <h6 class="fw-bold mb-0 text-dark">
+                        Sebaran per Lantai Gedung
+                    </h6>
+                    <span class="small text-secondary">Distribusi keluhan di Lantai 1 s.d. 4 FTII</span>
+                </div>
+                <div class="card-body pt-0">
+                    <div class="kf-chart-frame">
+                        <canvas id="locationChart" role="img" aria-label="Grafik batang sebaran keluhan per lantai gedung FTII" aria-describedby="dashboard-chart-summary"></canvas>
+                    </div>
+                    <div id="other-floors-note" class="small text-secondary mt-2 d-none">
+                        Tiket di luar Lantai 1–4: <strong id="other-floors-count">0</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Baris 3: Distribusi Kategori (Bar) dan Peringkat Ruangan (Top Rooms) -->
+    <div class="row g-3 mb-4">
+        <!-- Grafik Distribusi Kategori Fasilitas K1–K7 -->
+        <div class="col-12 col-lg-7">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-bottom-0 py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <div>
+                        <h6 class="fw-bold mb-0 text-dark">
+                            Distribusi 7 Kategori Fasilitas
+                        </h6>
+                        <span class="small text-secondary">Sebaran keluhan terverifikasi resmi (K1–K7)</span>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        <span class="badge bg-light text-secondary border small">
+                            Terverifikasi: <strong id="category-verified-count">0</strong>
+                        </span>
+                        <span id="category-unverified-badge" class="badge bg-light text-secondary border small">
+                            Unverified: <strong id="category-unverified-count">0</strong>
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body pt-0">
+                    <div class="kf-chart-frame kf-chart-frame--lg">
+                        <canvas id="categoryChart" role="img" aria-label="Grafik batang distribusi keluhan per kategori fasilitas K1 sampai K7" aria-describedby="dashboard-chart-summary"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Peringkat Ruangan Sering Rusak -->
+        <div class="col-12 col-lg-5">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-bottom-0 py-3">
+                    <h6 class="fw-bold mb-0 text-dark">
+                        5 Ruangan Paling Sering Bermasalah
+                    </h6>
+                    <span class="small text-secondary">Peringkat fasilitas dengan keluhan terbanyak</span>
+                </div>
+                <div class="card-body pt-0">
+                    <ul id="top-rooms-list" class="list-group list-group-flush mb-3">
+                        <li class="list-group-item text-secondary small py-2 px-0">
+                            Memuat data ruangan...
+                        </li>
+                    </ul>
+                    <div id="unspecified-room-note" class="small text-secondary pt-2 border-top">
+                        Tiket tanpa ruangan spesifik: <strong id="unspecified-room-count">0</strong> tiket.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='vendor/chartjs/chart.umd.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}
+

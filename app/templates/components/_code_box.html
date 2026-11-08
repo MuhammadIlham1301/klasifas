@@ -1,0 +1,30 @@
+{% macro code_box(label, value, hint=None, variant='reference', value_class='kf-code-box__value', value_id=None, copy_target=None, copy_label=None, copy_aria_label=None) %}
+<div class="kf-code-box kf-code-box--{{ variant }}">
+    <div class="kf-code-box__header">
+        <div class="kf-code-box__label">{{ label }}</div>
+        {% if copy_target %}
+        <button
+            type="button"
+            class="btn btn-sm kf-copy-button"
+            data-copy-target="{{ copy_target }}"
+            aria-label="{{ copy_aria_label or ('Salin ' ~ label) }}"
+        >
+            <i class="bi bi-clipboard" aria-hidden="true"></i>
+            <span data-copy-label aria-live="polite">{{ copy_label or 'Salin' }}</span>
+        </button>
+        {% endif %}
+    </div>
+    <div class="{{ value_class }}"{% if value_id %} id="{{ value_id }}"{% endif %}>{{ value }}</div>
+    {% if hint %}
+    <p class="kf-code-box__hint">{{ hint }}</p>
+    {% endif %}
+</div>
+{% endmacro %}
+
+{% macro ticket_code_box(ticket_code, hint=None, copy_target=None, copy_label=None, copy_aria_label=None) %}
+{{ code_box('Kode Referensi Tiket', ticket_code, hint=hint, variant='reference', value_class='fs-3 fw-semibold font-monospace', copy_target=copy_target, copy_label=copy_label, copy_aria_label=copy_aria_label) }}
+{% endmacro %}
+
+{% macro access_token_box(access_token, hint=None, copy_target=None, copy_label=None, copy_aria_label=None) %}
+{{ code_box('Token Akses Rahasia', access_token, hint=hint, variant='secret', value_class='fs-5 fw-semibold font-monospace text-break', copy_target=copy_target, copy_label=copy_label, copy_aria_label=copy_aria_label) }}
+{% endmacro %}

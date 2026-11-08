@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+
+<html lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><title>KlasiFas FTII UHAMKA - Admin Workspace</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"surface-bright":"#f8f9ff","tertiary":"#002339","on-surface":"#121c2a","on-tertiary-container":"#45a6eb","surface":"#f8f9ff","error-container":"#ffdad6","inverse-surface":"#27313f","on-error-container":"#93000a","outline-variant":"#c4c6d1","surface-container-lowest":"#ffffff","surface-variant":"#d9e3f6","on-error":"#ffffff","tertiary-fixed":"#cce5ff","surface-container-highest":"#d9e3f6","secondary":"#795900","on-secondary":"#ffffff","surface-tint":"#3e5e95","primary-fixed-dim":"#abc7ff","primary":"#002048","on-secondary-fixed-variant":"#5c4300","on-tertiary-fixed-variant":"#004b73","on-secondary-fixed":"#261a00","tertiary-container":"#00395a","on-primary-fixed-variant":"#23467c","inverse-primary":"#abc7ff","error":"#ba1a1a","on-tertiary":"#ffffff","primary-container":"#0c356a","primary-fixed":"#d7e3ff","on-secondary-container":"#6f5100","inverse-on-surface":"#eaf1ff","on-tertiary-fixed":"#001d31","on-primary-fixed":"#001b3f","on-primary":"#ffffff","on-background":"#121c2a","surface-dim":"#d0dbed","on-surface-variant":"#43474f","surface-container-high":"#dee9fc","surface-container":"#e6eeff","on-primary-container":"#7f9fdb","surface-container-low":"#eff4ff","tertiary-fixed-dim":"#93ccff","secondary-fixed-dim":"#f8bd2f","secondary-fixed":"#ffdea0","secondary-container":"#fec335","outline":"#747781","background":"#f8f9ff"},borderRadius:{DEFAULT:"0.125rem",lg:"0.25rem",xl:"0.5rem",full:"0.75rem"},spacing:{"gutter-sm":"1rem","space-sm":"0.5rem","gutter":"1.5rem","space-xl":"2.5rem","space-md":"1rem","space-xs":"0.25rem","margin-sm":"1rem","space-lg":"1.5rem","margin":"2rem"},fontFamily:{"label-lg":["Public Sans"],"headline-sm":["Public Sans"],"label-md":["Public Sans"],"body-lg":["Public Sans"],"label-sm":["Public Sans"],"body-sm":["Public Sans"],"headline-xl":["Public Sans"],"headline-md":["Public Sans"],"headline-xl-mobile":["Public Sans"],"body-md":["Public Sans"],"headline-lg":["Public Sans"],"headline-lg-mobile":["Public Sans"]},fontSize:{"label-lg":["14px",{lineHeight:"20px",letterSpacing:"0.01em",fontWeight:"600"}],"headline-sm":["16px",{lineHeight:"24px",letterSpacing:"0em",fontWeight:"600"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.02em",fontWeight:"600"}],"body-lg":["18px",{lineHeight:"28px",fontWeight:"400"}],"label-sm":["11px",{lineHeight:"14px",letterSpacing:"0.03em",fontWeight:"500"}],"body-sm":["13px",{lineHeight:"20px",fontWeight:"400"}],"headline-xl":["36px",{lineHeight:"44px",letterSpacing:"-0.02em",fontWeight:"700"}],"headline-md":["20px",{lineHeight:"28px",letterSpacing:"-0.005em",fontWeight:"600"}],"headline-xl-mobile":["28px",{lineHeight:"36px",letterSpacing:"-0.01em",fontWeight:"700"}],"body-md":["15px",{lineHeight:"24px",fontWeight:"400"}],"headline-lg":["28px",{lineHeight:"36px",letterSpacing:"-0.01em",fontWeight:"700"}],"headline-lg-mobile":["22px",{lineHeight:"28px",letterSpacing:"0em",fontWeight:"600"}]}}}};</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><header class="fixed top-0 left-0 w-full z-50 bg-primary shadow-[0_1px_8px_rgba(0,0,0,0.08)]"><div class="h-20 w-full max-w-[1440px] mx-auto px-gutter flex items-center justify-between gap-space-lg"><div class="flex items-center gap-space-md"><div class="w-10 h-10 rounded bg-secondary-container flex items-center justify-center text-primary font-headline-md font-bold"><span class="material-symbols-outlined text-[24px]">domain</span></div><div class="flex flex-col"><div class="flex items-center gap-space-xs"><span class="font-headline-sm text-headline-sm text-on-primary tracking-tight">KlasiFas</span><span class="px-space-xs py-0.5 rounded bg-secondary-container text-on-secondary-fixed font-label-sm text-label-sm uppercase tracking-wide">ADMIN SARPRAS FTII</span></div><span class="font-label-sm text-label-sm text-surface-variant font-normal">Fakultas Teknologi Industri &amp; Informatika</span></div></div><nav class="hidden md:flex items-center gap-space-xs" data-active-classes="bg-primary-container text-secondary-container font-semibold rounded"><a class="px-space-md py-space-sm font-label-lg text-label-lg text-surface-variant hover:text-on-primary hover:bg-primary-container transition-colors" data-path="dashboard" href="#">Dashboard</a><a aria-current="page" class="px-space-md py-space-sm transition-colors bg-primary-container text-secondary-container font-semibold rounded" data-path="antrean-tiket" href="#">Antrean Tiket</a><a class="px-space-md py-space-sm font-label-lg text-label-lg text-surface-variant hover:text-on-primary hover:bg-primary-container transition-colors" data-path="audit-log" href="#">Audit Log</a></nav><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-sm bg-primary-container px-space-md py-space-xs rounded-full"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><span class="hidden lg:inline font-label-md text-label-md text-on-primary">Admin Sarpras FTII</span></div><a class="flex items-center gap-space-xs font-label-md text-label-md text-surface-variant hover:text-secondary-container transition-colors" data-path="login" href="#"><span class="material-symbols-outlined text-[18px]">logout</span><span class="hidden sm:inline">Keluar</span></a></div></div></header><main class="w-full pt-20 bg-surface min-h-[calc(100vh-80px)]"><div class="flex flex-col w-full">
+<div class="w-full max-w-[1440px] mx-auto px-gutter py-space-lg flex flex-col gap-space-lg">
+<!-- PAGE HEADER -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md">
+<div class="flex flex-col gap-space-xs">
+<div class="flex flex-wrap items-center gap-space-sm">
+<h1 class="font-headline-xl text-headline-xl text-primary tracking-tight">Antrean Keluhan Fasilitas</h1>
+<span class="px-space-sm py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed font-label-sm text-label-sm uppercase tracking-wider flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-[14px]">science</span>
+            Data Sampel Ilustratif Admin
+          </span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+          Kelola, verifikasi, dan pantau laporan fasilitas Gedung FTII secara terintegrasi dan akuntabel.
+        </p>
+</div>
+<!-- Quick Action / Status Indicator -->
+<div class="flex items-center gap-space-sm self-start md:self-auto bg-surface-container-low px-space-md py-space-xs rounded-xl shadow-sm">
+<span class="inline-flex w-2.5 h-2.5 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-label-md text-label-md text-primary">Sistem Klasifikasi ML Aktif</span>
+<span class="text-outline-variant">•</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Gedung FTII (Lt. 1-4)</span>
+</div>
+</div>
+<!-- 5 KPI CARDS -->
+<div class="flex flex-col gap-space-xs">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-space-md">
+<!-- Card 1: Total Tiket -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between transition-all duration-200 hover:shadow-md">
+<div class="flex items-center justify-between gap-space-sm mb-space-sm">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Total Tiket</span>
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">folder_open</span>
+</div>
+</div>
+<div>
+<div class="font-headline-xl text-headline-xl text-primary font-bold">48</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Seluruh laporan tercatat</div>
+</div>
+<div class="mt-space-sm pt-space-xs flex items-center justify-between text-outline">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Arsip Semester Berjalan</span>
+<span class="material-symbols-outlined text-[16px]">trending_flat</span>
+</div>
+</div>
+<!-- Card 2: Baru -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between transition-all duration-200 hover:shadow-md">
+<div class="flex items-center justify-between gap-space-sm mb-space-sm">
+<span class="font-label-md text-label-md text-tertiary uppercase tracking-wider font-semibold">Baru</span>
+<div class="w-8 h-8 rounded-lg bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed">
+<span class="material-symbols-outlined text-[20px]">mark_email_unread</span>
+</div>
+</div>
+<div>
+<div class="font-headline-xl text-headline-xl text-tertiary font-bold">6</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Perlu verifikasi awal</div>
+</div>
+<div class="mt-space-sm pt-space-xs flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim"></span>
+<span class="font-label-sm text-label-sm text-tertiary font-medium">Antrean prioritas masuk</span>
+</div>
+</div>
+<!-- Card 3: Terverifikasi -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between transition-all duration-200 hover:shadow-md">
+<div class="flex items-center justify-between gap-space-sm mb-space-sm">
+<span class="font-label-md text-label-md text-secondary uppercase tracking-wider font-semibold">Terverifikasi</span>
+<div class="w-8 h-8 rounded-lg bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed">
+<span class="material-symbols-outlined text-[20px]">assignment_turned_in</span>
+</div>
+</div>
+<div>
+<div class="font-headline-xl text-headline-xl text-secondary font-bold">12</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Menunggu penugasan</div>
+</div>
+<div class="mt-space-sm pt-space-xs flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+<span class="font-label-sm text-label-sm text-secondary font-medium">Siap diteruskan PIC</span>
+</div>
+</div>
+<!-- Card 4: Diproses -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between transition-all duration-200 hover:shadow-md">
+<div class="flex items-center justify-between gap-space-sm mb-space-sm">
+<span class="font-label-md text-label-md text-primary font-semibold uppercase tracking-wider">Diproses</span>
+<div class="w-8 h-8 rounded-lg bg-primary-fixed flex items-center justify-center text-on-primary-fixed">
+<span class="material-symbols-outlined text-[20px]">build</span>
+</div>
+</div>
+<div>
+<div class="font-headline-xl text-headline-xl text-primary font-bold">18</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Sedang perbaikan teknisi</div>
+</div>
+<div class="mt-space-sm pt-space-xs flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span class="font-label-sm text-label-sm text-primary font-medium">Unit Pelaksana Sarpras</span>
+</div>
+</div>
+<!-- Card 5: Selesai -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between transition-all duration-200 hover:shadow-md">
+<div class="flex items-center justify-between gap-space-sm mb-space-sm">
+<span class="font-label-md text-label-md text-on-surface font-semibold uppercase tracking-wider">Selesai</span>
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+</div>
+</div>
+<div>
+<div class="font-headline-xl text-headline-xl text-on-surface font-bold">12</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Pekerjaan tuntas</div>
+</div>
+<div class="mt-space-sm pt-space-xs flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-surface-variant"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Konfirmasi terverifikasi</span>
+</div>
+</div>
+</div>
+<p class="font-label-sm text-label-sm text-outline italic text-right mt-1">
+        *Seluruh angka merupakan simulasi data sampel ilustratif.
+      </p>
+</div>
+<!-- SEARCH & FILTER PANEL -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-md md:p-space-lg flex flex-col gap-space-md">
+<!-- Panel Header -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs pb-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded bg-secondary-container flex items-center justify-center text-on-secondary-fixed">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-primary">Filter &amp; Pencarian Antrean</h2>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Konfigurasi parameter penyaringan tiket keluhan</span>
+</div>
+</div>
+<div class="px-space-sm py-1 rounded bg-surface-container text-on-surface font-label-sm text-label-sm">
+          Menampilkan <span class="font-semibold text-primary">6</span> entri teratas dari <span class="font-semibold text-primary">48</span> total rekaman simulasi
+        </div>
+</div>
+<!-- Filters Grid -->
+<form class="flex flex-col gap-space-md" id="filterForm" onsubmit="event.preventDefault(); applyFilterDemo();">
+<!-- Row 1 -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-space-md">
+<!-- Field 1: Kata Kunci / No. Tiket -->
+<div class="md:col-span-5 flex flex-col gap-space-xs">
+<label class="font-label-md text-label-md text-on-surface" for="searchQuery">Kata Kunci / No. Tiket</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-outline text-[20px] pointer-events-none">search</span>
+<input class="w-full bg-surface rounded-lg pl-10 pr-space-md py-2.5 text-on-surface font-body-sm text-body-sm placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest transition-all" id="searchQuery" placeholder="Cari kata kunci keluhan atau kode tiket..." type="text"/>
+</div>
+</div>
+<!-- Field 2: Status Tiket -->
+<div class="md:col-span-3 flex flex-col gap-space-xs">
+<label class="font-label-md text-label-md text-on-surface" for="filterStatus">Status Tiket</label>
+<div class="relative flex items-center">
+<select class="w-full bg-surface rounded-lg px-space-md py-2.5 text-on-surface font-body-sm text-body-sm appearance-none focus:outline-none focus:bg-surface-container-lowest transition-all" id="filterStatus">
+<option selected="" value="all">Semua Status</option>
+<option value="baru">Baru</option>
+<option value="terverifikasi">Terverifikasi</option>
+<option value="diproses">Diproses</option>
+<option value="selesai">Selesai</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 text-outline text-[20px] pointer-events-none">arrow_drop_down</span>
+</div>
+</div>
+<!-- Field 3: Kategori Klasifikasi -->
+<div class="md:col-span-4 flex flex-col gap-space-xs">
+<label class="font-label-md text-label-md text-on-surface" for="filterCategory">Kategori Klasifikasi</label>
+<div class="relative flex items-center">
+<select class="w-full bg-surface rounded-lg px-space-md py-2.5 text-on-surface font-body-sm text-body-sm appearance-none focus:outline-none focus:bg-surface-container-lowest transition-all" id="filterCategory">
+<option selected="" value="all">Semua Kategori (K1–K7)</option>
+<option value="k1">K1 - AC &amp; Tata Udara</option>
+<option value="k2">K2 - Kelistrikan &amp; Penerangan</option>
+<option value="k3">K3 - Sanitasi &amp; Plumbing</option>
+<option value="k4">K4 - Sarana Lab Komputer</option>
+<option value="k5">K5 - Meubelair &amp; Furnitur</option>
+<option value="k6">K6 - Pintu, Jendela &amp; Kunci</option>
+<option value="k7">K7 - Fasilitas Umum &amp; Koridor</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 text-outline text-[20px] pointer-events-none">arrow_drop_down</span>
+</div>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-space-md items-end">
+<!-- Field 4: Lantai -->
+<div class="md:col-span-3 flex flex-col gap-space-xs">
+<label class="font-label-md text-label-md text-on-surface" for="filterFloor">Lantai</label>
+<div class="relative flex items-center">
+<select class="w-full bg-surface rounded-lg px-space-md py-2.5 text-on-surface font-body-sm text-body-sm appearance-none focus:outline-none focus:bg-surface-container-lowest transition-all" id="filterFloor">
+<option selected="" value="all">Semua Lantai</option>
+<option value="1">Lantai 1</option>
+<option value="2">Lantai 2</option>
+<option value="3">Lantai 3</option>
+<option value="4">Lantai 4</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 text-outline text-[20px] pointer-events-none">apartment</span>
+</div>
+</div>
+<!-- Field 5: Nama Ruangan -->
+<div class="md:col-span-4 flex flex-col gap-space-xs">
+<label class="font-label-md text-label-md text-on-surface" for="filterRoom">Nama Ruangan</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-outline text-[20px] pointer-events-none">meeting_room</span>
+<input class="w-full bg-surface rounded-lg pl-10 pr-space-md py-2.5 text-on-surface font-body-sm text-body-sm placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest transition-all" id="filterRoom" placeholder="Contoh: Lab 302, R. Kuliah 401..." type="text"/>
+</div>
+</div>
+<!-- Field 6: Tanggal (Visual reference filter) -->
+<div class="md:col-span-2 flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<label class="font-label-md text-label-md text-on-surface" for="filterDate">Tanggal</label>
+<span class="font-label-sm text-label-sm text-outline italic">*Ref</span>
+</div>
+<div class="relative flex items-center">
+<input class="w-full bg-surface rounded-lg px-space-md py-2.5 text-on-surface font-body-sm text-body-sm focus:outline-none focus:bg-surface-container-lowest transition-all" id="filterDate" type="date" value="2024-10-24"/>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="md:col-span-3 flex items-center justify-end gap-space-sm pt-1">
+<button class="px-space-md py-2.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high font-label-md text-label-md transition-all flex items-center justify-center gap-1.5" onclick="resetFilterDemo()" type="button">
+<span class="material-symbols-outlined text-[18px]">restart_alt</span>
+              Reset Filter
+            </button>
+<button class="px-space-md py-2.5 rounded-lg bg-primary text-on-primary hover:bg-primary-container font-label-md text-label-md transition-all flex items-center justify-center gap-1.5 shadow-sm" type="submit">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+              Terapkan Filter
+            </button>
+</div>
+</div>
+</form>
+</div>
+<!-- OPERATIONAL TICKET TABLE CARD -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm flex flex-col overflow-hidden">
+<!-- Table Meta Bar -->
+<div class="p-space-md bg-surface-container-low flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="flex h-3 w-3 relative">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-secondary"></span>
+</span>
+<span class="font-headline-sm text-headline-sm text-primary">Antrean Berjalan</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">
+            48 data sampel ditemukan
+          </span>
+</div>
+<div class="flex items-center gap-space-md">
+<!-- View switcher preview controls -->
+<div class="flex items-center gap-1 bg-surface rounded-lg p-1">
+<button class="px-space-sm py-1 rounded font-label-sm text-label-sm bg-primary text-on-primary font-semibold transition-colors" id="viewBtnNormal" onclick="switchTableView('normal')" type="button">
+              Data Normal
+            </button>
+<button class="px-space-sm py-1 rounded font-label-sm text-label-sm text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" id="viewBtnEmpty" onclick="switchTableView('empty')" type="button">
+              Pratinjau Kosong
+            </button>
+<button class="px-space-sm py-1 rounded font-label-sm text-label-sm text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" id="viewBtnLoading" onclick="switchTableView('loading')" type="button">
+              Pratinjau Loading
+            </button>
+</div>
+<div class="hidden md:flex items-center gap-space-xs font-label-sm text-label-sm text-on-surface-variant">
+<span>Tampilkan:</span>
+<select class="bg-surface rounded px-2 py-1 text-on-surface font-label-sm focus:outline-none">
+<option selected="">6 baris</option>
+<option>10 baris</option>
+<option>25 baris</option>
+</select>
+</div>
+</div>
+</div>
+<!-- MAIN TABLE WRAPPER -->
+<div class="w-full overflow-x-auto" id="tableContainer">
+<table class="w-full min-w-[1080px] text-left border-collapse">
+<thead>
+<tr class="bg-surface-container text-on-surface font-label-md text-label-md">
+<th class="py-space-md px-space-md" scope="col">Kode Tiket</th>
+<th class="py-space-md px-space-md" scope="col">Keluhan</th>
+<th class="py-space-md px-space-md" scope="col">Kategori / Rekomendasi ML</th>
+<th class="py-space-md px-space-md" scope="col">Gedung / Lantai / Ruangan</th>
+<th class="py-space-md px-space-md" scope="col">Waktu Masuk</th>
+<th class="py-space-md px-space-md" scope="col">Status</th>
+<th class="py-space-md px-space-md" scope="col">Teknisi PIC</th>
+<th class="py-space-md px-space-md text-right" scope="col">Aksi</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-low font-body-sm text-body-sm text-on-surface">
+<!-- ROW 1 -->
+<tr class="hover:bg-surface transition-colors">
+<!-- Col 1: Reference -->
+<td class="py-space-md px-space-md align-top">
+<div class="flex flex-col gap-0.5">
+<span class="font-label-md text-label-md text-primary font-bold tracking-tight">TKT-202410-0419</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">person</span>
+                    Dosen Pengampu
+                  </span>
+</div>
+</td>
+<!-- Col 2: Complaint -->
+<td class="py-space-md px-space-md align-top max-w-[260px]">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Proyektor gantung mati total saat kuliah tatap muka</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-1">Lampu indikator merah berkedip</span>
+</div>
+</td>
+<!-- Col 3: Category ML (State B: Model unvalidated/unavailable) -->
+<td class="py-space-md px-space-md align-top">
+<div class="flex flex-col items-start gap-1">
+<span class="font-label-md text-label-md text-primary font-medium">K4 - Sarana Lab Komputer</span>
+<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[13px] text-secondary">pending_actions</span>
+                    Perlu Verifikasi Manual
+                  </div>
+</div>
+</td>
+<!-- Col 4: Location -->
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<div class="flex flex-col gap-0.5">
+<span class="font-label-md text-label-md text-on-surface font-medium">Gedung FTII</span>
+<span class="text-on-surface-variant font-body-sm">Lantai 4 • Ruang Kuliah 401</span>
+</div>
+</td>
+<!-- Col 5: Submission -->
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">24 Okt 2024</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">09:15 WIB</span>
+</div>
+</td>
+<!-- Col 6: Status (Baru - Soft Cyan) -->
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-md text-label-md font-semibold shadow-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-fixed"></span>
+                  Baru
+                </span>
+</td>
+<!-- Col 7: Technician -->
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<span class="italic text-outline font-label-sm text-label-sm px-2 py-1 rounded bg-surface">Belum Ditugaskan</span>
+</td>
+<!-- Col 8: Action -->
+<td class="py-space-md px-space-md align-top text-right whitespace-nowrap">
+<button class="px-space-md py-1.5 rounded bg-primary text-on-primary hover:bg-primary-container font-label-md text-label-md inline-flex items-center gap-1.5 shadow-sm transition-all" onclick="alert('Verifikasi manual tiket TKT-202410-0419')" type="button">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+                  Verifikasi
+                </button>
+</td>
+</tr>
+<!-- ROW 2 -->
+<tr class="hover:bg-surface transition-colors">
+<!-- Col 1: Reference -->
+<td class="py-space-md px-space-md align-top">
+<div class="flex flex-col gap-0.5">
+<span class="font-label-md text-label-md text-primary font-bold tracking-tight">TKT-202410-0418</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">school</span>
+                    Mahasiswa
+                  </span>
+</div>
+</td>
+<!-- Col 2: Complaint -->
+<td class="py-space-md px-space-md align-top max-w-[260px]">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Kebocoran pipa drainase AC indoor</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-1">Menetes basahi meja komputer lab</span>
+</div>
+</td>
+<!-- Col 3: Category ML (State A: Validated model 91.2%) -->
+<td class="py-space-md px-space-md align-top">
+<div class="flex flex-col items-start gap-1">
+<span class="font-label-md text-label-md text-primary font-medium">K1 - AC &amp; Tata Udara</span>
+<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container-high text-primary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[13px] text-primary">auto_awesome</span>
+<span>Rekomendasi Valid (91.2%)</span>
+</div>
+</div>
+</td>
+<!-- Col 4: Location -->
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<div class="flex flex-col gap-0.5">
+<span class="font-label-md text-label-md text-on-surface font-medium">Gedung FTII</span>
+<span class="text-on-surface-variant font-body-sm">Lantai 3 • Lab. Komputer 302</span>
+</div>
+</td>
+<!-- Col 5: Submission -->
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">24 Okt 2024</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">08:35 WIB</span>
+</div>
+</td>
+<!-- Col 6: Status (Diproses - Soft Navy) -->
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-fixed text-on-primary-fixed font-label-md text-label-md font-semibold shadow-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-on-primary-fixed"></span>
+                  Diproses
+                </span>
+</td>
+<!-- Col 7: Technician -->
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<span class="font-label-sm text-label-sm text-on-surface bg-surface-container px-2 py-1 rounded font-medium">Unit Pelaksana Sarpras FTII</span>
+</td>
+<!-- Col 8: Action -->
+<td class="py-space-md px-space-md align-top text-right whitespace-nowrap">
+<button class="px-space-md py-1.5 rounded bg-surface-container text-on-surface hover:bg-surface-container-high font-label-md text-label-md inline-flex items-center gap-1.5 transition-all" onclick="alert('Detail tiket TKT-202410-0418')" type="button">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+                  Detail
+                </button>
+</td>
+</tr>
+<!-- ROW 3 -->
+<tr class="hover:bg-surface transition-colors">
+<!-- Col 1: Reference -->
+<td class="py-space-md px-space-md align-top">
+<div class="flex flex-col gap-0.5">
+<span class="font-label-md text-label-md text-primary font-bold tracking-tight">TKT-202410-0416</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">badge</span>
+                    Tendik FTII
+                  </span>
+</div>
+</td>
+<!-- Col 2: Complaint -->
+<td class="py-space-md px-space-md align-top max-w-[260px]">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Stopkontak dinding meja dosen longgar</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-1">Berpotensi korsleting listrik</span>
+</div>
+</td>
+<!-- Col 3: Category ML -->
+<td class="py-space-md px-space-md align-top">
+<div class="flex flex-col items-start gap-1">
+<span class="font-label-md text-label-md text-primary font-medium">K2 - Kelistrikan &amp; Penerangan</span>
+<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[13px] text-primary">check</span>
+                    Terkonfirmasi
+                  </div>
+</div>
+</td>
+<!-- Col 4: Location -->
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<div class="flex flex-col gap-0.5">
+<span class="font-label-md text-label-md text-on-surface font-medium">Gedung FTII</span>
+<span class="text-on-surface-variant font-body-sm">Lantai 2 • Ruang Rapat Lt. 2</span>
+</div>
+</td>
+<!-- Col 5: Submission -->
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">23 Okt 2024</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">15:20 WIB</span>
+</div>
+</td>
+<!-- Col 6: Status (Terverifikasi - Soft Amber) -->
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-md text-label-md font-semibold shadow-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                  Terverifikasi
+                </span>
+</td>
+<!-- Col 7: Technician -->
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<span class="italic text-outline font-label-sm text-label-sm px-2 py-1 rounded bg-surface">Belum Ditugaskan</span>
+</td>
+<!-- Col 8: Action -->
+<td class="py-space-md px-space-md align-top text-right whitespace-nowrap">
+<button class="px-space-md py-1.5 rounded bg-surface-container-high text-primary hover:bg-surface-variant font-label-md text-label-md inline-flex items-center gap-1.5 transition-all" onclick="alert('Disposisi penugasan teknisi tiket TKT-202410-0416')" type="button">
+<span class="material-symbols-outlined text-[16px]">forward_to_inbox</span>
+                  Disposisi
+                </button>
+</td>
+</tr>
+<!-- ROW 4 -->
+<tr class="hover:bg-surface transition-colors">
+<!-- Col 1: Reference -->
+<td class="py-space-md px-space-md align-top">
+<div class="flex flex-col gap-0.5">
+<span class="font-label-md text-label-md text-primary font-bold tracking-tight">TKT-202410-0415</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">school</span>
+                    Mahasiswa
+                  </span>
+</div>
+</td>
+<!-- Col 2: Complaint -->
+<td class="py-space-md px-space-md align-top max-w-[260px]">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Kran wastafel toilet bocor dan meluap</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-1">Air meluber ke lantai koridor</span>
+</div>
+</td>
+<!-- Col 3: Category ML -->
+<td class="py-space-md px-space-md align-top">
+<div class="flex flex-col items-start gap-1">
+<span class="font-label-md text-label-md text-primary font-medium">K3 - Sanitasi &amp; Plumbing</span>
+<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[13px] text-primary">check</span>
+                    Terkonfirmasi
+                  </div>
+</div>
+</td>
+<!-- Col 4: Location -->
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<div class="flex flex-col gap-0.5">
+<span class="font-label-md text-label-md text-on-surface font-medium">Gedung FTII</span>
+<span class="text-on-surface-variant font-body-sm">Lantai 1 • Toilet Pria Lt. 1</span>
+</div>
+</td>
+<!-- Col 5: Submission -->
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">23 Okt 2024</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">11:05 WIB</span>
+</div>
+</td>
+<!-- Col 6: Status (Diproses - Soft Navy) -->
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-fixed text-on-primary-fixed font-label-md text-label-md font-semibold shadow-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-on-primary-fixed"></span>
+                  Diproses
+                </span>
+</td>
+<!-- Col 7: Technician -->
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<span class="font-label-sm text-label-sm text-on-surface bg-surface-container px-2 py-1 rounded font-medium">Unit Pelaksana Sarpras FTII</span>
+</td>
+<!-- Col 8: Action -->
+<td class="py-space-md px-space-md align-top text-right whitespace-nowrap">
+<button class="px-space-md py-1.5 rounded bg-surface-container text-on-surface hover:bg-surface-container-high font-label-md text-label-md inline-flex items-center gap-1.5 transition-all" onclick="alert('Detail tiket TKT-202410-0415')" type="button">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+                  Detail
+                </button>
+</td>
+</tr>
+<!-- ROW 5 -->
+<tr class="hover:bg-surface transition-colors">
+<!-- Col 1: Reference -->
+<td class="py-space-md px-space-md align-top">
+<div class="flex flex-col gap-0.5">
+<span class="font-label-md text-label-md text-primary font-bold tracking-tight">TKT-202410-0412</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">science</span>
+                    Laboran FTII
+                  </span>
+</div>
+</td>
+<!-- Col 2: Complaint -->
+<td class="py-space-md px-space-md align-top max-w-[260px]">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Engsel pintu laboratorium seret &amp; macet</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-1">Pintu sulit dikunci saat jam tutup</span>
+</div>
+</td>
+<!-- Col 3: Category ML -->
+<td class="py-space-md px-space-md align-top">
+<div class="flex flex-col items-start gap-1">
+<span class="font-label-md text-label-md text-primary font-medium">K6 - Pintu, Jendela &amp; Kunci</span>
+<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[13px] text-primary">check</span>
+                    Terkonfirmasi
+                  </div>
+</div>
+</td>
+<!-- Col 4: Location -->
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<div class="flex flex-col gap-0.5">
+<span class="font-label-md text-label-md text-on-surface font-medium">Gedung FTII</span>
+<span class="text-on-surface-variant font-body-sm">Lantai 3 • Lab. Jaringan 305</span>
+</div>
+</td>
+<!-- Col 5: Submission -->
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">23 Okt 2024</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">09:40 WIB</span>
+</div>
+</td>
+<!-- Col 6: Status (Selesai - Soft Green) -->
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container text-primary font-label-md text-label-md font-semibold shadow-xs">
+<span class="material-symbols-outlined text-[14px]">check</span>
+                  Selesai
+                </span>
+</td>
+<!-- Col 7: Technician -->
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<span class="font-label-sm text-label-sm text-on-surface bg-surface-container px-2 py-1 rounded font-medium">Unit Pelaksana Sarpras FTII</span>
+</td>
+<!-- Col 8: Action -->
+<td class="py-space-md px-space-md align-top text-right whitespace-nowrap">
+<button class="px-space-md py-1.5 rounded bg-surface-container text-on-surface hover:bg-surface-container-high font-label-md text-label-md inline-flex items-center gap-1.5 transition-all" onclick="alert('Detail tiket TKT-202410-0412')" type="button">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+                  Detail
+                </button>
+</td>
+</tr>
+<!-- ROW 6 -->
+<tr class="hover:bg-surface transition-colors">
+<!-- Col 1: Reference -->
+<td class="py-space-md px-space-md align-top">
+<div class="flex flex-col gap-0.5">
+<span class="font-label-md text-label-md text-primary font-bold tracking-tight">TKT-202410-0410</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">cleaning_services</span>
+                    Petugas Kebersihan
+                  </span>
+</div>
+</td>
+<!-- Col 2: Complaint -->
+<td class="py-space-md px-space-md align-top max-w-[260px]">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Lampu penerangan lorong koridor padam</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-1">Tabung neon berkedip gelap</span>
+</div>
+</td>
+<!-- Col 3: Category ML -->
+<td class="py-space-md px-space-md align-top">
+<div class="flex flex-col items-start gap-1">
+<span class="font-label-md text-label-md text-primary font-medium">K2 - Kelistrikan &amp; Penerangan</span>
+<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[13px] text-primary">check</span>
+                    Terkonfirmasi
+                  </div>
+</div>
+</td>
+<!-- Col 4: Location -->
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<div class="flex flex-col gap-0.5">
+<span class="font-label-md text-label-md text-on-surface font-medium">Gedung FTII</span>
+<span class="text-on-surface-variant font-body-sm">Lantai 2 • Koridor Barat Lt. 2</span>
+</div>
+</td>
+<!-- Col 5: Submission -->
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">22 Okt 2024</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">10:15 WIB</span>
+</div>
+</td>
+<!-- Col 6: Status (Selesai - Soft Green) -->
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container text-primary font-label-md text-label-md font-semibold shadow-xs">
+<span class="material-symbols-outlined text-[14px]">check</span>
+                  Selesai
+                </span>
+</td>
+<!-- Col 7: Technician -->
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<span class="font-label-sm text-label-sm text-on-surface bg-surface-container px-2 py-1 rounded font-medium">Unit Pelaksana Sarpras FTII</span>
+</td>
+<!-- Col 8: Action -->
+<td class="py-space-md px-space-md align-top text-right whitespace-nowrap">
+<button class="px-space-md py-1.5 rounded bg-surface-container text-on-surface hover:bg-surface-container-high font-label-md text-label-md inline-flex items-center gap-1.5 transition-all" onclick="alert('Detail tiket TKT-202410-0410')" type="button">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+                  Detail
+                </button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- AUXILIARY PREVIEW STATES (EMPTY / LOADING) -->
+<!-- Empty State Container -->
+<div class="hidden p-space-xl flex-col items-center justify-center text-center" id="emptyStateBox">
+<div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center text-outline mb-space-md">
+<span class="material-symbols-outlined text-[32px]">manage_search</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary font-semibold">Tidak ada tiket ditemukan</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-md mt-1">
+          Tidak ada tiket ditemukan untuk kriteria filter yang dipilih. Silakan periksa kembali parameter lantai, kata kunci, atau kategori.
+        </p>
+<button class="mt-space-md px-space-md py-2 rounded-lg bg-surface-container text-primary hover:bg-surface-variant font-label-md text-label-md flex items-center gap-1.5 transition-colors" onclick="resetFilterDemo(); switchTableView('normal');" type="button">
+<span class="material-symbols-outlined text-[18px]">restart_alt</span>
+          Kembalikan Filter Default
+        </button>
+</div>
+<!-- Loading State Container -->
+<div class="hidden p-space-xl flex-col items-center justify-center text-center" id="loadingStateBox">
+<div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-solid border-primary border-r-transparent align-[-0.125em] mb-space-md"></div>
+<h3 class="font-headline-md text-headline-md text-primary font-semibold">Memuat Rekaman Tiket...</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+          Mengambil data sampel dari pipeline sistem klasifikasi Sarpras FTII UHAMKA.
+        </p>
+<div class="w-full max-w-xl mt-space-lg flex flex-col gap-2 opacity-60">
+<div class="h-8 bg-surface-container rounded animate-pulse w-full"></div>
+<div class="h-8 bg-surface-container rounded animate-pulse w-5/6 mx-auto"></div>
+<div class="h-8 bg-surface-container rounded animate-pulse w-4/6 mx-auto"></div>
+</div>
+</div>
+<!-- PAGINATION BAR -->
+<div class="p-space-md bg-surface-container-lowest flex flex-col sm:flex-row sm:items-center justify-between gap-space-md">
+<div class="font-label-sm text-label-sm text-on-surface-variant">
+          Menampilkan <span class="font-semibold text-on-surface">1–6</span> dari <span class="font-semibold text-on-surface">48</span> tiket keluhan <span class="italic text-outline">(Simulasi Sampel)</span>
+</div>
+<nav aria-label="Navigasi Halaman" class="flex items-center gap-1 self-center sm:self-auto">
+<!-- Previous Button -->
+<button class="px-2.5 py-1.5 rounded bg-surface-container-low text-outline opacity-50 cursor-not-allowed font-label-md text-label-md flex items-center" disabled="" type="button">
+<span class="material-symbols-outlined text-[16px]">chevron_left</span>
+<span class="hidden sm:inline ml-1">Sebelumnya</span>
+</button>
+<!-- Active Page 1 -->
+<button class="w-8 h-8 rounded bg-primary text-on-primary font-label-md text-label-md font-bold flex items-center justify-center shadow-xs" type="button">
+            1
+          </button>
+<!-- Page 2 -->
+<button class="w-8 h-8 rounded hover:bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center transition-colors" onclick="switchTableView('loading'); setTimeout(()=&gt; switchTableView('normal'), 600);" type="button">
+            2
+          </button>
+<!-- Page 3 -->
+<button class="w-8 h-8 rounded hover:bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center transition-colors" onclick="switchTableView('loading'); setTimeout(()=&gt; switchTableView('normal'), 600);" type="button">
+            3
+          </button>
+<span class="px-1 text-outline font-label-md">...</span>
+<!-- Last Page 8 -->
+<button class="w-8 h-8 rounded hover:bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center transition-colors" onclick="switchTableView('loading'); setTimeout(()=&gt; switchTableView('normal'), 600);" type="button">
+            8
+          </button>
+<!-- Next Button -->
+<button class="px-2.5 py-1.5 rounded bg-surface-container text-on-surface hover:bg-surface-container-high font-label-md text-label-md flex items-center transition-colors" onclick="switchTableView('loading'); setTimeout(()=&gt; switchTableView('normal'), 600);" type="button">
+<span class="hidden sm:inline mr-1">Berikutnya</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</nav>
+</div>
+</div>
+<!-- SYSTEM COMPLIANCE & LEGAL NOTICE BOX -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex items-start gap-space-md shadow-xs">
+<div class="p-2 rounded-lg bg-surface-container text-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]">policy</span>
+</div>
+<div class="flex flex-col gap-0.5">
+<h4 class="font-label-md text-label-md text-primary font-bold">Catatan Kepatuhan Sistem</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+          Seluruh data, referensi penugasan teknisi, dan nilai metrik di layar ini merupakan data sampel simulasi antarmuka. Tidak memuat janji SLA darurat atau identitas kontak privat staf. Fasilitas terikat dengan lingkup Gedung FTII Kampus UHAMKA.
+        </p>
+</div>
+</div>
+</div>
+<!-- INLINE VANILLA JAVASCRIPT FOR INTERACTION -->
+<script>
+    function resetFilterDemo() {
+      const form = document.getElementById('filterForm');
+      if (form) form.reset();
+      const statusSelect = document.getElementById('filterStatus');
+      const catSelect = document.getElementById('filterCategory');
+      const floorSelect = document.getElementById('filterFloor');
+      if (statusSelect) statusSelect.value = 'all';
+      if (catSelect) catSelect.value = 'all';
+      if (floorSelect) floorSelect.value = 'all';
+    }
+
+    function applyFilterDemo() {
+      const q = document.getElementById('searchQuery').value.trim();
+      const status = document.getElementById('filterStatus').value;
+      
+      // If user types 'kosong' or 'empty', toggle empty state preview
+      if (q.toLowerCase().includes('kosong') || q.toLowerCase().includes('none')) {
+        switchTableView('empty');
+      } else {
+        // Brief loading feedback simulation
+        switchTableView('loading');
+        setTimeout(function() {
+          switchTableView('normal');
+        }, 400);
+      }
+    }
+
+    function switchTableView(mode) {
+      const tbl = document.getElementById('tableContainer');
+      const emptyBox = document.getElementById('emptyStateBox');
+      const loadBox = document.getElementById('loadingStateBox');
+      
+      const btnNormal = document.getElementById('viewBtnNormal');
+      const btnEmpty = document.getElementById('viewBtnEmpty');
+      const btnLoad = document.getElementById('viewBtnLoading');
+
+      // Reset button styles
+      [btnNormal, btnEmpty, btnLoad].forEach(function(btn) {
+        if (!btn) return;
+        btn.className = "px-space-sm py-1 rounded font-label-sm text-label-sm text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors";
+      });
+
+      if (mode === 'empty') {
+        tbl.classList.add('hidden');
+        loadBox.classList.add('hidden');
+        loadBox.classList.remove('flex');
+        emptyBox.classList.remove('hidden');
+        emptyBox.classList.add('flex');
+        btnEmpty.className = "px-space-sm py-1 rounded font-label-sm text-label-sm bg-primary text-on-primary font-semibold transition-colors";
+      } else if (mode === 'loading') {
+        tbl.classList.add('hidden');
+        emptyBox.classList.add('hidden');
+        emptyBox.classList.remove('flex');
+        loadBox.classList.remove('hidden');
+        loadBox.classList.add('flex');
+        btnLoad.className = "px-space-sm py-1 rounded font-label-sm text-label-sm bg-primary text-on-primary font-semibold transition-colors";
+      } else {
+        emptyBox.classList.add('hidden');
+        emptyBox.classList.remove('flex');
+        loadBox.classList.add('hidden');
+        loadBox.classList.remove('flex');
+        tbl.classList.remove('hidden');
+        btnNormal.className = "px-space-sm py-1 rounded font-label-sm text-label-sm bg-primary text-on-primary font-semibold transition-colors";
+      }
+    }
+  </script>
+</div></main><footer class="w-full bg-surface-container-low py-space-lg shadow-[0_-1px_6px_rgba(0,0,0,0.02)]"><div class="w-full max-w-[1440px] mx-auto px-gutter flex flex-col md:flex-row items-center justify-between gap-space-sm text-center md:text-left"><div class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-on-surface-variant text-[18px]">apartment</span><span class="font-body-sm text-body-sm text-on-surface-variant">Subbag Sarpras FTII UHAMKA • Gedung FTII</span></div><div class="font-label-sm text-label-sm text-on-surface-variant">© 2024 KlasiFas FTII UHAMKA. Hak Cipta Dilindungi Undang-Undang.</div></div></footer></body></html>

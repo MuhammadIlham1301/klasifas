@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% from "components/_macros.html" import status_badge %}
+
+{% block title %}Papan Tugas Teknisi — KlasiFas{% endblock %}
+
+{% block container_class %}kf-container kf-container--wide{% endblock %}
+
+{% block content %}
+<div class="kf-page-heading mb-4">
+    <p class="kf-page-heading__eyebrow mb-2">Portal Teknisi</p>
+    <h1 class="kf-page-heading__title">Papan Tugas Teknisi</h1>
+    <p class="kf-page-heading__sub mb-0">Daftar keluhan fasilitas yang sah ditugaskan kepada Anda untuk tindakan penanganan fisik (FR-06).</p>
+</div>
+
+<!-- KPI Agregat Status (data nyata dari basis data) -->
+<div class="row row-cols-2 row-cols-md-4 g-2 g-md-3 mb-4">
+    {% set kpi_items = [
+        ('Total Tugas', counts.total if counts else 0, 'Seluruh tiket yang ditugaskan', 'kpi-total', 'bi-inbox'),
+        ('Terverifikasi', counts.Terverifikasi if counts else 0, 'Menunggu penanganan', 'kpi-verified', 'bi-clipboard-check'),
+        ('Diproses', counts.Diproses if counts else 0, 'Sedang dikerjakan', 'kpi-progress', 'bi-tools'),
+        ('Selesai', counts.Selesai if counts else 0, 'Pekerjaan tuntas', 'kpi-done', 'bi-check2-circle')
+    ] %}
+    {% for label, value, caption, tone, kpi_icon in kpi_items %}
+    <div class="col">
+        <div class="card border-0 shadow-sm h-100 kf-kpi kf-kpi--{{ tone }}">
+            <div class="card-body p-3 pb-2">
+                <div class="kf-kpi__header">
+                    <span class="kf-kpi__icon" aria-hidden="true"><i class="bi {{ kpi_icon }}"></i></span>
+                    <div class="small text-secondary fw-semibold text-uppercase kf-kpi__label">{{ label }}</div>
+                </div>
+                <div class="fs-3 fw-bold kf-kpi__value">{{ value }}</div>
+            </div>
+            <div class="kf-kpi__footer">{{ caption }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Panel Penyaringan Status -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white border-bottom-0 py-3 d-flex justify-content-between align-items-center">
+        <h6 class="fw-bold mb-0 text-dark">
+            Filter Status Tugas
+        </h6>
+        <span class="small text-secondary">
+            Total: <strong>{{ pagination.total if pagination else tickets|length }}</strong> tiket ditampilkan
+        </span>
+    </div>
+    <div class="card-body pt-0 pb-3">
+        <form method="GET" action="{{ url_for('technician.ticket_queue') }}" class="row g-2 align-items-end">
+            <!-- Filter Status -->
+            <div class="col-12 col-md-6">
+                <label for="filter_status" class="form-label small text-secondary mb-1">Status Penanganan</label>
+                <select class="form-select form-select-sm" id="filter_status" name="status">
+                    <option value="all" {{ 'selected' if not active_filters or active_filters.status in ['all', 'semua', ''] else '' }}>Semua Status Tugas</option>
+                    <option value="Terverifikasi" {{ 'selected' if active_filters and active_filters.status == 'Terverifikasi' else '' }}>Terverifikasi (Menunggu Penanganan)</option>
+                    <option value="Diproses" {{ 'selected' if active_filters and active_filters.status == 'Diproses' else '' }}>Diproses (Sedang Dikerjakan)</option>
+                    <option value="Selesai" {{ 'selected' if active_filters and active_filters.status == 'Selesai' else '' }}>Selesai</option>
+                </select>
+            </div>
+
+            <!-- Filter Per Halaman -->
+            <div class="col-6 col-md-3">
+                <label for="filter_per_page" class="form-label small text-secondary mb-1">Per Halaman</label>
+                <select class="form-select form-select-sm" id="filter_per_page" name="per_page">
+                    <option value="10" {{ 'selected' if active_filters and active_filters.per_page|string == '10' else '' }}>10</option>
+                    <option value="20" {{ 'selected' if not active_filters or active_filters.per_page|string == '20' else '' }}>20</option>
+                    <option value="50" {{ 'selected' if active_filters and active_filters.per_page|string == '50' else '' }}>50</option>
+                </select>
+            </div>
+
+            <!-- Tombol Aksi -->
+            <div class="col-6 col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-sm btn-primary flex-grow-1">
+                    Terapkan
+                </button>
+                <a href="{{ url_for('technician.ticket_queue') }}" class="btn btn-sm btn-outline-secondary" title="Reset filter">
+                    Reset
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Tabel Antrean Tugas Teknisi -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-0">
+        {% if tickets %}
+        <div class="table-responsive">
+            <table class="table table-hover table-striped align-middle mb-0 small">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col" class="kf-table-col-130">Waktu</th>
+                        <th scope="col" class="kf-table-col-120">Kode Tiket</th>
+                        <th scope="col" class="kf-table-col-180">Lokasi Fasilitas</th>
+                        <th scope="col" class="kf-table-col-180">Kategori Resmi</th>
+                        <th scope="col">Deskripsi Keluhan</th>
+                        <th scope="col" class="kf-table-col-120">Status</th>
+                        <th scope="col" class="text-end kf-table-col-100">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in tickets %}
+                    <tr>
+                        <!-- Waktu -->
+                        <td class="text-nowrap text-secondary">
+                            {{ t.created_at.strftime('%d/%m/%Y %H:%M') if t.created_at else '-' }} WIB
+                        </td>
+
+                        <!-- Kode Tiket -->
+                        <td class="text-nowrap fw-semibold">
+                            {{ t.ticket_code }}
+                        </td>
+
+                        <!-- Lokasi -->
+                        <td>
+                            <div>{{ t.building_name }} &middot; Lt. {{ t.floor_number }}</div>
+                            <span class="text-muted small">{{ t.room_name }}</span>
+                        </td>
+
+                        <!-- Kategori Resmi -->
+                        <td>
+                            {% if t.official_category %}
+                                <span class="fw-semibold text-dark">{{ t.official_category.code }} - {{ t.official_category.name }}</span>
+                            {% else %}
+                                <em class="text-muted">Belum ditetapkan</em>
+                            {% endif %}
+                        </td>
+
+                        <!-- Deskripsi -->
+                        <td>
+                            <span class="d-block kf-text-clamp-2" title="{{ t.description }}">{{ t.description }}</span>
+                        </td>
+
+                        <!-- Status -->
+                        <td>
+                            {{ status_badge(t.status) }}
+                        </td>
+
+                        <!-- Aksi -->
+                        <td class="text-end">
+                            <a href="{{ url_for('technician.ticket_detail', ticket_id=t.id) }}"
+                               class="btn btn-sm btn-outline-primary">
+                                Rincian
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="p-5 text-center">
+            <i class="bi bi-inbox fs-1 text-secondary d-block mb-2" aria-hidden="true"></i>
+            <h2 class="h6 fw-semibold">Tidak ada tiket ditemukan</h2>
+            <p class="text-secondary small mb-3">
+                Belum ada tiket yang ditugaskan kepada Anda. Tidak ada tiket yang cocok dengan filter yang diterapkan.
+            </p>
+            <a href="{{ url_for('technician.ticket_queue') }}" class="btn btn-sm btn-outline-secondary">
+                Kembalikan Filter Default
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Kontrol Paginasi -->
+{% if pagination and pagination.pages > 1 %}
+<nav aria-label="Paginasi Antrean Teknisi" class="mt-4">
+    <ul class="pagination pagination-sm justify-content-center mb-0">
+        <li class="page-item {{ 'disabled' if not pagination.has_prev else '' }}">
+            {% if pagination.has_prev %}
+            <a class="page-link" href="{{ url_for('technician.ticket_queue', page=pagination.prev_num, status=active_filters.status if active_filters and active_filters.status not in ['all', 'semua'] else '', per_page=active_filters.per_page if active_filters else 20) }}">Sebelumnya</a>
+            {% else %}
+            <span class="page-link">Sebelumnya</span>
+            {% endif %}
+        </li>
+        {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+            {% if p %}
+                <li class="page-item {{ 'active' if p == pagination.page else '' }}">
+                    <a class="page-link" href="{{ url_for('technician.ticket_queue', page=p, status=active_filters.status if active_filters and active_filters.status not in ['all', 'semua'] else '', per_page=active_filters.per_page if active_filters else 20) }}">{{ p }}</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">&hellip;</span></li>
+            {% endif %}
+        {% endfor %}
+        <li class="page-item {{ 'disabled' if not pagination.has_next else '' }}">
+            {% if pagination.has_next %}
+            <a class="page-link" href="{{ url_for('technician.ticket_queue', page=pagination.next_num, status=active_filters.status if active_filters and active_filters.status not in ['all', 'semua'] else '', per_page=active_filters.per_page if active_filters else 20) }}">Selanjutnya</a>
+            {% else %}
+            <span class="page-link">Selanjutnya</span>
+            {% endif %}
+        </li>
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}
+

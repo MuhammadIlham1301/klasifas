@@ -1,0 +1,75 @@
+{% macro flash_messages() %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="kf-flash-stack mb-4" aria-live="polite">
+    {% for category, message in messages %}
+    {% set alert_category = 'danger' if category == 'error' else (category if category in ['success', 'danger', 'warning', 'info'] else 'info') %}
+    <div class="alert alert-{{ alert_category }} alert-dismissible fade show kf-alert d-flex align-items-start gap-2 mb-2"
+        role="alert">
+        <i class="bi bi-info-circle-fill alert-icon" aria-hidden="true"></i>
+        <div class="flex-grow-1">{{ message }}</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Tutup"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% endmacro %}
+
+{% macro status_badge(status, extra_classes='') %}
+{% set normalized = status|string|trim %}
+{% if normalized == 'Baru' %}
+<span class="badge kf-status kf-status-new {{ extra_classes }}">Baru</span>
+{% elif normalized == 'Terverifikasi' %}
+<span class="badge kf-status kf-status-verified {{ extra_classes }}">Terverifikasi</span>
+{% elif normalized == 'Diproses' %}
+<span class="badge kf-status kf-status-in-progress {{ extra_classes }}">Diproses</span>
+{% elif normalized == 'Selesai' %}
+<span class="badge kf-status kf-status-done {{ extra_classes }}">Selesai</span>
+{% else %}
+<span class="badge kf-status kf-status-unknown {{ extra_classes }}">{{ status }}</span>
+{% endif %}
+{% endmacro %}
+
+{% macro manual_verification_badge(show=True, extra_classes='') %}
+{% if show %}
+<span class="badge bg-secondary {{ extra_classes }}">
+    <i class="bi bi-exclamation-circle me-1" aria-hidden="true"></i>Perlu Verifikasi Manual
+</span>
+{% endif %}
+{% endmacro %}
+
+{% macro category_badge(category, extra_classes='') %}
+{% if category %}
+{% set code = category.code if category.code is defined else '' %}
+{% set name = category.name if category.name is defined else category %}
+<span class="badge kf-badge-neutral {{ extra_classes }}">
+    {% if code %}{{ code }} - {% endif %}{{ name }}
+</span>
+{% else %}
+<span class="text-secondary small">-</span>
+{% endif %}
+{% endmacro %}
+
+{% macro role_badge(role, extra_classes='') %}
+{% set normalized = role|string|trim %}
+{% set labels = {
+    'reporter': 'Pelapor',
+    'admin_sarpras': 'Admin Sarpras',
+    'teknisi': 'Teknisi',
+    'pimpinan': 'Pimpinan/Kaprodi'
+} %}
+<span class="badge kf-badge-neutral {{ extra_classes }}">{{ labels.get(normalized, normalized) }}</span>
+{% endmacro %}
+
+{% macro page_heading(title, eyebrow=None, subtitle=None, title_classes='h2') %}
+<div class="mb-4">
+    {% if eyebrow %}
+    <p class="text-uppercase small fw-semibold kf-eyebrow mb-2">{{ eyebrow }}</p>
+    {% endif %}
+    <h1 class="{{ title_classes }} mb-2">{{ title }}</h1>
+    {% if subtitle %}
+    <p class="text-secondary mb-0">{{ subtitle }}</p>
+    {% endif %}
+</div>
+{% endmacro %}

@@ -1,0 +1,351 @@
+{% extends "base.html" %}
+{% from "components/_macros.html" import status_badge, category_badge, manual_verification_badge, role_badge %}
+
+{% block title %}Verifikasi Tiket {{ ticket.ticket_code }} — KlasiFas{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb small">
+        <li class="breadcrumb-item"><a href="{{ url_for('admin.ticket_queue') }}">Antrean Sarpras</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Tiket {{ ticket.ticket_code }}</li>
+    </ol>
+</nav>
+
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
+    <div>
+        <h1 class="h3 fw-bold mb-1">Tiket {{ ticket.ticket_code }}</h1>
+        <div class="small text-secondary">
+            Dibuat pada {{ ticket.created_at.strftime('%d %B %Y, %H:%M WIB') if ticket.created_at else '-' }}
+        </div>
+    </div>
+    <div>
+        {{ status_badge(ticket.status, 'fs-6 px-3 py-2') }}
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Kolom Kiri: Detail Laporan -->
+    <div class="col-12 col-lg-7">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3">
+                <h2 class="h5 fw-semibold mb-0">Rincian Laporan Keluhan</h2>
+            </div>
+            <div class="card-body">
+                {% if ticket.needs_manual_verification %}
+                <div class="alert alert-warning small mb-3" role="alert">
+                    <div class="mb-1">{{ manual_verification_badge() }}</div>
+                    <div>
+                        {% if ticket.predicted_category %}
+                        Skor keyakinan rekomendasi ML berada di bawah ambang batas evaluasi. Mohon periksa kesesuaian
+                        kategori fisik secara teliti.
+                        {% else %}
+                        Layanan klasifikasi Machine Learning belum aktif atau dalam mode pemulihan (fallback manual
+                        FR-10). Kategori wajib ditentukan oleh Admin Sarpras.
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <label class="form-label text-secondary small mb-1">Deskripsi Keluhan</label>
+                    <div class="p-3 bg-light rounded border text-break">
+                        {{ ticket.description }}
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-6">
+                        <label class="form-label text-secondary small mb-1">Lokasi Fisik</label>
+                        <div>
+                            <strong>{{ ticket.room_name }}</strong><br>
+                            <span class="small text-secondary">{{ ticket.building_name }}, Lantai {{ ticket.floor_number
+                                }}</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label text-secondary small mb-1">Detail Lokasi</label>
+                        <div class="small">
+                            {{ ticket.location_detail or '-' }}
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-3 text-muted">
+
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-6">
+                        <label class="form-label text-secondary small mb-1">Pilihan Pelapor</label>
+                        <div>
+                            {% if ticket.reporter_category %}
+                            {{ category_badge(ticket.reporter_category) }}
+                            {% else %}
+                            <span class="small text-muted">Tidak memilih</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label text-secondary small mb-1">Rekomendasi AI / ML</label>
+                        <div>
+                            {% if ticket.predicted_category %}
+                            <span class="badge bg-info text-dark">
+                                {{ ticket.predicted_category.code }} - {{ ticket.predicted_category.name }}
+                            </span>
+                            {% if ticket.confidence_score is not none %}
+                            <div class="small text-secondary mt-1">Keyakinan: {{ "%.1f"|format(ticket.confidence_score *
+                                100) }}%</div>
+                            {% endif %}
+                            {% else %}
+                            <span class="small text-muted">Model belum tersedia (Fallback)</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-secondary small mb-1">Kategori Resmi Saat Ini</label>
+                    <div>
+                        {% if ticket.official_category %}
+                        {{ category_badge(ticket.official_category, 'fs-6') }}
+                        {% else %}
+                        <span class="badge kf-badge-neutral fs-6">Belum Diverifikasi</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-secondary small mb-1">Teknisi Penanggung Jawab (FR-05)</label>
+                    <div>
+                        {% if ticket.assigned_technician %}
+                            <span class="badge bg-primary fs-6">{{ ticket.assigned_technician.full_name }}</span>
+                            {% if not ticket.assigned_technician.is_active %}
+                                <span class="badge bg-danger small ms-1">Akun Nonaktif</span>
+                            {% endif %}
+                        {% else %}
+                            <span class="badge bg-secondary fs-6">Belum Ditugaskan</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if ticket.reporter_name or ticket.reporter_contact %}
+                <hr class="my-3 text-muted">
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label class="form-label text-secondary small mb-1">Nama Pelapor</label>
+                        <div class="small">{{ ticket.reporter_name or '-' }}</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label text-secondary small mb-1">Kontak Pelapor</label>
+                        <div class="small">{{ ticket.reporter_contact or '-' }}</div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <hr class="my-3 text-muted">
+
+                <div>
+                    <label class="form-label text-secondary small mb-1">Foto Bukti Lapangan</label>
+                    {% if ticket.photo_filename %}
+                    <div class="mt-2">
+                        <a href="{{ url_for('admin.ticket_photo', ticket_id=ticket.id) }}" target="_blank"
+                            rel="noopener noreferrer">
+                            <img src="{{ url_for('admin.ticket_photo', ticket_id=ticket.id) }}"
+                                alt="Foto Bukti Keluhan {{ ticket.ticket_code }}"
+                                class="img-fluid rounded border shadow-sm kf-evidence-image--lg">
+                        </a>
+                        <div class="small text-secondary mt-1">
+                            Klik foto untuk melihat ukuran penuh. File dilindungi dan disajikan via autentikasi staf.
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="small text-muted mb-0">Pelapor tidak melampirkan foto bukti.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kolom Kanan: Form Penetapan Kategori Resmi & Tindakan -->
+    <div class="col-12 col-lg-5">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3">
+                <h2 class="h5 fw-semibold mb-0">Verifikasi & Koreksi Kategori</h2>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin.verify_ticket', ticket_id=ticket.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div class="mb-3">
+                        <label for="official_category_id" class="form-label fw-semibold">
+                            Kategori Resmi (K1–K7) <span class="text-danger">*</span>
+                        </label>
+                        <select id="official_category_id" name="official_category_id" class="form-select" required>
+                            <option value="">-- Pilih Kategori Resmi --</option>
+                            {% for cat in categories %}
+                            {% set is_selected = (ticket.official_category_id == cat.id) or
+                            (not ticket.official_category_id and ticket.predicted_category_id == cat.id) or
+                            (not ticket.official_category_id and not ticket.predicted_category_id and
+                            ticket.reporter_category_id == cat.id) %}
+                            <option value="{{ cat.id }}" {{ 'selected' if is_selected else '' }}>
+                                {{ cat.code }} &mdash; {{ cat.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text small">
+                            Kategori resmi ini menentukan unit penanggung jawab penanganan fasilitas (FR-04).
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="note" class="form-label fw-semibold">Catatan Verifikasi / Alasan Koreksi</label>
+                        <textarea id="note" name="note" class="form-control" rows="3"
+                            placeholder="Contoh: Dikonfirmasi sesuai temuan AC bocor di lab, dialihkan ke K5."></textarea>
+                        <div class="form-text small">
+                            Catatan ini akan tersimpan ke dalam Audit Log operasional sistem (FR-09).
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit"
+                            class="btn {{ 'btn-primary' if ticket.status == 'Baru' else 'btn-warning' }} py-2 fw-semibold">
+                            {{ 'Simpan Verifikasi Kategori' if ticket.status == 'Baru' else 'Simpan Koreksi Kategori' }}
+                        </button>
+                        <a href="{{ url_for('admin.ticket_queue') }}" class="btn btn-outline-secondary py-2">
+                            Kembali ke Antrean
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Card Penugasan Teknisi Lapangan (FR-05) -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3">
+                <h2 class="h5 fw-semibold mb-0">Penugasan Teknisi Lapangan</h2>
+            </div>
+            <div class="card-body">
+                {% if ticket.status == 'Baru' %}
+                    <div class="alert alert-info small mb-0">
+                        Tiket berstatus <strong>Baru</strong> harus diverifikasi kategorinya terlebih dahulu sebelum dapat ditugaskan ke teknisi.
+                    </div>
+                {% elif ticket.status == 'Selesai' %}
+                    <div class="alert alert-secondary small mb-0">
+                        Tiket sudah berstatus <strong>Selesai</strong>. Penugasan teknisi tidak dapat diubah.
+                    </div>
+                {% else %}
+                    <form method="POST" action="{{ url_for('admin.assign_technician', ticket_id=ticket.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                        <div class="mb-3">
+                            <label for="technician_id" class="form-label fw-semibold">
+                                Pilih Teknisi <span class="text-danger">*</span>
+                            </label>
+                            <select id="technician_id" name="technician_id" class="form-select" required>
+                                <option value="">-- Pilih Teknisi Aktif --</option>
+                                {% for tech in technicians %}
+                                    <option value="{{ tech.id }}" {{ 'selected' if ticket.assigned_technician_id == tech.id else '' }}>
+                                        {{ tech.full_name }} ({{ tech.username }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text small">
+                                Hanya teknisi dengan akun aktif yang tersedia untuk penugasan baru.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="tech_note" class="form-label fw-semibold">Catatan Penugasan</label>
+                            <textarea id="tech_note" name="note" class="form-control" rows="2"
+                                      placeholder="Instruksi atau catatan penugasan untuk teknisi..."></textarea>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-outline-primary fw-semibold">
+                                {{ 'Tugaskan Teknisi' if not ticket.assigned_technician_id else 'Perbarui Penugasan Teknisi' }}
+                            </button>
+                        </div>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Card Riwayat Audit (FR-09) -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h3 class="h6 fw-semibold mb-0">Riwayat Audit Operasional</h3>
+            </div>
+            <div class="card-body p-0">
+                {% if audit_logs %}
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped align-middle mb-0 small">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Waktu</th>
+                                <th scope="col">Aktor</th>
+                                <th scope="col">Aksi</th>
+                                <th scope="col">Perubahan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in audit_logs %}
+                            <tr>
+                                <td class="text-nowrap text-secondary">
+                                    {{ log.created_at.strftime('%d/%m/%y %H:%M') if log.created_at else '-' }}
+                                </td>
+                                <td>
+                                    <div>
+                                        {% if log.actor %}
+                                        <span class="fw-semibold">{{ log.actor.full_name }}</span>
+                                        {% else %}
+                                        <span class="fst-italic text-muted">Sistem</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="mt-1">{{ role_badge(log.actor_role or 'sistem') }}</div>
+                                </td>
+                                <td>
+                                    {% if log.action == 'category_changed' %}
+                                    <span class="badge bg-info text-dark">Perubahan Kategori</span>
+                                    {% elif log.action == 'status_changed' %}
+                                    <span class="badge bg-primary">Perubahan Status</span>
+                                    {% elif log.action == 'technician_assigned' %}
+                                    <span class="badge bg-secondary">Penugasan Teknisi</span>
+                                    {% else %}
+                                    <span class="badge bg-dark">{{ log.action }}</span>
+                                    {% endif %}
+                                    <div class="small text-muted mt-1 font-monospace">{{ log.field_name }}</div>
+                                </td>
+                                <td>
+                                    {% if log.action == 'status_changed' %}
+                                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                                        <span class="badge bg-light text-secondary border text-decoration-line-through">
+                                            {{ log.old_value or '-' }}
+                                        </span>
+                                        <span class="text-secondary">&rarr;</span>
+                                        {{ status_badge(log.new_value) }}
+                                    </div>
+                                    {% else %}
+                                    <div>
+                                        <del class="text-danger">{{ log.old_value or '-' }}</del>
+                                        &rarr;
+                                        <strong class="text-success">{{ log.new_value or '-' }}</strong>
+                                    </div>
+                                    {% endif %}
+                                    {% if log.note %}
+                                    <div class="fst-italic text-muted small mt-1">&ldquo;{{ log.note }}&rdquo;</div>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="p-4 text-center text-muted small">
+                    <i class="bi bi-clock-history fs-4 d-block mb-1" aria-hidden="true"></i>
+                    Belum ada catatan audit untuk tiket ini.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

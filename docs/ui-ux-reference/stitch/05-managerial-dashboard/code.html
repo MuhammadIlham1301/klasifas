@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+
+<html lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={"darkMode":"class","theme":{"extend":{"colors":{"surface-container":"#e6eeff","on-error-container":"#93000a","on-secondary-fixed":"#261a00","tertiary-fixed-dim":"#93ccff","inverse-surface":"#27313f","surface-dim":"#d0dbed","error":"#ba1a1a","primary":"#002048","on-error":"#ffffff","on-primary":"#ffffff","surface-variant":"#d9e3f6","inverse-primary":"#abc7ff","on-secondary-fixed-variant":"#5c4300","tertiary-fixed":"#cce5ff","on-tertiary":"#ffffff","surface-container-lowest":"#ffffff","background":"#f8f9ff","on-secondary":"#ffffff","surface-container-high":"#dee9fc","primary-fixed-dim":"#abc7ff","on-surface":"#121c2a","tertiary":"#002339","surface-container-highest":"#d9e3f6","secondary-container":"#fec335","secondary-fixed":"#ffdea0","surface-bright":"#f8f9ff","surface-tint":"#3e5e95","surface":"#f8f9ff","outline-variant":"#c4c6d1","primary-container":"#0c356a","on-primary-fixed-variant":"#23467c","primary-fixed":"#d7e3ff","error-container":"#ffdad6","outline":"#747781","on-surface-variant":"#43474f","on-primary-container":"#7f9fdb","on-tertiary-fixed":"#001d31","on-tertiary-container":"#45a6eb","surface-container-low":"#eff4ff","secondary":"#795900","on-background":"#121c2a","on-tertiary-fixed-variant":"#004b73","on-secondary-container":"#6f5100","inverse-on-surface":"#eaf1ff","secondary-fixed-dim":"#f8bd2f","tertiary-container":"#00395a","on-primary-fixed":"#001b3f"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"space-lg":"1.5rem","space-md":"1rem","gutter-sm":"1rem","space-xl":"2.5rem","margin":"2rem","gutter":"1.5rem","space-xs":"0.25rem","space-sm":"0.5rem","margin-sm":"1rem"},"fontFamily":{"label-md":["Public Sans"],"body-md":["Public Sans"],"headline-lg":["Public Sans"],"label-lg":["Public Sans"],"headline-md":["Public Sans"],"headline-sm":["Public Sans"],"label-sm":["Public Sans"],"headline-lg-mobile":["Public Sans"],"headline-xl":["Public Sans"],"body-sm":["Public Sans"],"body-lg":["Public Sans"],"headline-xl-mobile":["Public Sans"]},"fontSize":{"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"600"}],"body-md":["15px",{"lineHeight":"24px","fontWeight":"400"}],"headline-lg":["28px",{"lineHeight":"36px","letterSpacing":"-0.01em","fontWeight":"700"}],"label-lg":["14px",{"lineHeight":"20px","letterSpacing":"0.01em","fontWeight":"600"}],"headline-md":["20px",{"lineHeight":"28px","letterSpacing":"-0.005em","fontWeight":"600"}],"headline-sm":["16px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"600"}],"label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.03em","fontWeight":"500"}],"headline-lg-mobile":["22px",{"lineHeight":"28px","letterSpacing":"0em","fontWeight":"600"}],"headline-xl":["36px",{"lineHeight":"44px","letterSpacing":"-0.02em","fontWeight":"700"}],"body-sm":["13px",{"lineHeight":"20px","fontWeight":"400"}],"body-lg":["18px",{"lineHeight":"28px","fontWeight":"400"}],"headline-xl-mobile":["28px",{"lineHeight":"36px","letterSpacing":"-0.01em","fontWeight":"700"}]}}}</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 max-w-7xl mx-auto px-margin-sm lg:px-margin flex items-center justify-between"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-lg bg-primary-container flex items-center justify-center text-on-primary font-headline-sm text-headline-sm font-bold tracking-tight shadow-sm">KF</div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-primary tracking-tight leading-none">KlasiFas</span><span class="font-label-sm text-label-sm text-on-surface-variant leading-tight">FTII UHAMKA</span></div></div><div class="hidden sm:flex items-center"><span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm uppercase tracking-wider">Pimpinan FTII</span></div></div><nav class="flex items-center gap-space-xs" data-active-classes="bg-primary-container text-on-primary rounded-lg shadow-sm font-label-lg"><a aria-current="page" class="px-3 py-2 transition-colors bg-primary-container text-on-primary rounded-lg shadow-sm font-label-lg" data-path="dashboard-eksekutif" href="#">Dashboard</a><a class="px-3 py-2 rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="laporan-ringkas" href="#">Laporan Ringkas</a></nav><div class="flex items-center gap-space-md"><div class="hidden md:flex flex-col text-right"><span class="font-label-md text-label-md text-on-surface leading-snug">Pimpinan / Manajemen FTII</span><span class="font-label-sm text-label-sm text-on-surface-variant">Akses Eksekutif</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><a class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-error hover:bg-error-container hover:text-on-error-container transition-colors font-label-md text-label-md" data-path="keluar" href="#"><span class="material-symbols-outlined text-[18px]">logout</span><span class="hidden sm:inline">Keluar</span></a></div></div></header><main class="w-full pt-16 bg-surface min-h-[calc(100vh-140px)]"><div class="flex flex-col w-full">
+<div class="max-w-7xl mx-auto w-full px-margin-sm lg:px-margin py-space-lg flex flex-col gap-space-xl">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm tracking-wide">
+<span class="material-symbols-outlined text-[16px] text-primary">analytics</span>
+            Panel Eksekutif FTII
+          </span>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-secondary-container/30 text-on-secondary-fixed-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">info</span>
+            Data Sampel Ilustratif Eksekutif
+          </span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-primary tracking-tight mt-1">
+          Dashboard Pemantauan Fasilitas
+        </h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+          Ringkasan dan analisis laporan fasilitas Gedung FTII untuk evaluasi mutu sarana dan prasarana.
+        </p>
+</div>
+<div class="flex items-center gap-space-sm self-start md:self-auto">
+<div class="px-3.5 py-2 rounded-lg bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">calendar_today</span>
+<span>Rentang Data: 30 Hari Terakhir</span>
+</div>
+</div>
+</div>
+<!-- Official 4 KPI Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<!-- Card 1: Total Tiket -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Total Tiket</span>
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[22px]">inbox</span>
+</div>
+</div>
+<div class="mt-space-md">
+<div class="font-headline-xl text-headline-xl text-primary leading-none">48</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Total laporan masuk dalam periode</p>
+</div>
+</div>
+<!-- Card 2: Tiket Aktif -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Tiket Aktif</span>
+<div class="w-10 h-10 rounded-lg bg-secondary-container/20 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[22px]">pending_actions</span>
+</div>
+</div>
+<div class="mt-space-md">
+<div class="font-headline-xl text-headline-xl text-primary leading-none">36</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Status Baru, Terverifikasi, Diproses</p>
+</div>
+</div>
+<!-- Card 3: Tiket Selesai -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Tiket Selesai</span>
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-tertiary-container">
+<span class="material-symbols-outlined text-[22px]">check_circle</span>
+</div>
+</div>
+<div class="mt-space-md">
+<div class="font-headline-xl text-headline-xl text-primary leading-none">12</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Laporan terselesaikan tuntas</p>
+</div>
+</div>
+<!-- Card 4: Tingkat Penyelesaian -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Tingkat Penyelesaian</span>
+<div class="w-10 h-10 rounded-lg bg-primary-fixed flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[22px]">pie_chart</span>
+</div>
+</div>
+<div class="mt-space-md">
+<div class="font-headline-xl text-headline-xl text-primary leading-none">25.0%</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Rasio tiket tuntas terhadap total</p>
+</div>
+</div>
+</div>
+<!-- Official Status Breakdown Row -->
+<div class="bg-surface-container-lowest p-space-md lg:p-space-lg rounded-xl shadow-sm flex flex-col gap-space-md">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs">
+<span class="font-headline-sm text-headline-sm text-primary">Distribusi Status Alur Penanganan</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">4 Status Resmi Terintegrasi</span>
+</div>
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-space-sm">
+<!-- Status Baru -->
+<div class="flex items-center justify-between p-3.5 rounded-lg bg-surface-container-low">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm uppercase tracking-wide text-primary">Baru</span>
+<span class="font-headline-md text-headline-md text-primary mt-0.5">6</span>
+</div>
+<span class="px-2.5 py-1 rounded font-label-sm text-label-sm bg-surface-variant text-primary font-bold">12.5%</span>
+</div>
+<!-- Status Terverifikasi -->
+<div class="flex items-center justify-between p-3.5 rounded-lg bg-secondary-fixed/30">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm uppercase tracking-wide text-secondary">Terverifikasi</span>
+<span class="font-headline-md text-headline-md text-secondary mt-0.5">12</span>
+</div>
+<span class="px-2.5 py-1 rounded font-label-sm text-label-sm bg-secondary-container text-on-secondary-container font-bold">25.0%</span>
+</div>
+<!-- Status Diproses -->
+<div class="flex items-center justify-between p-3.5 rounded-lg bg-surface-container">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm uppercase tracking-wide text-primary-container">Diproses</span>
+<span class="font-headline-md text-headline-md text-primary-container mt-0.5">18</span>
+</div>
+<span class="px-2.5 py-1 rounded font-label-sm text-label-sm bg-primary-fixed text-primary-container font-bold">37.5%</span>
+</div>
+<!-- Status Selesai -->
+<div class="flex items-center justify-between p-3.5 rounded-lg bg-surface-container-high">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm uppercase tracking-wide text-primary">Selesai</span>
+<span class="font-headline-md text-headline-md text-primary mt-0.5">12</span>
+</div>
+<span class="px-2.5 py-1 rounded font-label-sm text-label-sm bg-surface-variant text-on-primary-fixed-variant font-bold">25.0%</span>
+</div>
+</div>
+<!-- Aggregate Status Progress Bar -->
+<div class="w-full flex h-2 rounded-full overflow-hidden bg-surface-container-high mt-1">
+<div class="h-full bg-surface-variant" style="width: 12.5%" title="Baru: 6 tiket"></div>
+<div class="h-full bg-secondary-container" style="width: 25.0%" title="Terverifikasi: 12 tiket"></div>
+<div class="h-full bg-primary-container" style="width: 37.5%" title="Diproses: 18 tiket"></div>
+<div class="h-full bg-primary" style="width: 25.0%" title="Selesai: 12 tiket"></div>
+</div>
+</div>
+<!-- Managerial Filter Panel -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs text-primary">
+<span class="material-symbols-outlined text-[20px]">tune</span>
+<span class="font-headline-sm text-headline-sm">Penyaringan &amp; Analisis Kriteria</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant hidden sm:inline">Sesuaikan lingkup visualisasi data</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<!-- Periode Selector -->
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-md text-label-md text-on-surface" for="filter-periode">Periode Pelaporan</label>
+<div class="relative">
+<select class="w-full bg-surface-container-low text-on-surface px-3.5 py-2.5 rounded-lg appearance-none font-body-sm text-body-sm pr-9 focus:outline-none focus:ring-2 focus:ring-primary-container" id="filter-periode">
+<option value="7">7 Hari Terakhir</option>
+<option selected="" value="30">30 Hari Terakhir</option>
+<option value="90">90 Hari Terakhir</option>
+<option value="180">180 Hari Terakhir</option>
+<option value="365">365 Hari (1 Tahun)</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-2.5 text-on-surface-variant pointer-events-none text-[18px]">expand_more</span>
+</div>
+</div>
+<!-- Kategori Selector (Official K1-K7) -->
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-md text-label-md text-on-surface" for="filter-kategori">Kategori Fasilitas (K1–K7)</label>
+<div class="relative">
+<select class="w-full bg-surface-container-low text-on-surface px-3.5 py-2.5 rounded-lg appearance-none font-body-sm text-body-sm pr-9 focus:outline-none focus:ring-2 focus:ring-primary-container" id="filter-kategori">
+<option value="all">Semua Kategori Resmi</option>
+<option value="k1">K1 - AC &amp; Tata Udara</option>
+<option value="k2">K2 - Kelistrikan &amp; Penerangan</option>
+<option value="k3">K3 - Sanitasi &amp; Plumbing</option>
+<option value="k4">K4 - Sarana Lab Komputer</option>
+<option value="k5">K5 - Meubelair &amp; Furnitur</option>
+<option value="k6">K6 - Pintu, Jendela &amp; Kunci</option>
+<option value="k7">K7 - Fasilitas Umum &amp; Koridor</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-2.5 text-on-surface-variant pointer-events-none text-[18px]">expand_more</span>
+</div>
+</div>
+<!-- Lokasi Lantai Selector (FTII 1-4) -->
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-md text-label-md text-on-surface" for="filter-lantai">Lantai Gedung FTII</label>
+<div class="relative">
+<select class="w-full bg-surface-container-low text-on-surface px-3.5 py-2.5 rounded-lg appearance-none font-body-sm text-body-sm pr-9 focus:outline-none focus:ring-2 focus:ring-primary-container" id="filter-lantai">
+<option value="all">Semua Lantai (1–4)</option>
+<option value="1">Lantai 1 - Gedung FTII</option>
+<option value="2">Lantai 2 - Gedung FTII</option>
+<option value="3">Lantai 3 - Gedung FTII</option>
+<option value="4">Lantai 4 - Gedung FTII</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-2.5 text-on-surface-variant pointer-events-none text-[18px]">expand_more</span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-end gap-space-sm pt-space-xs">
+<button class="px-4 py-2 rounded-lg bg-surface-container text-on-surface font-label-md text-label-md hover:bg-surface-container-high transition-colors" id="btn-reset">
+          Reset Filter
+        </button>
+<button class="px-5 py-2 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md hover:bg-primary transition-colors flex items-center gap-1.5 shadow-sm" id="btn-terapkan">
+<span class="material-symbols-outlined text-[18px]">filter_alt</span>
+          Terapkan Filter
+        </button>
+</div>
+</div>
+<!-- Visualizations Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
+<!-- Chart A: Tren Tiket Harian (Span 12 cols for high temporal clarity) -->
+<div class="lg:col-span-12 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col gap-space-md">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs">
+<div>
+<h2 class="font-headline-md text-headline-md text-primary">Tren Masuk Tiket Harian</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Kronologis pelaporan harian (18 Okt – 24 Okt) dengan representasi zero-filled date</p>
+</div>
+<div class="flex items-center gap-4 text-on-surface-variant font-label-sm text-label-sm">
+<span class="flex items-center gap-1.5">
+<span class="w-3 h-3 rounded-full bg-primary-container inline-block"></span>
+              Volume Tiket
+            </span>
+<span class="text-outline-variant">•</span>
+<span>Total 7 Hari: 28 Tiket</span>
+</div>
+</div>
+<!-- Rendered Vector Line Chart (Chart.js look with precise coordinates) -->
+<div class="w-full overflow-x-auto">
+<div class="min-w-[640px] h-64 relative flex flex-col justify-end pt-4 pb-8 px-2">
+<!-- Background Grid Lines -->
+<div class="absolute inset-0 top-4 bottom-8 flex flex-col justify-between pointer-events-none">
+<div class="w-full flex items-center justify-between text-on-surface-variant/40 font-label-sm text-label-sm">
+<div class="w-full h-px bg-surface-container"></div>
+<span class="ml-2 w-6 text-right">8</span>
+</div>
+<div class="w-full flex items-center justify-between text-on-surface-variant/40 font-label-sm text-label-sm">
+<div class="w-full h-px bg-surface-container"></div>
+<span class="ml-2 w-6 text-right">6</span>
+</div>
+<div class="w-full flex items-center justify-between text-on-surface-variant/40 font-label-sm text-label-sm">
+<div class="w-full h-px bg-surface-container"></div>
+<span class="ml-2 w-6 text-right">4</span>
+</div>
+<div class="w-full flex items-center justify-between text-on-surface-variant/40 font-label-sm text-label-sm">
+<div class="w-full h-px bg-surface-container"></div>
+<span class="ml-2 w-6 text-right">2</span>
+</div>
+<div class="w-full flex items-center justify-between text-on-surface-variant/40 font-label-sm text-label-sm">
+<div class="w-full h-px bg-surface-container-high"></div>
+<span class="ml-2 w-6 text-right">0</span>
+</div>
+</div>
+<!-- SVG Data Curve & Area -->
+<!-- 7 points: 
+                 0: 18 Okt (2) -> y = 200 - (2/8 * 170) = 157.5
+                 1: 19 Okt (0) -> y = 200
+                 2: 20 Okt (4) -> y = 115
+                 3: 21 Okt (3) -> y = 136.25
+                 4: 22 Okt (5) -> y = 93.75
+                 5: 23 Okt (8) -> y = 30
+                 6: 24 Okt (6) -> y = 72.5
+            -->
+<svg class="w-[calc(100%-2rem)] h-[calc(100%-2rem)] absolute top-4 left-0" preserveaspectratio="none" viewbox="0 0 600 200">
+<defs>
+<lineargradient id="lineAreaGrad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#0c356a" stop-opacity="0.22"></stop>
+<stop offset="100%" stop-color="#0c356a" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<!-- Filled Area -->
+<path d="M 20 157.5 
+                       L 113.3 200 
+                       L 206.6 115 
+                       L 300 136.25 
+                       L 393.3 93.75 
+                       L 486.6 30 
+                       L 580 72.5 
+                       L 580 200 
+                       L 20 200 Z" fill="url(#lineAreaGrad)"></path>
+<!-- Stroke Line -->
+<path d="M 20 157.5 
+                       L 113.3 200 
+                       L 206.6 115 
+                       L 300 136.25 
+                       L 393.3 93.75 
+                       L 486.6 30 
+                       L 580 72.5" fill="none" stroke="#0c356a" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+<!-- Data Node Circles -->
+<circle class="stroke-surface-container-lowest" cx="20" cy="157.5" fill="#0c356a" r="5" stroke-width="2"></circle>
+<circle class="stroke-surface-container-lowest" cx="113.3" cy="200" fill="#0c356a" r="5" stroke-width="2"></circle>
+<circle class="stroke-surface-container-lowest" cx="206.6" cy="115" fill="#0c356a" r="5" stroke-width="2"></circle>
+<circle class="stroke-surface-container-lowest" cx="300" cy="136.25" fill="#0c356a" r="5" stroke-width="2"></circle>
+<circle class="stroke-surface-container-lowest" cx="393.3" cy="93.75" fill="#0c356a" r="5" stroke-width="2"></circle>
+<circle class="stroke-surface-container-lowest" cx="486.6" cy="30" fill="#0c356a" r="5" stroke-width="2"></circle>
+<circle class="stroke-surface-container-lowest" cx="580" cy="72.5" fill="#0c356a" r="5" stroke-width="2"></circle>
+<!-- Point Labels -->
+<text fill="#0c356a" font-size="11" font-weight="600" text-anchor="middle" x="20" y="145">2</text>
+<text fill="#747781" font-size="11" font-weight="600" text-anchor="middle" x="113.3" y="190">0</text>
+<text fill="#0c356a" font-size="11" font-weight="600" text-anchor="middle" x="206.6" y="103">4</text>
+<text fill="#0c356a" font-size="11" font-weight="600" text-anchor="middle" x="300" y="124">3</text>
+<text fill="#0c356a" font-size="11" font-weight="600" text-anchor="middle" x="393.3" y="81">5</text>
+<text fill="#0c356a" font-size="11" font-weight="600" text-anchor="middle" x="486.6" y="20">8</text>
+<text fill="#0c356a" font-size="11" font-weight="600" text-anchor="middle" x="580" y="60">6</text>
+</svg>
+<!-- X Axis Labels -->
+<div class="w-[calc(100%-2rem)] flex justify-between absolute bottom-0 left-0 text-on-surface-variant font-label-sm text-label-sm">
+<span class="w-12 text-center">18 Okt</span>
+<span class="w-12 text-center">19 Okt</span>
+<span class="w-12 text-center">20 Okt</span>
+<span class="w-12 text-center">21 Okt</span>
+<span class="w-12 text-center">22 Okt</span>
+<span class="w-12 text-center">23 Okt</span>
+<span class="w-12 text-center">24 Okt</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Chart B: Distribusi Kategori K1-K7 (7 Cols) -->
+<div class="lg:col-span-7 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between gap-space-md">
+<div>
+<div class="flex items-center justify-between">
+<h2 class="font-headline-md text-headline-md text-primary">Distribusi Berdasarkan Kategori (K1–K7)</h2>
+<span class="font-label-sm text-label-sm text-on-surface-variant">7 Kategori Resmi</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Komposisi seluruh tiket pada inventaris sarana dan prasarana FTII</p>
+</div>
+<!-- Horizontal Bar Graphic -->
+<div class="flex flex-col gap-3 my-1">
+<!-- K1: 14 -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-on-surface font-semibold">K1 - AC &amp; Tata Udara</span>
+<span class="text-primary font-bold">14 Tiket (29.2%)</span>
+</div>
+<div class="w-full bg-surface-container-low h-3 rounded-full overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 100%;"></div>
+</div>
+</div>
+<!-- K2: 11 -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-on-surface font-semibold">K2 - Kelistrikan &amp; Penerangan</span>
+<span class="text-primary font-bold">11 Tiket (22.9%)</span>
+</div>
+<div class="w-full bg-surface-container-low h-3 rounded-full overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 78.5%;"></div>
+</div>
+</div>
+<!-- K3: 9 -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-on-surface font-semibold">K3 - Sanitasi &amp; Plumbing</span>
+<span class="text-primary font-bold">9 Tiket (18.8%)</span>
+</div>
+<div class="w-full bg-surface-container-low h-3 rounded-full overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 64.2%;"></div>
+</div>
+</div>
+<!-- K4: 7 -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-on-surface font-semibold">K4 - Sarana Lab Komputer</span>
+<span class="text-primary font-bold">7 Tiket (14.6%)</span>
+</div>
+<div class="w-full bg-surface-container-low h-3 rounded-full overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 50%;"></div>
+</div>
+</div>
+<!-- K5: 4 -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-on-surface font-semibold">K5 - Meubelair &amp; Furnitur</span>
+<span class="text-primary font-bold">4 Tiket (8.3%)</span>
+</div>
+<div class="w-full bg-surface-container-low h-3 rounded-full overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 28.5%;"></div>
+</div>
+</div>
+<!-- K6: 3 -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-on-surface font-semibold">K6 - Pintu, Jendela &amp; Kunci</span>
+<span class="text-primary font-bold">3 Tiket (6.3%)</span>
+</div>
+<div class="w-full bg-surface-container-low h-3 rounded-full overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 21.4%;"></div>
+</div>
+</div>
+<!-- K7: 0 -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-on-surface-variant">K7 - Fasilitas Umum &amp; Koridor</span>
+<span class="text-on-surface-variant font-bold">0 Tiket (0.0%)</span>
+</div>
+<div class="w-full bg-surface-container-low h-3 rounded-full overflow-hidden">
+<div class="bg-surface-variant h-full rounded-full" style="width: 0%;"></div>
+</div>
+</div>
+</div>
+<div class="pt-2 text-on-surface-variant font-label-sm text-label-sm flex items-center justify-between">
+<span>*Skala persentase didasarkan pada nilai puncak kategori (14 Tiket)</span>
+<span class="text-primary font-bold">Total Kategori: 48 Tiket</span>
+</div>
+</div>
+<!-- Chart C: Distribusi Lokasi Lantai (5 Cols) -->
+<div class="lg:col-span-5 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between gap-space-md">
+<div>
+<div class="flex items-center justify-between">
+<h2 class="font-headline-md text-headline-md text-primary">Distribusi Lokasi per Lantai</h2>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Gedung FTII</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Pemetaan kuantitas keluhan pada tiap lantai fisik</p>
+</div>
+<!-- Vertical Columns Visualization -->
+<div class="h-52 flex items-end justify-between gap-4 px-2 pt-4 pb-2 border-b border-surface-container">
+<!-- Lantai 1: 8 -->
+<div class="flex-1 flex flex-col items-center h-full justify-end group">
+<span class="font-label-sm text-label-sm text-primary font-bold mb-1.5">8</span>
+<div class="w-full bg-surface-container-high rounded-t-lg transition-all group-hover:bg-primary-container" style="height: 44.4%;"></div>
+<span class="font-label-md text-label-md text-on-surface mt-2">Lt. 1</span>
+</div>
+<!-- Lantai 2: 12 -->
+<div class="flex-1 flex flex-col items-center h-full justify-end group">
+<span class="font-label-sm text-label-sm text-primary font-bold mb-1.5">12</span>
+<div class="w-full bg-surface-container-high rounded-t-lg transition-all group-hover:bg-primary-container" style="height: 66.6%;"></div>
+<span class="font-label-md text-label-md text-on-surface mt-2">Lt. 2</span>
+</div>
+<!-- Lantai 3: 18 (Max) -->
+<div class="flex-1 flex flex-col items-center h-full justify-end group">
+<span class="font-label-sm text-label-sm text-primary font-bold mb-1.5">18</span>
+<div class="w-full bg-primary-container rounded-t-lg" style="height: 100%;"></div>
+<span class="font-label-md text-label-md text-primary font-bold mt-2">Lt. 3</span>
+</div>
+<!-- Lantai 4: 10 -->
+<div class="flex-1 flex flex-col items-center h-full justify-end group">
+<span class="font-label-sm text-label-sm text-primary font-bold mb-1.5">10</span>
+<div class="w-full bg-surface-container-high rounded-t-lg transition-all group-hover:bg-primary-container" style="height: 55.5%;"></div>
+<span class="font-label-md text-label-md text-on-surface mt-2">Lt. 4</span>
+</div>
+</div>
+<!-- Floor Breakdown Footnote -->
+<div class="flex flex-col gap-1.5 text-on-surface-variant font-body-sm text-body-sm">
+<div class="flex items-center justify-between">
+<span>Konsentrasi Tertinggi:</span>
+<span class="font-semibold text-primary">Lantai 3 (37.5% dari total)</span>
+</div>
+<div class="flex items-center justify-between">
+<span>Rata-rata per Lantai:</span>
+<span class="font-semibold text-on-surface">12.0 Tiket/Lantai</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 6: Operational Insights (Ruangan Terbanyak Dilaporkan) -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col gap-space-md">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs">
+<div>
+<h2 class="font-headline-md text-headline-md text-primary">Ruangan dengan Laporan Terbanyak &amp; Catatan Ruang</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Daftar ruangan prioritas penanganan sarpras berdasarkan akumulasi frekuensi tiket</p>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">lock</span>
+<span>Privasi Eksekutif: Data anonim tanpa rincian identitas pelapor</span>
+</div>
+</div>
+<!-- Table Representation -->
+<div class="w-full overflow-x-auto">
+<table class="w-full text-left font-body-sm text-body-sm">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-label-md text-label-md">
+<th class="py-3 px-4 rounded-l-lg">Peringkat</th>
+<th class="py-3 px-4">Nama Ruangan / Titik Fasilitas</th>
+<th class="py-3 px-4">Lokasi Lantai</th>
+<th class="py-3 px-4 text-center">Jumlah Laporan</th>
+<th class="py-3 px-4 rounded-r-lg">Status Dominan</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-low text-on-surface">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-3.5 px-4 font-semibold text-primary">1</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[18px]">desktop_windows</span>
+<span class="font-semibold text-primary">Lab. Komputer 302</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-on-surface-variant">Lantai 3</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-secondary-container/20 text-secondary font-bold text-label-sm">
+                  7 Laporan
+                </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2 py-0.5 rounded bg-surface-container text-primary-container font-label-sm text-label-sm">Diproses (4)</span>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-3.5 px-4 font-semibold text-primary">2</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[18px]">school</span>
+<span class="font-semibold text-primary">Ruang Kuliah 401</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-on-surface-variant">Lantai 4</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-surface-container text-primary font-bold text-label-sm">
+                  5 Laporan
+                </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2 py-0.5 rounded bg-secondary-fixed/50 text-secondary font-label-sm text-label-sm">Terverifikasi (3)</span>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-3.5 px-4 font-semibold text-primary">3</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[18px]">wc</span>
+<span class="font-semibold text-primary">Toilet Pria Lt. 1</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-on-surface-variant">Lantai 1</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-surface-container text-primary font-bold text-label-sm">
+                  4 Laporan
+                </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2 py-0.5 rounded bg-surface-container text-primary-container font-label-sm text-label-sm">Diproses (2)</span>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-3.5 px-4 font-semibold text-primary">4</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[18px]">meeting_room</span>
+<span class="font-semibold text-primary">Ruang Rapat Lt. 2</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-on-surface-variant">Lantai 2</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-surface-container text-primary font-bold text-label-sm">
+                  3 Laporan
+                </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2 py-0.5 rounded bg-surface-variant text-on-primary-fixed-variant font-label-sm text-label-sm">Selesai (2)</span>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-3.5 px-4 font-semibold text-primary">5</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[18px]">door_front</span>
+<span class="font-semibold text-primary">Koridor Barat Lt. 2</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-on-surface-variant">Lantai 2</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-surface-container text-primary font-bold text-label-sm">
+                  3 Laporan
+                </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2 py-0.5 rounded bg-surface-container text-primary-container font-label-sm text-label-sm">Diproses (3)</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Unspecified Room Operational Notice Box -->
+<div class="p-space-md rounded-lg bg-surface-container-low flex items-start gap-space-sm mt-1">
+<span class="material-symbols-outlined text-primary mt-0.5 text-[20px]">assignment_late</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-primary font-semibold">Catatan Khusus Ruangan Tidak Terspesifikasi (Unspecified Room)</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+            Terdapat <strong>4 Laporan</strong> tercatat tanpa spesifikasi nomor ruang khusus (meliputi area umum sirkulasi, tangga darurat, atau selasar penghubung lantai). Telah dialokasikan pada inspeksi harian petugas Sarpras FTII.
+          </p>
+</div>
+</div>
+</div>
+<!-- Managerial Footer Action Bar -->
+<div class="flex flex-col sm:flex-row items-center justify-between gap-space-md p-space-md rounded-xl bg-surface-container-low">
+<div class="flex items-center gap-2 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+<span>Akses Terverifikasi: Pimpinan / Manajemen FTII UHAMKA</span>
+</div>
+<div class="flex items-center gap-space-sm w-full sm:w-auto">
+<button class="w-full sm:w-auto px-4 py-2 rounded-lg bg-surface-container-lowest text-on-surface font-label-md text-label-md hover:bg-surface-container-high transition-colors flex items-center justify-center gap-1.5 shadow-sm" onclick="window.print()">
+<span class="material-symbols-outlined text-[18px]">print</span>
+          Cetak Ringkasan Eksekutif
+        </button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Simple interactive filter reset handling
+  document.getElementById('btn-reset')?.addEventListener('click', function() {
+    const p = document.getElementById('filter-periode');
+    const k = document.getElementById('filter-kategori');
+    const l = document.getElementById('filter-lantai');
+    if (p) p.value = '30';
+    if (k) k.value = 'all';
+    if (l) l.value = 'all';
+  });
+
+  document.getElementById('btn-terapkan')?.addEventListener('click', function() {
+    const btn = this;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[18px]">refresh</span> Memuat Data...';
+    setTimeout(() => {
+      btn.innerHTML = originalText;
+    }, 450);
+  });
+</script></main><footer class="w-full bg-surface-container-low shadow-[0_1px_8px_rgba(0,0,0,0.04)] mt-space-xl"><div class="max-w-7xl mx-auto px-margin-sm lg:px-margin py-space-lg flex flex-col md:flex-row items-center justify-between gap-space-md"><div class="flex flex-col items-center md:items-start text-center md:text-left"><div class="flex items-center gap-space-xs"><span class="font-headline-sm text-headline-sm text-primary">KlasiFas FTII</span><span class="text-outline-variant font-body-sm text-body-sm">|</span><span class="font-body-sm text-body-sm text-on-surface-variant">Sistem Penanganan &amp; Klasifikasi Keluhan Fasilitas</span></div><p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Subbag Sarana dan Prasarana (Sarpras) FTII UHAMKA — Gedung FTII Kampus Terpadu Limau</p></div><div class="flex flex-col items-center md:items-end text-center md:text-right"><span class="font-label-sm text-label-sm text-on-surface-variant">© 2024 Fakultas Teknologi Industri &amp; Informatika. All rights reserved.</span><span class="font-label-sm text-label-sm text-outline mt-0.5">Portal Pengawasan Eksekutif Kampus</span></div></div></footer></body></html>

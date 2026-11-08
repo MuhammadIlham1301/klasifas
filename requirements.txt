@@ -1,0 +1,25 @@
+# --- Web Framework & Core ---
+Flask>=3.0.0,<4.0.0
+python-dotenv>=1.0.0,<2.0.0
+
+# --- Database & Object-Relational Mapping ---
+SQLAlchemy>=2.0.0,<3.0.0
+Flask-SQLAlchemy>=3.1.1,<4.0.0
+Flask-Migrate>=4.0.5,<5.0.0
+psycopg2-binary>=2.9.9,<3.0.0
+
+# --- Form Security ---
+Flask-WTF>=1.2.1,<2.0.0
+
+# --- Image Validation ---
+Pillow>=10.0.0,<12.0.0
+
+# --- NLP & Machine Learning Ecosystem ---
+PySastrawi>=1.2.0,<2.0.0
+scikit-learn>=1.3.0,<2.0.0
+pandas>=2.1.0,<3.0.0
+numpy>=1.26.0,<2.0.0
+joblib>=1.3.0,<2.0.0
+
+# --- Automated Testing Suite ---
+pytest>=7.4.0,<8.0.0

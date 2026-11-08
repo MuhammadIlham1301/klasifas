@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% from "components/_code_box.html" import ticket_code_box, access_token_box %}
+
+{% block title %}Laporan Diterima - KlasiFas{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-9 col-xl-8">
+        <div class="card border-0 shadow-sm kf-form-card kf-receipt-card">
+            <div class="card-body p-4 p-lg-5">
+                <div class="kf-receipt-header">
+                    <div class="kf-receipt-icon" aria-hidden="true">
+                        <i class="bi bi-check2-circle"></i>
+                    </div>
+                    <div>
+                        <span class="badge text-bg-success mb-2">Laporan Berhasil Diterima</span>
+                        <h1 class="h3 mb-2">Laporan berhasil dikirim</h1>
+                        <p class="text-secondary mb-0">
+                            Laporan Anda sudah tersimpan. Simpan kode referensi dan token akses berikut untuk memantau status keluhan.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="kf-receipt-divider"></div>
+
+                <div class="mb-3">
+                    {{ ticket_code_box(
+                        ticket_code,
+                        copy_target='ticket-code-value',
+                        copy_label='Salin Kode',
+                        copy_aria_label='Salin kode referensi tiket'
+                    ) }}
+                </div>
+
+                <div class="mb-3">
+                    {{ access_token_box(
+                        access_token,
+                        copy_target='access-token-value',
+                        copy_label='Salin Token',
+                        copy_aria_label='Salin token akses rahasia'
+                    ) }}
+                </div>
+
+                <div class="alert alert-warning kf-alert d-flex gap-2" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill fs-5 alert-icon" aria-hidden="true"></i>
+                    <div>
+                        <strong>Simpan token sekarang.</strong> Token hanya ditampilkan satu kali dan tidak dapat ditampilkan kembali. Jangan bagikan token kepada orang lain.
+                    </div>
+                </div>
+
+                <div class="kf-receipt-note">
+                    <i class="bi bi-shield-lock" aria-hidden="true"></i>
+                    <p class="mb-0">
+                        Kode referensi bukan kredensial pembuka detail tiket. Detail tiket memerlukan token akses yang valid.
+                    </p>
+                </div>
+
+                <div class="d-flex flex-column flex-sm-row gap-2 mt-4">
+                    <a class="btn kf-btn-primary px-4" href="{{ url_for('report.track', ticket_code=ticket_code) }}">
+                        Lacak Tiket Sekarang
+                        <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
+                    </a>
+                    <a class="btn btn-outline-secondary px-4" href="{{ url_for('report.report_form') }}">
+                        Buat Laporan Baru
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/portal.js') }}"></script>
+{% endblock %}
