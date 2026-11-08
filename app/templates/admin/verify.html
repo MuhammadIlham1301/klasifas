@@ -11,14 +11,17 @@
     </ol>
 </nav>
 
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
-    <div>
-        <h1 class="h3 fw-bold mb-1">Tiket {{ ticket.ticket_code }}</h1>
-        <div class="small text-secondary">
-            Dibuat pada {{ ticket.created_at.strftime('%d %B %Y, %H:%M WIB') if ticket.created_at else '-' }}
+<div class="row align-items-center mb-4">
+    <div class="col-12 col-md-8">
+        <div class="kf-page-heading">
+            <p class="kf-page-heading__eyebrow mb-2">Portal Admin Sarpras</p>
+            <h1 class="kf-page-heading__title">Tiket {{ ticket.ticket_code }}</h1>
+            <p class="kf-page-heading__sub mb-0">
+                Dibuat pada {{ ticket.created_at.strftime('%d %B %Y, %H:%M WIB') if ticket.created_at else '-' }}
+            </p>
         </div>
     </div>
-    <div>
+    <div class="col-12 col-md-4 text-md-end mt-2 mt-md-0">
         {{ status_badge(ticket.status, 'fs-6 px-3 py-2') }}
     </div>
 </div>

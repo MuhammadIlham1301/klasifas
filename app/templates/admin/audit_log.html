@@ -4,17 +4,16 @@
 {% block title %}Riwayat Log Audit Operasional — KlasiFas{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-12 col-md-8">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb small mb-2">
-                <li class="breadcrumb-item"><a href="{{ url_for('admin.ticket_queue') }}" class="text-decoration-none">Antrean Sarpras</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Riwayat Log Audit</li>
-            </ol>
-        </nav>
-        <h1 class="h3 fw-bold mb-1">Riwayat Log Audit Operasional</h1>
-        <p class="text-secondary small mb-0">Peninjauan terpusat seluruh rekaman perubahan kategori, status, dan penugasan tiket fasilitas (FR-09).</p>
-    </div>
+<nav aria-label="breadcrumb" class="mb-2">
+    <ol class="breadcrumb small mb-0">
+        <li class="breadcrumb-item"><a href="{{ url_for('admin.ticket_queue') }}" class="text-decoration-none">Antrean Sarpras</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Riwayat Log Audit</li>
+    </ol>
+</nav>
+<div class="kf-page-heading mb-4">
+    <p class="kf-page-heading__eyebrow mb-2">Portal Admin Sarpras</p>
+    <h1 class="kf-page-heading__title">Riwayat Log Audit Operasional</h1>
+    <p class="kf-page-heading__sub mb-0">Peninjauan terpusat seluruh rekaman perubahan kategori, status, dan penugasan tiket fasilitas (FR-09).</p>
 </div>
 
 <!-- Panel Pencarian dan Filter Log Audit -->
