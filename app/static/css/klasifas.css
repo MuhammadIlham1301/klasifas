@@ -60,6 +60,7 @@
     --kf-radius-md: 0.375rem;
     --kf-radius-lg: 0.5rem;
     --kf-radius-xl: 0.75rem;
+    --kf-card-radius: 0.75rem;
     --kf-container-max: 1200px;
     --kf-container-wide-max: 1440px;
     --kf-input-height: 2.75rem;
@@ -793,12 +794,12 @@ a {
 
 .card {
     --bs-card-border-color: var(--kf-border);
-    --bs-card-border-radius: var(--kf-radius-lg);
-    --bs-card-inner-border-radius: calc(var(--kf-radius-lg) - 1px);
+    --bs-card-border-radius: var(--kf-card-radius);
+    --bs-card-inner-border-radius: calc(var(--kf-card-radius) - 1px);
     --bs-card-cap-bg: var(--kf-surface);
     background-color: var(--kf-surface) !important;
     border: 1px solid var(--kf-border) !important;
-    border-radius: var(--kf-radius-lg) !important;
+    border-radius: var(--kf-card-radius) !important;
     color: var(--kf-text);
 }
 
@@ -1146,6 +1147,14 @@ a {
     justify-content: space-between;
 }
 
+.kf-kpi__header > .kf-kpi__label {
+    order: 1;
+}
+
+.kf-kpi__header > .kf-kpi__icon {
+    order: 2;
+}
+
 .kf-kpi__icon {
     align-items: center;
     background-color: var(--kf-primary-soft);
@@ -1195,6 +1204,23 @@ a {
     font-size: 0.8125rem;
     margin-top: auto;
     padding: 0.55rem 1rem;
+}
+
+/* Pil status sistem pada header halaman admin (mengikuti Stitch 04) */
+.kf-kpi--status-pill {
+    background-color: var(--kf-surface-subtle);
+    border: 1px solid var(--kf-border) !important;
+    border-top: 0 !important;
+    border-radius: var(--kf-radius-md);
+}
+
+.kf-status-dot {
+    background-color: var(--kf-secondary);
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+    height: 0.625rem;
+    width: 0.625rem;
 }
 
 .kf-evidence-image {

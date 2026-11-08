@@ -4,10 +4,22 @@
 {% block title %}Antrean Tiket Sarpras — KlasiFas{% endblock %}
 
 {% block content %}
-<div class="kf-page-heading mb-4">
-    <p class="kf-page-heading__eyebrow mb-2">Portal Admin Sarpras</p>
-    <h1 class="kf-page-heading__title">Antrean Keluhan Fasilitas</h1>
-    <p class="kf-page-heading__sub mb-0">Verifikasi kategori keluhan fasilitas dan transisi status operasional (FR-04).</p>
+<div class="row align-items-center g-2 mb-4">
+    <div class="col-12 col-md-8">
+        <div class="kf-page-heading">
+            <p class="kf-page-heading__eyebrow mb-2">Portal Admin Sarpras</p>
+            <h1 class="kf-page-heading__title">Antrean Keluhan Fasilitas</h1>
+            <p class="kf-page-heading__sub mb-0">Verifikasi kategori keluhan fasilitas dan transisi status operasional (FR-04).</p>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="kf-kpi kf-kpi--status-pill d-flex flex-wrap align-items-center justify-content-md-end gap-2 px-3 py-2 rounded">
+            <span class="kf-status-dot" aria-hidden="true"></span>
+            <span class="small fw-semibold text-primary">Verifikasi Manual Aktif</span>
+            <span class="text-secondary" aria-hidden="true">&middot;</span>
+            <span class="small text-secondary">Gedung FTII (Lt. 1&ndash;4)</span>
+        </div>
+    </div>
 </div>
 
 <!-- KPI Agregat Status (data nyata dari basis data) -->

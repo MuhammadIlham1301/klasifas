@@ -42,10 +42,17 @@ def test_card_base_uses_tokens(css):
 
     assert "background-color: var(--kf-surface) !important;" in body
     assert "border: 1px solid var(--kf-border) !important;" in body
-    assert "border-radius: var(--kf-radius-lg) !important;" in body
+    assert "border-radius: var(--kf-card-radius) !important;" in body
 
 
-def test_card_radius_token_is_8px(css):
+def test_card_radius_token_is_12px(css):
+    match = re.search(r"--kf-card-radius:\s*([0-9.]+)rem;", css)
+
+    assert match is not None
+    assert float(match.group(1)) * 16 == 12
+
+
+def test_inner_surface_radius_token_stays_8px(css):
     match = re.search(r"--kf-radius-lg:\s*([0-9.]+)rem;", css)
 
     assert match is not None
