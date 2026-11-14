@@ -66,6 +66,17 @@ document.addEventListener("DOMContentLoaded", function () {
         return value || fallback;
     }
 
+    function isReducedMotionPreferred() {
+        return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    }
+
+    function applyChartFontDefaults() {
+        Chart.defaults.font.family = getDesignToken(
+            "--kf-font-sans-serif",
+            '"Public Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+        );
+    }
+
     // Palet Warna Kategori K1 s.d. K7
     const CATEGORY_PALETTE = [
         getDesignToken("--kf-primary", "#0c356a"), // K1 - Ruang kelas dan perabot (--kf-primary)
@@ -138,7 +149,8 @@ document.addEventListener("DOMContentLoaded", function () {
         if (errorAlert) errorAlert.classList.add("d-none");
         if (emptyAlert) emptyAlert.classList.add("d-none");
         if (mainContent) {
-            mainContent.style.opacity = "0.5";
+            mainContent.classList.add("is-loading");
+            mainContent.style.opacity = "0.7";
             mainContent.setAttribute("aria-busy", "true");
         }
 
@@ -164,6 +176,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Sembunyikan loading
                 if (loadingSpinner) loadingSpinner.classList.add("d-none");
                 if (mainContent) {
+                    mainContent.classList.remove("is-loading");
                     mainContent.style.opacity = "1";
                     mainContent.setAttribute("aria-busy", "false");
                 }
@@ -172,6 +185,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 renderCharts(data);
                 renderTopRooms(data.location_chart);
                 updateChartSummary(data);
+
+                if (window.KlasifasToast) {
+                    window.KlasifasToast.show("Data visualisasi dasbor diperbarui.", "info", 2500);
+                }
 
                 // Cek kondisi data kosong
                 if (data.kpi && data.kpi.total_tickets === 0) {
@@ -183,6 +200,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(function (error) {
                 if (loadingSpinner) loadingSpinner.classList.add("d-none");
                 if (mainContent) {
+                    mainContent.classList.remove("is-loading");
                     mainContent.style.opacity = "1";
                     mainContent.setAttribute("aria-busy", "false");
                 }
@@ -196,14 +214,48 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     /**
+     * Menggerakkan angka secara halus (count-up/down) dari nilai lama ke nilai baru.
+     */
+    function animateNumber(element, end, duration, isPercentage) {
+        if (!element) return;
+        duration = duration || 450;
+        isPercentage = isPercentage || false;
+
+        const start = Number(element.dataset.currentValue) || 0;
+        if (isReducedMotionPreferred() || start === end) {
+            element.textContent = isPercentage ? end.toFixed(1) + "%" : Math.round(end).toLocaleString("id-ID");
+            element.dataset.currentValue = end;
+            return;
+        }
+
+        let startTime = null;
+        function frame(timestamp) {
+            if (!startTime) startTime = timestamp;
+            const elapsed = timestamp - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const ease = 1 - Math.pow(1 - progress, 4); // easeOutQuart
+            const current = start + (end - start) * ease;
+
+            element.textContent = isPercentage ? current.toFixed(1) + "%" : Math.round(current).toLocaleString("id-ID");
+
+            if (progress < 1) {
+                window.requestAnimationFrame(frame);
+            } else {
+                element.dataset.currentValue = end;
+            }
+        }
+        window.requestAnimationFrame(frame);
+    }
+
+    /**
      * Memperbarui jumlah, persentase, dan lebar segmen status.
      * Total 0 menghasilkan persentase dan lebar 0 tanpa pembagian nol.
      */
     function updateStatusShare(countEl, pctEl, progressEl, count, total) {
-        if (countEl) countEl.textContent = count;
+        if (countEl) animateNumber(countEl, count, 450, false);
 
         const percentage = total > 0 ? (count / total) * 100 : 0;
-        if (pctEl) pctEl.textContent = percentage.toFixed(1) + "%";
+        if (pctEl) animateNumber(pctEl, percentage, 450, true);
         if (progressEl) progressEl.style.width = percentage.toFixed(4) + "%";
     }
 
@@ -266,10 +318,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const total = kpi.total_tickets ?? 0;
         const counts = kpi.status_counts || {};
 
-        if (kpiTotal) kpiTotal.textContent = total;
-        if (kpiActive) kpiActive.textContent = kpi.active_tickets ?? 0;
-        if (kpiCompleted) kpiCompleted.textContent = counts.Selesai ?? 0;
-        if (kpiRate) kpiRate.textContent = (kpi.completion_rate ?? 0.0) + "%";
+        if (kpiTotal) animateNumber(kpiTotal, total, 450, false);
+        if (kpiActive) animateNumber(kpiActive, kpi.active_tickets ?? 0, 450, false);
+        if (kpiCompleted) animateNumber(kpiCompleted, counts.Selesai ?? 0, 450, false);
+        if (kpiRate) animateNumber(kpiRate, kpi.completion_rate ?? 0.0, 450, true);
 
         updateStatusShare(countBaru, pctBaru, progressBaru, counts.Baru ?? 0, total);
         updateStatusShare(countVerif, pctVerif, progressVerif, counts.Terverifikasi ?? 0, total);
@@ -286,6 +338,8 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+        applyChartFontDefaults();
+
         renderTrendChart(payload.trend_chart);
         renderCategoryChart(payload.category_chart);
         renderLocationChart(payload.location_chart);
@@ -299,12 +353,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const labels = trendData.labels || [];
         const dataValues = (trendData.datasets && trendData.datasets[0] && trendData.datasets[0].data) || [];
+        const prefersReducedMotion = isReducedMotionPreferred();
 
         if (trendChartInstance) {
             trendChartInstance.data.labels = labels;
             trendChartInstance.data.datasets[0].data = dataValues;
-            trendChartInstance.update();
+            if (trendChartInstance.options.scales && trendChartInstance.options.scales.x && trendChartInstance.options.scales.x.ticks) {
+                trendChartInstance.options.scales.x.ticks.maxTicksLimit = window.innerWidth < 576 ? 6 : 12;
+            }
+            trendChartInstance.update(prefersReducedMotion ? "none" : undefined);
         } else {
+            const ctx = trendCanvas.getContext("2d");
+            let gradient = null;
+            if (ctx) {
+                gradient = ctx.createLinearGradient(0, 0, 0, 300);
+                gradient.addColorStop(0, "rgba(12, 53, 106, 0.22)");
+                gradient.addColorStop(1, "rgba(12, 53, 106, 0.01)");
+            }
+
             trendChartInstance = new Chart(trendCanvas, {
                 type: "line",
                 data: {
@@ -313,9 +379,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         label: "Tiket Masuk",
                         data: dataValues,
                         borderColor: getDesignToken("--kf-primary", "#0c356a"),
-                        backgroundColor: getDesignToken("--kf-primary-soft", "#e6eef9"),
+                        backgroundColor: gradient || getDesignToken("--kf-primary-soft", "#e6eef9"),
                         fill: true,
-                        tension: 0.2,
+                        tension: 0.35,
                         pointRadius: labels.length > 60 ? 1 : 3,
                         pointHoverRadius: 6,
                         pointBackgroundColor: getDesignToken("--kf-secondary", "#ffc436"),
@@ -326,6 +392,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    animation: prefersReducedMotion ? false : { duration: 500, easing: "easeOutCubic" },
                     plugins: {
                         legend: { display: false },
                         tooltip: {
@@ -342,7 +409,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             ticks: {
                                 maxRotation: 45,
                                 autoSkip: true,
-                                maxTicksLimit: 12,
+                                maxTicksLimit: window.innerWidth < 576 ? 6 : 12,
                                 font: { size: 11 }
                             }
                         },
@@ -385,6 +452,8 @@ document.addEventListener("DOMContentLoaded", function () {
             return " " + ctx.parsed.y + " tiket terverifikasi" + percentageText;
         };
 
+        const prefersReducedMotion = isReducedMotionPreferred();
+
         if (categoryChartInstance) {
             categoryChartInstance.data.labels = labels;
             categoryChartInstance.data.datasets[0].data = dataValues;
@@ -394,7 +463,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 return (labels[idx] || "") + " - " + (catNames[idx] || "");
             };
             categoryChartInstance.options.plugins.tooltip.callbacks.label = tooltipLabel;
-            categoryChartInstance.update();
+            categoryChartInstance.update(prefersReducedMotion ? "none" : undefined);
         } else {
             categoryChartInstance = new Chart(categoryCanvas, {
                 type: "bar",
@@ -404,13 +473,20 @@ document.addEventListener("DOMContentLoaded", function () {
                         label: "Jumlah Tiket",
                         data: dataValues,
                         backgroundColor: CATEGORY_PALETTE,
-                        borderRadius: 4,
+                        borderRadius: 6,
                         borderSkipped: false
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    animation: prefersReducedMotion ? false : {
+                        duration: 450,
+                        easing: "easeOutQuart",
+                        delay: function (ctx) {
+                            return (ctx.type === "data" && ctx.mode === "default") ? ctx.dataIndex * 35 : 0;
+                        }
+                    },
                     plugins: {
                         legend: { display: false },
                         tooltip: {
@@ -459,10 +535,12 @@ document.addEventListener("DOMContentLoaded", function () {
             otherFloorsNote.classList.toggle("d-none", !(otherFloors > 0));
         }
 
+        const prefersReducedMotion = isReducedMotionPreferred();
+
         if (locationChartInstance) {
             locationChartInstance.data.labels = labels;
             locationChartInstance.data.datasets[0].data = dataValues;
-            locationChartInstance.update();
+            locationChartInstance.update(prefersReducedMotion ? "none" : undefined);
         } else {
             locationChartInstance = new Chart(locationCanvas, {
                 type: "bar",
@@ -472,13 +550,20 @@ document.addEventListener("DOMContentLoaded", function () {
                         label: "Keluhan",
                         data: dataValues,
                         backgroundColor: FLOOR_PALETTE,
-                        borderRadius: 4,
+                        borderRadius: 6,
                         borderSkipped: false
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    animation: prefersReducedMotion ? false : {
+                        duration: 450,
+                        easing: "easeOutQuart",
+                        delay: function (ctx) {
+                            return (ctx.type === "data" && ctx.mode === "default") ? ctx.dataIndex * 35 : 0;
+                        }
+                    },
                     plugins: {
                         legend: { display: false },
                         tooltip: {
@@ -530,7 +615,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 li.className = "list-group-item d-flex justify-content-between align-items-center py-2 px-0 border-bottom";
 
                 const nameSpan = document.createElement("span");
-                nameSpan.className = "small text-dark";
+                nameSpan.className = "small text-dark text-truncate d-inline-block";
+                nameSpan.style.maxWidth = "70%";
 
                 const badgeRank = document.createElement("span");
                 badgeRank.className = "badge bg-light text-secondary border me-2";
@@ -540,7 +626,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 nameSpan.appendChild(document.createTextNode(item.room_name || "Tanpa Nama"));
 
                 const countBadge = document.createElement("span");
-                countBadge.className = "badge bg-primary-subtle text-primary border px-2 py-1 small";
+                countBadge.className = "badge bg-primary-subtle text-primary border px-2 py-1 small flex-shrink-0 ms-2";
                 countBadge.textContent = (item.count || 0) + " keluhan";
 
                 li.appendChild(nameSpan);
@@ -552,6 +638,10 @@ document.addEventListener("DOMContentLoaded", function () {
         if (unspecifiedRoomCount) {
             unspecifiedRoomCount.textContent = locData.unspecified_room_count ?? 0;
         }
+
+        if (window.kfMotion && typeof window.kfMotion.refresh === "function") {
+            window.kfMotion.refresh(topRoomsList);
+        }
     }
 
     // Event Listener: Form Submit Filter
@@ -562,12 +652,41 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // Segmented Control Sync (P0.2)
+    const segmentedButtons = document.querySelectorAll(".kf-segmented-btn");
+
+    function syncSegmentedButtons(days) {
+        segmentedButtons.forEach(function (btn) {
+            const matches = btn.dataset.days === String(days);
+            btn.classList.toggle("is-active", matches);
+            btn.classList.toggle("active", matches);
+        });
+    }
+
+    segmentedButtons.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            const days = btn.dataset.days;
+            if (filterDays && days) {
+                filterDays.value = days;
+                syncSegmentedButtons(days);
+                loadDashboardData();
+            }
+        });
+    });
+
+    if (filterDays) {
+        filterDays.addEventListener("change", function () {
+            syncSegmentedButtons(filterDays.value);
+        });
+    }
+
     // Event Listener: Reset Filter Button
     if (btnReset) {
         btnReset.addEventListener("click", function () {
             if (filterDays) filterDays.value = "30";
             if (filterCategory) filterCategory.value = "";
             if (filterFloor) filterFloor.value = "";
+            syncSegmentedButtons("30");
             loadDashboardData();
         });
     }

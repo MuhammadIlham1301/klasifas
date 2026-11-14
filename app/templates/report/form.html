@@ -231,6 +231,9 @@
                             for="photo"
                             class="kf-photo-dropzone{% if errors.get('photo') %} border-danger{% endif %}"
                             data-photo-dropzone
+                            tabindex="0"
+                            role="button"
+                            aria-label="Unggah foto bukti keluhan fasilitas"
                         >
                             <i class="bi bi-cloud-arrow-up kf-photo-dropzone__icon" aria-hidden="true"></i>
                             <span class="kf-photo-dropzone__title">Tarik foto ke sini atau klik untuk memilih</span>
@@ -251,6 +254,16 @@
                                 {% if errors.get('photo') %}aria-invalid="true"{% endif %}
                             >
                         </label>
+                        <div id="photo-preview-box" class="kf-photo-preview-box">
+                            <img id="photo-preview-img" src="" alt="Pratinjau Foto" class="kf-photo-thumbnail">
+                            <div class="flex-grow-1 min-w-0">
+                                <div class="fw-semibold text-truncate small" id="photo-preview-size">Nama file</div>
+                                <span class="badge bg-success-subtle text-success border border-success-subtle mt-1" style="font-size: 0.75rem;">Siap diunggah</span>
+                            </div>
+                            <button type="button" id="photo-remove-btn" class="btn btn-outline-danger btn-sm" aria-label="Hapus foto terpilih">
+                                <i class="bi bi-trash3" aria-hidden="true"></i> Hapus
+                            </button>
+                        </div>
                         <div id="photo-help" class="form-text mt-2">
                             Foto bersifat opsional dan tidak digunakan untuk klasifikasi. Metadata EXIF akan dibersihkan
                             sebelum file disimpan.
@@ -381,6 +394,32 @@
                         </div>
                     </li>
                 </ol>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm kf-emergency-card">
+            <div class="card-body kf-emergency-card__body">
+                <div class="kf-emergency-card__header">
+                    <i class="bi bi-exclamation-octagon-fill" aria-hidden="true"></i>
+                    <h2 class="kf-emergency-card__title">Kontak Cepat Darurat</h2>
+                </div>
+                <p class="kf-emergency-card__intro">
+                    Untuk insiden berisiko tinggi seperti korsleting listrik aktif, pipa bocor membanjiri lorong, atau bahaya keselamatan, segera hubungi posko:
+                </p>
+                <dl class="kf-emergency-card__contacts">
+                    <div class="kf-emergency-card__row">
+                        <dt class="kf-emergency-card__label">Posko Teknisi FTII:</dt>
+                        <dd class="kf-emergency-card__value">Gedung FTII Lt. 1</dd>
+                    </div>
+                    <div class="kf-emergency-card__row">
+                        <dt class="kf-emergency-card__label">Hotline Darurat:</dt>
+                        <dd class="kf-emergency-card__value kf-emergency-card__value--accent">(021) 87782773</dd>
+                    </div>
+                    <div class="kf-emergency-card__row">
+                        <dt class="kf-emergency-card__label">WhatsApp Posko:</dt>
+                        <dd class="kf-emergency-card__value kf-emergency-card__value--accent">0812-9900-FTII</dd>
+                    </div>
+                </dl>
             </div>
         </div>
     </aside>

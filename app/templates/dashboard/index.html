@@ -33,11 +33,26 @@
 <!-- Panel Filter Agregat -->
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white border-bottom-0 py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
-        <h6 class="fw-bold mb-0 text-dark">
-            Filter Visualisasi Dasbor
-        </h6>
-        <div id="filter-active-indicator" class="small text-secondary">
-            Menampilkan data: <strong id="filter-summary-text">30 hari terakhir</strong>
+        <div>
+            <h6 class="fw-bold mb-1 text-dark">
+                Filter Visualisasi Dasbor
+            </h6>
+            <div id="filter-active-indicator" class="small text-secondary">
+                Menampilkan data: <strong id="filter-summary-text">30 hari terakhir</strong>
+            </div>
+        </div>
+        <div class="d-flex align-items-center gap-2 gap-sm-3">
+            <div class="kf-segmented-control d-none d-sm-inline-flex" role="group" aria-label="Pilihan rentang waktu cepat">
+                <button type="button" class="kf-segmented-btn" data-days="7">7 Hari</button>
+                <button type="button" class="kf-segmented-btn is-active" data-days="30">30 Hari</button>
+                <button type="button" class="kf-segmented-btn" data-days="90">90 Hari</button>
+                <button type="button" class="kf-segmented-btn" data-days="180">180 Hari</button>
+                <button type="button" class="kf-segmented-btn" data-days="365">1 Tahun</button>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-secondary d-none d-md-inline-flex align-items-center gap-1 kf-btn-print" onclick="window.print()" title="Cetak ringkasan dasbor">
+                <i class="bi bi-printer" aria-hidden="true"></i>
+                <span>Cetak</span>
+            </button>
         </div>
     </div>
     <div class="card-body pt-0 pb-3">
@@ -117,60 +132,68 @@
     <p id="dashboard-chart-summary" class="visually-hidden" aria-live="polite"></p>
 
     <!-- Baris 1: Empat Kartu KPI Ringkasan (VQ-16 A1) -->
-    <div class="row g-3 mb-4">
+    <div class="row row-cols-2 row-cols-lg-4 g-2 g-md-3 mb-4">
         <!-- Kartu 1: Total Keluhan -->
-        <div class="col-12 col-sm-6 col-lg-3">
-            <div class="card border-0 shadow-sm h-100 kf-kpi kf-kpi--kpi-total">
+        <div class="col">
+            <div class="card border-0 shadow-sm h-100 kf-kpi kf-kpi-modern kf-kpi--kpi-total">
                 <div class="card-body p-3 pb-2">
-                    <div class="kf-kpi__header">
-                        <span class="kf-kpi__icon" aria-hidden="true"><i class="bi bi-inbox"></i></span>
-                        <span class="text-secondary small fw-semibold text-uppercase kf-kpi__label">Total Keluhan</span>
+                    <div class="kf-kpi-modern__header kf-kpi__header">
+                        <span class="kf-kpi-modern__label kf-kpi__label">Total Keluhan</span>
+                        <div class="kf-kpi-modern__icon-wrap bg-primary-subtle text-primary kf-kpi__icon" aria-hidden="true">
+                            <i class="bi bi-inbox"></i>
+                        </div>
                     </div>
-                    <h2 id="kpi-total-tickets" class="h2 fw-bold text-dark mt-2 mb-1 kf-kpi__value">0</h2>
+                    <h2 id="kpi-total-tickets" class="h2 fw-bold text-dark mt-2 mb-1 kf-kpi-modern__value kf-kpi__value">0</h2>
                 </div>
-                <div class="kf-kpi__footer">Semua status terdaftar</div>
+                <div class="kf-kpi__footer small text-secondary px-3 pb-3">Semua status terdaftar</div>
             </div>
         </div>
 
         <!-- Kartu 2: Tiket Aktif -->
-        <div class="col-12 col-sm-6 col-lg-3">
-            <div class="card border-0 shadow-sm h-100 kf-kpi kf-kpi--kpi-progress">
+        <div class="col">
+            <div class="card border-0 shadow-sm h-100 kf-kpi kf-kpi-modern kf-kpi--kpi-progress">
                 <div class="card-body p-3 pb-2">
-                    <div class="kf-kpi__header">
-                        <span class="kf-kpi__icon" aria-hidden="true"><i class="bi bi-hourglass-split"></i></span>
-                        <span class="text-secondary small fw-semibold text-uppercase kf-kpi__label">Tiket Berjalan</span>
+                    <div class="kf-kpi-modern__header kf-kpi__header">
+                        <span class="kf-kpi-modern__label kf-kpi__label">Tiket Berjalan</span>
+                        <div class="kf-kpi-modern__icon-wrap bg-warning-subtle text-warning-emphasis kf-kpi__icon" aria-hidden="true">
+                            <i class="bi bi-hourglass-split"></i>
+                        </div>
                     </div>
-                    <h2 id="kpi-active-tickets" class="h2 fw-bold text-primary mt-2 mb-1 kf-kpi__value">0</h2>
+                    <h2 id="kpi-active-tickets" class="h2 fw-bold text-primary mt-2 mb-1 kf-kpi-modern__value kf-kpi__value">0</h2>
                 </div>
-                <div class="kf-kpi__footer">Baru + Terverifikasi + Diproses</div>
+                <div class="kf-kpi__footer small text-secondary px-3 pb-3">Baru + Terverifikasi + Diproses</div>
             </div>
         </div>
 
         <!-- Kartu 3: Tiket Selesai -->
-        <div class="col-12 col-sm-6 col-lg-3">
-            <div class="card border-0 shadow-sm h-100 kf-kpi kf-kpi--kpi-done">
+        <div class="col">
+            <div class="card border-0 shadow-sm h-100 kf-kpi kf-kpi-modern kf-kpi--kpi-done">
                 <div class="card-body p-3 pb-2">
-                    <div class="kf-kpi__header">
-                        <span class="kf-kpi__icon" aria-hidden="true"><i class="bi bi-check2-circle"></i></span>
-                        <span class="text-secondary small fw-semibold text-uppercase kf-kpi__label">Tiket Selesai</span>
+                    <div class="kf-kpi-modern__header kf-kpi__header">
+                        <span class="kf-kpi-modern__label kf-kpi__label">Tiket Selesai</span>
+                        <div class="kf-kpi-modern__icon-wrap bg-success-subtle text-success kf-kpi__icon" aria-hidden="true">
+                            <i class="bi bi-check2-circle"></i>
+                        </div>
                     </div>
-                    <h2 id="kpi-completed-tickets" class="h2 fw-bold text-success mt-2 mb-1 kf-kpi__value">0</h2>
+                    <h2 id="kpi-completed-tickets" class="h2 fw-bold text-success mt-2 mb-1 kf-kpi-modern__value kf-kpi__value">0</h2>
                 </div>
-                <div class="kf-kpi__footer">Tindakan perbaikan tuntas</div>
+                <div class="kf-kpi__footer small text-secondary px-3 pb-3">Tindakan perbaikan tuntas</div>
             </div>
         </div>
 
         <!-- Kartu 4: Tingkat Penyelesaian -->
-        <div class="col-12 col-sm-6 col-lg-3">
-            <div class="card border-0 shadow-sm h-100 kf-kpi kf-kpi--kpi-verified">
+        <div class="col">
+            <div class="card border-0 shadow-sm h-100 kf-kpi kf-kpi-modern kf-kpi--kpi-verified">
                 <div class="card-body p-3 pb-2">
-                    <div class="kf-kpi__header">
-                        <span class="kf-kpi__icon" aria-hidden="true"><i class="bi bi-speedometer2"></i></span>
-                        <span class="text-secondary small fw-semibold text-uppercase kf-kpi__label">Rasio Penyelesaian</span>
+                    <div class="kf-kpi-modern__header kf-kpi__header">
+                        <span class="kf-kpi-modern__label kf-kpi__label">Rasio Penyelesaian</span>
+                        <div class="kf-kpi-modern__icon-wrap bg-info-subtle text-info-emphasis kf-kpi__icon" aria-hidden="true">
+                            <i class="bi bi-speedometer2"></i>
+                        </div>
                     </div>
-                    <h2 id="kpi-completion-rate" class="h2 fw-bold text-dark mt-2 mb-1 kf-kpi__value">0.0%</h2>
+                    <h2 id="kpi-completion-rate" class="h2 fw-bold text-dark mt-2 mb-1 kf-kpi-modern__value kf-kpi__value">0.0%</h2>
                 </div>
-                <div class="kf-kpi__footer">Persentase terhadap total</div>
+                <div class="kf-kpi__footer small text-secondary px-3 pb-3">Persentase terhadap total</div>
             </div>
         </div>
     </div>
@@ -221,6 +244,12 @@
                 </div>
                 <div class="card-body pt-0">
                     <div class="kf-chart-frame">
+                        <div class="kf-chart-skeleton-overlay" aria-hidden="true">
+                            <div class="w-100 h-100 d-flex flex-column justify-content-center gap-3">
+                                <div class="kf-skeleton w-100" style="height: 60%;"></div>
+                                <div class="kf-skeleton w-50 mx-auto" style="height: 15%;"></div>
+                            </div>
+                        </div>
                         <canvas id="trendChart" role="img" aria-label="Grafik garis tren keluhan fasilitas masuk per hari" aria-describedby="dashboard-chart-summary"></canvas>
                     </div>
                 </div>
@@ -238,6 +267,12 @@
                 </div>
                 <div class="card-body pt-0">
                     <div class="kf-chart-frame">
+                        <div class="kf-chart-skeleton-overlay" aria-hidden="true">
+                            <div class="w-100 h-100 d-flex flex-column justify-content-center gap-3">
+                                <div class="kf-skeleton w-100" style="height: 60%;"></div>
+                                <div class="kf-skeleton w-50 mx-auto" style="height: 15%;"></div>
+                            </div>
+                        </div>
                         <canvas id="locationChart" role="img" aria-label="Grafik batang sebaran keluhan per lantai gedung FTII" aria-describedby="dashboard-chart-summary"></canvas>
                     </div>
                     <div id="other-floors-note" class="small text-secondary mt-2 d-none">
@@ -271,6 +306,12 @@
                 </div>
                 <div class="card-body pt-0">
                     <div class="kf-chart-frame kf-chart-frame--lg">
+                        <div class="kf-chart-skeleton-overlay" aria-hidden="true">
+                            <div class="w-100 h-100 d-flex flex-column justify-content-center gap-3">
+                                <div class="kf-skeleton w-100" style="height: 65%;"></div>
+                                <div class="kf-skeleton w-50 mx-auto" style="height: 15%;"></div>
+                            </div>
+                        </div>
                         <canvas id="categoryChart" role="img" aria-label="Grafik batang distribusi keluhan per kategori fasilitas K1 sampai K7" aria-describedby="dashboard-chart-summary"></canvas>
                     </div>
                 </div>
