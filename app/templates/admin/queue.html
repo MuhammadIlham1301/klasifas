@@ -33,15 +33,17 @@
     ] %}
     {% for label, value, caption, tone, kpi_icon in kpi_items %}
     <div class="col">
-        <div class="card border-0 shadow-sm h-100 kf-kpi kf-kpi--{{ tone }}">
+        <div class="card border-0 shadow-sm h-100 kf-kpi kf-kpi-modern kf-kpi--{{ tone }}">
             <div class="card-body p-3 pb-2">
-                <div class="kf-kpi__header">
-                    <span class="kf-kpi__icon" aria-hidden="true"><i class="bi {{ kpi_icon }}"></i></span>
-                    <div class="small text-secondary fw-semibold text-uppercase kf-kpi__label">{{ label }}</div>
+                <div class="kf-kpi-modern__header kf-kpi__header">
+                    <span class="kf-kpi-modern__label kf-kpi__label">{{ label }}</span>
+                    <div class="kf-kpi-modern__icon-wrap bg-light kf-kpi__icon" aria-hidden="true">
+                        <i class="bi {{ kpi_icon }}"></i>
+                    </div>
                 </div>
-                <div class="fs-3 fw-bold kf-kpi__value">{{ value }}</div>
+                <div class="fs-3 fw-bold kf-kpi-modern__value kf-kpi__value">{{ value }}</div>
             </div>
-            <div class="kf-kpi__footer">{{ caption }}</div>
+            <div class="kf-kpi__footer small text-secondary px-3 pb-3">{{ caption }}</div>
         </div>
     </div>
     {% endfor %}
@@ -49,10 +51,10 @@
 
 <!-- Panel Pencarian dan Filter Multi-Kriteria -->
 <div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-white border-bottom-0 py-3 d-flex justify-content-between align-items-center">
-        <h6 class="fw-bold mb-0 text-dark">
+    <div class="card-header bg-white border-bottom-0 py-3 d-flex justify-content-between align-items-center gap-2 flex-wrap">
+        <h2 class="h6 fw-bold mb-0 text-dark">
             <i class="bi bi-funnel me-1"></i> Filter & Pencarian Tiket
-        </h6>
+        </h2>
         <span class="small text-secondary">
             Total: <strong>{{ pagination.total if pagination else tickets|length }}</strong> tiket ditemukan
         </span>
@@ -126,7 +128,7 @@
             </div>
 
             <!-- Tombol Aksi -->
-            <div class="col-6 col-md-3 d-flex gap-2">
+            <div class="col-12 col-md-3 d-flex gap-2">
                 <button type="submit" class="btn btn-sm btn-primary flex-grow-1">
                     <i class="bi bi-search me-1"></i> Terapkan
                 </button>
@@ -139,25 +141,25 @@
 
     <!-- Quick Status Tabs -->
     <div class="card-footer bg-light border-top p-2 d-flex flex-wrap align-items-center justify-content-between gap-2">
-        <div class="btn-group btn-group-sm flex-wrap" role="group" aria-label="Filter Status Tiket">
+        <div class="d-flex flex-wrap gap-1" role="group" aria-label="Filter Status Tiket">
             <a href="{{ url_for('admin.ticket_queue', status='Baru') }}"
-               class="btn {{ 'btn-primary' if current_status == 'Baru' else 'btn-outline-secondary' }}">
+               class="btn btn-sm rounded {{ 'btn-primary' if current_status == 'Baru' else 'btn-outline-secondary' }}">
                Baru (Antrean)
             </a>
             <a href="{{ url_for('admin.ticket_queue', status='Terverifikasi') }}"
-               class="btn {{ 'btn-primary' if current_status == 'Terverifikasi' else 'btn-outline-secondary' }}">
+               class="btn btn-sm rounded {{ 'btn-primary' if current_status == 'Terverifikasi' else 'btn-outline-secondary' }}">
                Terverifikasi
             </a>
             <a href="{{ url_for('admin.ticket_queue', status='Diproses') }}"
-               class="btn {{ 'btn-primary' if current_status == 'Diproses' else 'btn-outline-secondary' }}">
+               class="btn btn-sm rounded {{ 'btn-primary' if current_status == 'Diproses' else 'btn-outline-secondary' }}">
                Diproses
             </a>
             <a href="{{ url_for('admin.ticket_queue', status='Selesai') }}"
-               class="btn {{ 'btn-primary' if current_status == 'Selesai' else 'btn-outline-secondary' }}">
+               class="btn btn-sm rounded {{ 'btn-primary' if current_status == 'Selesai' else 'btn-outline-secondary' }}">
                Selesai
             </a>
             <a href="{{ url_for('admin.ticket_queue', status='all') }}"
-               class="btn {{ 'btn-primary' if current_status in ['all', 'semua'] else 'btn-outline-secondary' }}">
+               class="btn btn-sm rounded {{ 'btn-primary' if current_status in ['all', 'semua'] else 'btn-outline-secondary' }}">
                Semua Status
             </a>
         </div>
@@ -170,18 +172,24 @@
 </div>
 
 {% if not tickets %}
-<div class="card border-0 shadow-sm p-5 text-center">
-    <i class="bi bi-inbox fs-1 text-secondary d-block mb-2" aria-hidden="true"></i>
-    <h2 class="h6 fw-semibold">Tidak ada tiket ditemukan</h2>
-    <p class="text-secondary small mb-3">Tidak ada tiket pada status yang dipilih atau filter yang diterapkan.</p>
-    <div>
-        <a href="{{ url_for('admin.ticket_queue') }}" class="btn btn-sm btn-outline-secondary">Kembalikan Filter Default</a>
+<div class="card border-0 shadow-sm">
+    <div class="card-body text-center py-5 px-3 px-sm-4">
+        <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-light text-primary p-3 mb-3" aria-hidden="true">
+            <i class="bi bi-inbox fs-3"></i>
+        </div>
+        <h2 class="h5 fw-semibold mb-2">Tidak ada tiket ditemukan</h2>
+        <p class="text-secondary small mb-4">
+            Tidak ada tiket pada status atau filter yang dipilih. Ubah kriteria pencarian atau kembalikan filter untuk melihat seluruh antrean.
+        </p>
+        <a href="{{ url_for('admin.ticket_queue') }}" class="btn btn-sm btn-primary">
+            <i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i>Kembalikan Filter Default
+        </a>
     </div>
 </div>
 {% else %}
 <div class="card border-0 shadow-sm">
     <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
+        <table class="table table-hover align-middle mb-0 kf-table-dense">
             <thead class="table-light">
                 <tr>
                     <th scope="col" class="kf-table-col-min-110">Kode Tiket</th>
@@ -289,7 +297,11 @@
 <nav aria-label="Paginasi Antrean Tiket" class="mt-4">
     <ul class="pagination pagination-sm justify-content-center mb-0">
         <li class="page-item {{ 'disabled' if not pagination.has_prev else '' }}">
-            <a class="page-link" href="{{ url_for('admin.ticket_queue', page=pagination.prev_num, keyword=active_filters.keyword if active_filters else '', status=active_filters.status if active_filters else current_status, category_id=active_filters.category_id if active_filters else '', floor_number=active_filters.floor_number if active_filters else '', room_name=active_filters.room_name if active_filters else '', date_from=active_filters.date_from if active_filters else '', date_to=active_filters.date_to if active_filters else '', per_page=active_filters.per_page if active_filters else 15) if pagination.has_prev else '#' }}">Sebelumnya</a>
+            {% if pagination.has_prev %}
+            <a class="page-link" href="{{ url_for('admin.ticket_queue', page=pagination.prev_num, keyword=active_filters.keyword if active_filters else '', status=active_filters.status if active_filters else current_status, category_id=active_filters.category_id if active_filters else '', floor_number=active_filters.floor_number if active_filters else '', room_name=active_filters.room_name if active_filters else '', date_from=active_filters.date_from if active_filters else '', date_to=active_filters.date_to if active_filters else '', per_page=active_filters.per_page if active_filters else 15) }}">Sebelumnya</a>
+            {% else %}
+            <span class="page-link">Sebelumnya</span>
+            {% endif %}
         </li>
         {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
             {% if p %}
@@ -301,7 +313,11 @@
             {% endif %}
         {% endfor %}
         <li class="page-item {{ 'disabled' if not pagination.has_next else '' }}">
-            <a class="page-link" href="{{ url_for('admin.ticket_queue', page=pagination.next_num, keyword=active_filters.keyword if active_filters else '', status=active_filters.status if active_filters else current_status, category_id=active_filters.category_id if active_filters else '', floor_number=active_filters.floor_number if active_filters else '', room_name=active_filters.room_name if active_filters else '', date_from=active_filters.date_from if active_filters else '', date_to=active_filters.date_to if active_filters else '', per_page=active_filters.per_page if active_filters else 15) if pagination.has_next else '#' }}">Selanjutnya</a>
+            {% if pagination.has_next %}
+            <a class="page-link" href="{{ url_for('admin.ticket_queue', page=pagination.next_num, keyword=active_filters.keyword if active_filters else '', status=active_filters.status if active_filters else current_status, category_id=active_filters.category_id if active_filters else '', floor_number=active_filters.floor_number if active_filters else '', room_name=active_filters.room_name if active_filters else '', date_from=active_filters.date_from if active_filters else '', date_to=active_filters.date_to if active_filters else '', per_page=active_filters.per_page if active_filters else 15) }}">Selanjutnya</a>
+            {% else %}
+            <span class="page-link">Selanjutnya</span>
+            {% endif %}
         </li>
     </ul>
 </nav>

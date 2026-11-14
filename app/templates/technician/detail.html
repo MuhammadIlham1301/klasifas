@@ -1,136 +1,130 @@
 {% extends "base.html" %}
-{% from "components/_macros.html" import status_badge %}
+{% from "components/_macros.html" import status_badge, category_badge %}
 
 {% block title %}Rincian Tugas {{ ticket.ticket_code }} — KlasiFas{% endblock %}
 
 {% block container_class %}kf-container kf-container--wide{% endblock %}
 
 {% block content %}
-<!-- Navigasi Breadcrumb -->
 <nav aria-label="breadcrumb" class="mb-3">
     <ol class="breadcrumb small">
-        <li class="breadcrumb-item"><a href="{{ url_for('technician.ticket_queue') }}" class="text-decoration-none">Papan Tugas</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{ ticket.ticket_code }}</li>
+        <li class="breadcrumb-item"><a href="{{ url_for('technician.ticket_queue') }}">Papan Tugas</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Tiket {{ ticket.ticket_code }}</li>
     </ol>
 </nav>
 
-<!-- Header Rincian Tiket -->
-<div class="row align-items-sm-center g-2 mb-4">
+<div class="row align-items-center mb-4">
     <div class="col-12 col-md-8">
         <div class="kf-page-heading">
             <p class="kf-page-heading__eyebrow mb-2">Portal Teknisi</p>
             <h1 class="kf-page-heading__title">Rincian Tugas {{ ticket.ticket_code }}</h1>
             <p class="kf-page-heading__sub mb-0">
-                Dilaporkan pada: {{ ticket.created_at.strftime('%d/%m/%Y %H:%M') if ticket.created_at else '-' }} WIB
+                Dilaporkan pada {{ ticket.created_at.strftime('%d/%m/%Y %H:%M') if ticket.created_at else '-' }} WIB
             </p>
         </div>
     </div>
-    <div class="col-12 col-md-4 d-flex flex-wrap align-items-center justify-content-md-end gap-2">
-        {{ status_badge(ticket.status) }}
-        <a href="{{ url_for('technician.ticket_queue') }}" class="btn btn-sm btn-outline-secondary">
-            &larr; Kembali ke Papan Tugas
-        </a>
+    <div class="col-12 col-md-4 text-md-end mt-2 mt-md-0">
+        <div class="d-inline-flex flex-wrap align-items-center justify-content-md-end gap-2">
+            {{ status_badge(ticket.status, 'fs-6 px-3 py-2') }}
+            <a href="{{ url_for('technician.ticket_queue') }}" class="btn btn-sm btn-outline-secondary">
+                &larr; Kembali ke Papan Tugas
+            </a>
+        </div>
     </div>
 </div>
 
 <div class="row g-4">
-    <!-- Kolom Kiri: Lokasi & Kategori -->
-    <div class="col-12 col-lg-6">
-        <!-- Informasi Lokasi -->
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-white py-3">
-                <h2 class="h6 fw-semibold mb-0">Lokasi Fasilitas</h2>
+    <!-- Kolom Kiri: Rincian Tugas -->
+    <div class="col-12 col-lg-7">
+        <div class="card border-0 shadow-sm kf-card-modern mb-4">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h2 class="h5 fw-semibold mb-0 text-dark">Rincian Tugas</h2>
             </div>
             <div class="card-body">
-                <dl class="row mb-0 small">
-                    <dt class="col-sm-4 text-secondary">Gedung</dt>
-                    <dd class="col-sm-8 fw-semibold text-dark">{{ ticket.building_name }}</dd>
-
-                    <dt class="col-sm-4 text-secondary">Lantai</dt>
-                    <dd class="col-sm-8">Lantai {{ ticket.floor_number }}</dd>
-
-                    <dt class="col-sm-4 text-secondary">Ruangan</dt>
-                    <dd class="col-sm-8">{{ ticket.room_name }}</dd>
-
-                    <dt class="col-sm-4 text-secondary">Detail Lokasi</dt>
-                    <dd class="col-sm-8 text-break">{{ ticket.location_detail or '-' }}</dd>
+                <dl class="mb-3">
+                    <dt class="text-secondary small fw-normal mb-1">Deskripsi Keluhan</dt>
+                    <dd class="p-3 bg-light rounded border text-break mb-0">
+                        {{ ticket.description }}
+                    </dd>
                 </dl>
-            </div>
-        </div>
 
-        <!-- Informasi Kategori Resmi -->
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-white py-3">
-                <h2 class="h6 fw-semibold mb-0">Kategori Resmi Penanganan</h2>
-            </div>
-            <div class="card-body">
-                {% if ticket.official_category %}
-                    <div class="d-flex align-items-center gap-2 mb-2">
-                        <span class="badge bg-dark">{{ ticket.official_category.code }}</span>
-                        <strong class="text-dark">{{ ticket.official_category.name }}</strong>
+                <dl class="row g-3 mb-3">
+                    <div class="col-sm-6">
+                        <dt class="text-secondary small fw-normal mb-1">Lokasi Fasilitas</dt>
+                        <dd class="mb-0">
+                            <strong>{{ ticket.room_name }}</strong><br>
+                            <span class="small text-secondary">{{ ticket.building_name }}, Lantai {{ ticket.floor_number }}</span>
+                        </dd>
                     </div>
+                    <div class="col-sm-6">
+                        <dt class="text-secondary small fw-normal mb-1">Detail Lokasi</dt>
+                        <dd class="small text-break mb-0">{{ ticket.location_detail or '-' }}</dd>
+                    </div>
+                </dl>
+
+                <div class="kf-separator" role="separator"></div>
+
+                <dl class="mb-3">
+                    <dt class="text-secondary small mb-2 fw-semibold">
+                        Kategori Resmi Penanganan
+                        <span class="badge bg-light text-secondary border small ms-1">Read-only</span>
+                    </dt>
+                    {% if ticket.official_category %}
+                    <dd class="mb-0">
+                        {{ category_badge(ticket.official_category, 'fs-6') }}
+                    </dd>
                     {% if ticket.official_category.description %}
-                    <p class="text-secondary small mb-0">{{ ticket.official_category.description }}</p>
+                    <dd class="text-secondary small mb-0 mt-2">{{ ticket.official_category.description }}</dd>
                     {% endif %}
-                {% else %}
-                    <em class="text-muted small">Kategori resmi belum ditetapkan oleh Admin Sarpras.</em>
-                {% endif %}
-            </div>
-        </div>
+                    {% else %}
+                    <dd class="text-muted small mb-0">
+                        <em>Kategori resmi belum ditetapkan oleh Admin Sarpras.</em>
+                    </dd>
+                    {% endif %}
+                </dl>
 
-        <!-- Informasi Pelapor (Tanpa Kredensial / Token) -->
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white py-3">
-                <h2 class="h6 fw-semibold mb-0">Kontak Koordinasi Pelapor</h2>
-            </div>
-            <div class="card-body">
-                <dl class="row mb-0 small">
-                    <dt class="col-sm-4 text-secondary">Nama</dt>
-                    <dd class="col-sm-8">{{ ticket.reporter_name or 'Anonim' }}</dd>
+                <div class="kf-separator" role="separator"></div>
 
-                    <dt class="col-sm-4 text-secondary">Kontak</dt>
-                    <dd class="col-sm-8">{{ ticket.reporter_contact or 'Tidak dicantumkan' }}</dd>
+                <dl class="row g-3 mb-0">
+                    <div class="col-sm-6">
+                        <dt class="text-secondary small fw-normal mb-1">Nama Pelapor</dt>
+                        <dd class="small mb-0">{{ ticket.reporter_name or 'Anonim' }}</dd>
+                    </div>
+                    <div class="col-sm-6">
+                        <dt class="text-secondary small fw-normal mb-1">Kontak Pelapor</dt>
+                        <dd class="small mb-0">{{ ticket.reporter_contact or 'Tidak dicantumkan' }}</dd>
+                    </div>
+                </dl>
+
+                <div class="kf-separator" role="separator"></div>
+
+                <dl class="mb-0">
+                    <dt class="text-secondary small fw-normal mb-1">Foto Bukti Keluhan</dt>
+                    {% if ticket.photo_filename %}
+                    <dd class="mt-2 mb-0">
+                        <a href="{{ url_for('technician.ticket_photo', ticket_id=ticket.id) }}" target="_blank"
+                            rel="noopener noreferrer">
+                            <img src="{{ url_for('technician.ticket_photo', ticket_id=ticket.id) }}"
+                                alt="Foto bukti fasilitas {{ ticket.ticket_code }}"
+                                class="img-fluid rounded border shadow-sm kf-evidence-image--lg">
+                        </a>
+                        <div class="small text-secondary mt-1">
+                            Klik foto untuk melihat ukuran penuh. File dilindungi dan disajikan via autentikasi staf.
+                        </div>
+                    </dd>
+                    {% else %}
+                    <dd class="small text-muted mb-0">Pelapor tidak melampirkan foto bukti keluhan.</dd>
+                    {% endif %}
                 </dl>
             </div>
         </div>
     </div>
 
-    <!-- Kolom Kanan: Deskripsi Keluhan & Foto Bukti -->
-    <div class="col-12 col-lg-6">
-        <!-- Deskripsi Keluhan -->
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-white py-3">
-                <h2 class="h6 fw-semibold mb-0">Deskripsi Keluhan Fasilitas</h2>
-            </div>
-            <div class="card-body">
-                <div class="p-3 bg-light rounded text-dark text-break small">
-                    {{ ticket.description }}
-                </div>
-            </div>
-        </div>
-
-        <!-- Foto Bukti -->
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-white py-3">
-                <h2 class="h6 fw-semibold mb-0">Foto Bukti Keluhan</h2>
-            </div>
-            <div class="card-body">
-                {% if ticket.photo_filename %}
-                <div class="text-center">
-                    <img src="{{ url_for('technician.ticket_photo', ticket_id=ticket.id) }}"
-                         alt="Foto bukti fasilitas {{ ticket.ticket_code }}"
-                         class="img-fluid rounded border shadow-sm kf-evidence-image">
-                </div>
-                {% else %}
-                <p class="text-muted small mb-0">Pelapor tidak melampirkan foto bukti keluhan.</p>
-                {% endif %}
-            </div>
-        </div>
-
-        <!-- Status Pengerjaan & Tindakan Perbaikan (FR-06) -->
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white py-3">
-                <h2 class="h6 fw-semibold mb-0">Status Pengerjaan Fisik</h2>
+    <!-- Kolom Kanan: Status Pengerjaan & Tindakan Perbaikan (FR-06) -->
+    <div class="col-12 col-lg-5">
+        <div class="card border-0 shadow-sm kf-card-modern">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h2 class="h5 fw-semibold mb-0 text-dark">Status Pengerjaan Fisik</h2>
             </div>
             <div class="card-body">
             {% if ticket.status == 'Terverifikasi' %}
@@ -150,9 +144,11 @@
                                   placeholder="Contoh: Menyiapkan peralatan dan suku cadang untuk perbaikan..."></textarea>
                         <div class="form-text small" id="technician_note_help">Maksimal 1000 karakter. Catatan akan tercatat dalam log audit operasional.</div>
                     </div>
-                    <button type="submit" class="btn btn-warning btn-sm fw-semibold">
-                        Mulai Pengerjaan (Ubah Status ke Diproses)
-                    </button>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-warning btn-sm fw-semibold">
+                            Mulai Pengerjaan (Ubah Status ke Diproses)
+                        </button>
+                    </div>
                 </form>
             {% elif ticket.status == 'Diproses' %}
                 <div class="alert alert-warning small mb-3" role="status">
@@ -171,22 +167,26 @@
                                   placeholder="Jelaskan tindakan perbaikan yang telah diselesaikan (contoh: Mengganti kabel HDMI dan menguji proyektor berfungsi normal)..."></textarea>
                         <div class="form-text small" id="resolution_note_help">Wajib diisi. Catatan ini akan ditampilkan kepada pelapor saat melacak tiket serta dicatat pada log audit.</div>
                     </div>
-                    <button type="submit" class="btn btn-success btn-sm fw-semibold">
-                        Selesaikan Pekerjaan (Ubah Status ke Selesai)
-                    </button>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success btn-sm fw-semibold">
+                            Selesaikan Pekerjaan (Ubah Status ke Selesai)
+                        </button>
+                    </div>
                 </form>
             {% elif ticket.status == 'Selesai' %}
-                <dl class="row mb-0 small">
-                    <dt class="col-sm-4 text-secondary">Waktu Penyelesaian</dt>
-                    <dd class="col-sm-8 fw-semibold text-dark">
-                        {{ ticket.resolved_at.strftime('%d/%m/%Y, %H:%M WIB') if ticket.resolved_at else '-' }}
-                    </dd>
-                    <dt class="col-sm-4 text-secondary">Catatan Perbaikan</dt>
-                    <dd class="col-sm-8 text-break">
-                        {{ ticket.resolution_note or '-' }}
-                    </dd>
+                <dl class="row g-3 mb-3">
+                    <div class="col-12">
+                        <dt class="text-secondary small fw-normal mb-1">Waktu Penyelesaian</dt>
+                        <dd class="fw-semibold text-dark mb-0">
+                            {{ ticket.resolved_at.strftime('%d/%m/%Y, %H:%M WIB') if ticket.resolved_at else '-' }}
+                        </dd>
+                    </div>
+                    <div class="col-12">
+                        <dt class="text-secondary small fw-normal mb-1">Catatan Perbaikan</dt>
+                        <dd class="small text-break mb-0">{{ ticket.resolution_note or '-' }}</dd>
+                    </div>
                 </dl>
-                <div class="alert alert-secondary small mt-3 mb-0" role="status">
+                <div class="alert alert-secondary small mb-0" role="status">
                     <i class="bi bi-check2-all me-1" aria-hidden="true"></i>
                     Tiket ini telah selesai secara resmi dan tidak menerima pembaruan status lebih lanjut.
                 </div>
@@ -201,4 +201,3 @@
     </div>
 </div>
 {% endblock %}
-

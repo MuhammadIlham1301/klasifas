@@ -118,6 +118,12 @@
                         'Diproses': 'Perbaikan sedang berjalan.',
                         'Selesai': 'Perbaikan telah ditutup.'
                     } %}
+                    {% set step_icons = {
+                        'Baru': 'bi-inbox',
+                        'Terverifikasi': 'bi-clipboard-check',
+                        'Diproses': 'bi-tools',
+                        'Selesai': 'bi-check2-circle'
+                    } %}
                     {% set current_index = status_steps.index(ticket.status) if ticket.status in status_steps else 0 %}
                     <div class="kf-stepper mb-4" role="list" aria-label="Progres penanganan tiket">
                         {% for step in status_steps %}
@@ -131,11 +137,13 @@
                                 {% set step_state = 'is-pending' %}
                                 {% set step_label = 'belum tercapai' %}
                             {% endif %}
-                            <div class="kf-stepper__step {{ step_state }}" role="listitem"
+                            <div class="kf-stepper__step kf-stepper__step--{{ step|lower }} {{ step_state }}" role="listitem"
                                  {% if loop.index0 == current_index %}aria-current="step"{% endif %}>
                                 <span class="kf-stepper__indicator" aria-hidden="true">
                                     {% if loop.index0 < current_index %}
                                         <i class="bi bi-check-lg"></i>
+                                    {% elif loop.index0 == current_index %}
+                                        <i class="bi {{ step_icons[step] }}"></i>
                                     {% else %}
                                         {{ loop.index }}
                                     {% endif %}

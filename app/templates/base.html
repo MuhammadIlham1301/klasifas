@@ -11,16 +11,23 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/klasifas.css') }}">
 </head>
 
-    <body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100">
     {%- set kf_container -%}{% block container_class %}kf-container{% endblock %}{%- endset -%}
     <a class="visually-hidden-focusable kf-skip-link" href="#main-content">Lewati ke konten utama</a>
 
+    {% if not g.current_user %}
+    {# ============================================================== #}
+    {# MODE PUBLIK: Topbar Navigasi Publik Lapang                     #}
+    {# ============================================================== #}
     <header class="kf-header">
         <nav class="navbar navbar-expand-md navbar-dark kf-navbar" aria-label="Navigasi utama">
             <div class="container {{ kf_container }}">
-                <a class="navbar-brand kf-brand text-decoration-none" href="{{ url_for('report.report_form') }}">
-                    <span class="d-block fw-semibold">KlasiFas</span>
-                    <span class="d-block kf-brand-subtitle">Klasifikasi Keluhan Fasilitas</span>
+                <a class="navbar-brand kf-brand d-flex align-items-center text-decoration-none" href="{{ url_for('report.report_form') }}">
+                    <img src="{{ url_for('static', filename='img/logo-uhamka.png') }}" alt="Logo UHAMKA" class="kf-brand-emblem-img me-2">
+                    <div>
+                        <span class="d-block fw-bold kf-brand-title">KlasiFas</span>
+                        <span class="d-block kf-brand-subtitle">Fakultas Teknologi Industri &amp; Informatika</span>
+                    </div>
                 </a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#kf-main-nav"
@@ -30,33 +37,21 @@
 
                 <div class="collapse navbar-collapse" id="kf-main-nav">
                     <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
-                        {% if g.current_user and g.current_user.role in ['admin_sarpras', 'pimpinan'] %}
                         <li class="nav-item">
-                            <a class="nav-link kf-nav-emphasis" href="{{ url_for('dashboard.dashboard_view') }}">Dasbor</a>
-                        </li>
-                        {% endif %}
-                        {% if g.current_user and g.current_user.role == 'admin_sarpras' %}
-                        <li class="nav-item">
-                            <a class="nav-link kf-nav-emphasis" href="{{ url_for('admin.ticket_queue') }}">Antrean Sarpras</a>
+                            <a class="nav-link kf-nav-emphasis {% if request.endpoint == 'report.report_form' %}active{% endif %}" href="{{ url_for('report.report_form') }}">
+                                <i class="bi bi-pencil-square me-1" aria-hidden="true"></i>Buat Laporan
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link kf-nav-emphasis" href="{{ url_for('admin.audit_log_list') }}">Log Audit</a>
+                            <a class="nav-link kf-nav-emphasis {% if request.endpoint == 'report.track' %}active{% endif %}" href="{{ url_for('report.track') }}">
+                                <i class="bi bi-search me-1" aria-hidden="true"></i>Lacak Tiket
+                            </a>
                         </li>
-                        {% endif %}
-                        {% if g.current_user and g.current_user.role == 'teknisi' %}
-                        <li class="nav-item">
-                            <a class="nav-link kf-nav-emphasis" href="{{ url_for('technician.ticket_queue') }}">Tugas Saya</a>
+                        <li class="nav-item ms-lg-2">
+                            <a class="btn btn-sm kf-btn-staff-portal" href="{{ url_for('auth.login') }}">
+                                <i class="bi bi-person-lock me-1" aria-hidden="true"></i>Masuk Staf
+                            </a>
                         </li>
-                        {% endif %}
-                        {% if g.current_user %}
-                        <li class="nav-item">
-                            <form method="POST" action="{{ url_for('auth.logout') }}" class="d-inline m-0 p-0">
-                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                <button type="submit"
-                                    class="btn btn-link nav-link kf-nav-danger border-0 bg-transparent">Keluar</button>
-                            </form>
-                        </li>
-                        {% endif %}
                     </ul>
                     <span class="kf-header-note ms-md-3 d-none d-md-inline">FTII UHAMKA</span>
                 </div>
@@ -64,18 +59,149 @@
         </nav>
     </header>
 
-    <main id="main-content" class="container {{ kf_container }} flex-grow-1 py-4 py-lg-5">
+    {% else %}
+    {# ============================================================== #}
+    {# MODE INTERNAL STAF: Hybrid Sidebar Collapsible + Staf Topbar   #}
+    {# ============================================================== #}
+    <div class="kf-internal-layout flex-grow-1" id="kf-app-layout">
+        <!-- Backdrop Mobile -->
+        <div class="kf-sidebar-backdrop" id="kf-sidebar-backdrop" aria-hidden="true"></div>
+
+        <!-- Sidebar Collapsible Staf -->
+        <aside class="kf-sidebar" id="kf-sidebar" aria-label="Navigasi Internal Staf">
+            <div class="kf-sidebar-header">
+                <a class="d-flex align-items-center text-decoration-none min-w-0" href="{{ url_for('dashboard.dashboard_view') if g.current_user.role in ['admin_sarpras', 'pimpinan'] else url_for('technician.ticket_queue') }}">
+                    <img src="{{ url_for('static', filename='img/logo-uhamka.png') }}" alt="Logo UHAMKA" class="kf-brand-emblem-img me-2 flex-shrink-0" style="height: 32px; width: 32px;">
+                    <div class="kf-brand-text">
+                        <span class="d-block fw-bold" style="line-height: 1.15;">KlasiFas</span>
+                        <span class="d-block text-secondary small fw-normal" style="font-size: 0.6875rem;">FTII UHAMKA</span>
+                    </div>
+                </a>
+                <button type="button" class="kf-sidebar-toggle-btn d-none d-md-inline-flex" id="kf-sidebar-toggle" title="Ciutkan Sidebar ([)" aria-controls="kf-sidebar" aria-expanded="true">
+                    <i class="bi bi-chevron-bar-left"></i>
+                </button>
+                <button type="button" class="kf-sidebar-toggle-btn d-md-none" id="kf-mobile-drawer-close" aria-label="Tutup menu navigasi">
+                    <i class="bi bi-x-lg" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            <nav class="kf-sidebar-nav">
+                <div class="kf-sidebar-section-title">Menu Utama</div>
+
+                {% if g.current_user.role in ['admin_sarpras', 'pimpinan'] %}
+                <a class="kf-sidebar-link {% if request.endpoint and 'dashboard' in request.endpoint %}active{% endif %}" href="{{ url_for('dashboard.dashboard_view') }}">
+                    <i class="bi bi-speedometer2"></i>
+                    <span class="kf-sidebar-label">Dasbor</span>
+                </a>
+                {% endif %}
+
+                {% if g.current_user.role == 'admin_sarpras' %}
+                <a class="kf-sidebar-link {% if request.endpoint and 'admin.ticket' in request.endpoint %}active{% endif %}" href="{{ url_for('admin.ticket_queue') }}">
+                    <i class="bi bi-inbox"></i>
+                    <span class="kf-sidebar-label">Antrean Sarpras</span>
+                </a>
+                <a class="kf-sidebar-link {% if request.endpoint and 'audit_log' in request.endpoint %}active{% endif %}" href="{{ url_for('admin.audit_log_list') }}">
+                    <i class="bi bi-journal-text"></i>
+                    <span class="kf-sidebar-label">Log Audit</span>
+                </a>
+                {% endif %}
+
+                {% if g.current_user.role == 'teknisi' %}
+                <a class="kf-sidebar-link {% if request.endpoint and 'technician' in request.endpoint %}active{% endif %}" href="{{ url_for('technician.ticket_queue') }}">
+                    <i class="bi bi-tools"></i>
+                    <span class="kf-sidebar-label">Tugas Saya</span>
+                </a>
+                {% endif %}
+            </nav>
+
+            <div class="kf-sidebar-footer">
+                <div class="kf-user-pill">
+                    <div class="kf-user-avatar">
+                        {{ g.current_user.username[:1].upper() if g.current_user.username else 'U' }}
+                    </div>
+                    <div class="kf-sidebar-footer-info min-w-0 flex-grow-1">
+                        <div class="small fw-semibold text-truncate text-dark">{{ g.current_user.full_name or g.current_user.username }}</div>
+                        <div class="text-secondary small" style="font-size: 0.6875rem;">
+                            {% if g.current_user.role == 'admin_sarpras' %}Admin Sarpras
+                            {% elif g.current_user.role == 'pimpinan' %}Pimpinan FTII
+                            {% elif g.current_user.role == 'teknisi' %}Teknisi
+                            {% else %}{{ g.current_user.role }}{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Wrapper & Topbar Staf -->
+        <div class="kf-main-wrapper flex-grow-1" id="kf-main-wrapper">
+            <header class="kf-contextual-topbar">
+                <div class="d-flex align-items-center gap-2">
+                    <button type="button" class="btn btn-sm btn-outline-secondary d-md-none" id="kf-mobile-drawer-toggle" aria-controls="kf-sidebar" aria-expanded="false" aria-label="Buka Menu Sidebar">
+                        <i class="bi bi-list fs-5" aria-hidden="true"></i>
+                    </button>
+                    <span class="badge bg-light text-secondary border d-none d-sm-inline-block">
+                        {% if g.current_user.role == 'admin_sarpras' %}
+                            <i class="bi bi-shield-check text-primary me-1"></i>Admin Sarpras
+                        {% elif g.current_user.role == 'pimpinan' %}
+                            <i class="bi bi-eye text-secondary me-1"></i>Pimpinan (Read-Only)
+                        {% elif g.current_user.role == 'teknisi' %}
+                            <i class="bi bi-tools text-success me-1"></i>Teknisi Lapangan
+                        {% endif %}
+                    </span>
+                    <span class="small text-secondary d-none d-md-inline">&middot; Gedung FTII UHAMKA</span>
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                    <span class="small text-secondary d-none d-sm-inline">{{ g.current_user.username }}</span>
+                    <form method="POST" action="{{ url_for('auth.logout') }}" class="d-inline m-0 p-0">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-sm btn-outline-danger py-1 px-2.5">
+                            <i class="bi bi-box-arrow-right me-1"></i>Keluar
+                        </button>
+                    </form>
+                </div>
+            </header>
+    {% endif %}
+
+    {# ============================================================== #}
+    {# KONTEN UTAMA HALAMAN (Universal Content Area)                   #}
+    {# ============================================================== #}
+    <main id="main-content" class="{% if not g.current_user %}container {{ kf_container }} py-4 py-lg-5{% else %}kf-staff-canvas p-3 p-lg-4{% endif %} flex-grow-1">
         {% from "components/_macros.html" import flash_messages %}
         {{ flash_messages() }}
 
         {% block content %}{% endblock %}
     </main>
 
+    {% if not g.current_user %}
     <footer class="container {{ kf_container }} py-4 small text-secondary">
-        KlasiFas Kelompok 7 &middot; Fakultas Teknologi Industri dan Informatika UHAMKA
+        <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-2 border-top pt-3">
+            <div class="d-flex align-items-center gap-2">
+                <img src="{{ url_for('static', filename='img/logo-uhamka.png') }}" alt="Logo UHAMKA" class="kf-brand-emblem-img" style="height: 24px; width: 24px;">
+                <span>KlasiFas &middot; Fakultas Teknologi Industri dan Informatika, Universitas Muhammadiyah Prof. Dr. HAMKA</span>
+            </div>
+            <div class="text-secondary" style="font-size: 0.8125rem;">
+                <i class="bi bi-shield-check text-success me-1"></i>Academic Civic Trust &middot; Kelompok 7
+            </div>
+        </div>
     </footer>
+    {% else %}
+            <footer class="p-3 border-top small text-secondary bg-white">
+                <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between gap-2">
+                    <span>KlasiFas &middot; FTII UHAMKA</span>
+                    <span style="font-size: 0.75rem;"><i class="bi bi-shield-check text-success me-1"></i>Academic Civic Trust &middot; Kelompok 7</span>
+                </div>
+            </footer>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Wadah Toast Universal KlasiFas (Academic Civic Trust) -->
+    <div id="kf-toast-container" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1090;" aria-live="polite" aria-atomic="true"></div>
 
     <script src="{{ url_for('static', filename='vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/motion.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
     {% block scripts %}{% endblock %}
 </body>
 

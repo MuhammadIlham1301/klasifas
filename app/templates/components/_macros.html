@@ -4,9 +4,10 @@
 <div class="mb-4" aria-live="polite">
     {% for category, message in messages %}
     {% set alert_category = 'danger' if category == 'error' else (category if category in ['success', 'danger', 'warning', 'info'] else 'info') %}
-    <div class="alert alert-{{ alert_category }} alert-dismissible fade show kf-alert d-flex align-items-start gap-2 mb-2"
+    {% set alert_icon = 'bi-check-circle-fill text-success' if alert_category == 'success' else ('bi-exclamation-octagon-fill text-danger' if alert_category == 'danger' else ('bi-exclamation-triangle-fill text-warning' if alert_category == 'warning' else 'bi-info-circle-fill text-info')) %}
+    <div class="alert alert-{{ alert_category }} alert-dismissible fade show kf-alert kf-alert--{{ alert_category }} d-flex align-items-start gap-2 mb-2"
         role="alert">
-        <i class="bi bi-info-circle-fill alert-icon" aria-hidden="true"></i>
+        <i class="bi {{ alert_icon }} alert-icon" aria-hidden="true"></i>
         <div class="flex-grow-1">{{ message }}</div>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Tutup"></button>
     </div>
@@ -19,22 +20,22 @@
 {% macro status_badge(status, extra_classes='') %}
 {% set normalized = status|string|trim %}
 {% if normalized == 'Baru' %}
-<span class="badge kf-status kf-status-new {{ extra_classes }}">Baru</span>
+<span class="badge kf-status kf-status-new kf-badge-pill kf-badge-pill--baru {{ extra_classes }}">Baru</span>
 {% elif normalized == 'Terverifikasi' %}
-<span class="badge kf-status kf-status-verified {{ extra_classes }}">Terverifikasi</span>
+<span class="badge kf-status kf-status-verified kf-badge-pill kf-badge-pill--verif {{ extra_classes }}">Terverifikasi</span>
 {% elif normalized == 'Diproses' %}
-<span class="badge kf-status kf-status-in-progress {{ extra_classes }}">Diproses</span>
+<span class="badge kf-status kf-status-in-progress kf-badge-pill kf-badge-pill--proses {{ extra_classes }}">Diproses</span>
 {% elif normalized == 'Selesai' %}
-<span class="badge kf-status kf-status-done {{ extra_classes }}">Selesai</span>
+<span class="badge kf-status kf-status-done kf-badge-pill kf-badge-pill--selesai {{ extra_classes }}">Selesai</span>
 {% else %}
-<span class="badge kf-status kf-status-unknown {{ extra_classes }}">{{ status }}</span>
+<span class="badge kf-status kf-status-unknown kf-badge-pill {{ extra_classes }}">{{ status }}</span>
 {% endif %}
 {% endmacro %}
 
 {% macro manual_verification_badge(show=True, extra_classes='') %}
 {% if show %}
-<span class="badge bg-secondary {{ extra_classes }}">
-    <i class="bi bi-exclamation-circle me-1" aria-hidden="true"></i>Perlu Verifikasi Manual
+<span class="badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle kf-badge-pill {{ extra_classes }}">
+    <i class="bi bi-shield-exclamation me-1" aria-hidden="true"></i>Perlu Verifikasi Manual
 </span>
 {% endif %}
 {% endmacro %}
@@ -70,6 +71,23 @@
     <h1 class="{{ title_classes }} mb-2">{{ title }}</h1>
     {% if subtitle %}
     <p class="text-secondary mb-0">{{ subtitle }}</p>
+    {% endif %}
+</div>
+{% endmacro %}
+
+{% macro render_empty_state(icon='bi-inbox', title='Tidak Ada Data', message='Belum ada data yang dapat ditampilkan.', action_url=None, action_text=None, extra_classes='') %}
+<div class="kf-empty-state text-center p-4 p-md-5 my-3 {{ extra_classes }}">
+    <div class="kf-empty-state__icon-wrap mb-3 mx-auto" aria-hidden="true">
+        <i class="bi {{ icon }}"></i>
+    </div>
+    <h3 class="h6 fw-semibold text-dark mb-1">{{ title }}</h3>
+    <p class="small text-secondary mb-3 mx-auto" style="max-width: 420px;">{{ message }}</p>
+    {% if action_url and action_text %}
+    <div>
+        <a href="{{ action_url }}" class="btn btn-sm btn-outline-secondary">
+            {{ action_text }}
+        </a>
+    </div>
     {% endif %}
 </div>
 {% endmacro %}

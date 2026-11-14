@@ -18,7 +18,7 @@
 
 <!-- Panel Pencarian dan Filter Log Audit -->
 <div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-white border-bottom-0 py-3 d-flex justify-content-between align-items-center">
+    <div class="card-header bg-white border-bottom-0 py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
         <h6 class="fw-bold mb-0 text-dark">
             Filter Log Audit
         </h6>
@@ -76,7 +76,7 @@
     <div class="card-body p-0">
         {% if logs %}
         <div class="table-responsive">
-            <table class="table table-hover table-striped align-middle mb-0 small">
+            <table class="table table-hover table-striped align-middle mb-0 small kf-table-dense">
                 <thead class="table-light">
                     <tr>
                         <th scope="col" class="kf-table-col-140">Waktu</th>
@@ -143,7 +143,8 @@
                                 {% set new_cat_id = log.new_value|int if (log.new_value and log.new_value.isdigit()) else None %}
                                 
                                 <div class="d-flex align-items-center gap-2 flex-wrap">
-                                    <span class="text-danger text-decoration-line-through">
+                                    <span class="visually-hidden">Nilai lama:</span>
+                                    <del class="text-danger">
                                         {% if old_cat_id and old_cat_id in categories %}
                                             {{ categories[old_cat_id].code }} - {{ categories[old_cat_id].name }}
                                         {% elif log.old_value %}
@@ -151,9 +152,10 @@
                                         {% else %}
                                             Belum ditetapkan
                                         {% endif %}
-                                    </span>
-                                    <span class="text-secondary">&rarr;</span>
-                                    <span class="fw-semibold text-success">
+                                    </del>
+                                    <span class="text-secondary" aria-hidden="true">&rarr;</span>
+                                    <span class="visually-hidden">Nilai baru:</span>
+                                    <ins class="fw-semibold text-success text-decoration-none">
                                         {% if new_cat_id and new_cat_id in categories %}
                                             {{ categories[new_cat_id].code }} - {{ categories[new_cat_id].name }}
                                         {% elif log.new_value %}
@@ -161,31 +163,37 @@
                                         {% else %}
                                             Belum ditetapkan
                                         {% endif %}
-                                    </span>
+                                    </ins>
                                 </div>
                             {% elif log.action == 'status_changed' %}
                                 <div class="d-flex align-items-center gap-2 flex-wrap">
-                                    <span class="badge bg-light text-secondary border text-decoration-line-through">
+                                    <span class="visually-hidden">Nilai lama:</span>
+                                    <del class="badge bg-light text-secondary border">
                                         {{ log.old_value or '-' }}
-                                    </span>
-                                    <span class="text-secondary">&rarr;</span>
-                                    {{ status_badge(log.new_value) }}
+                                    </del>
+                                    <span class="text-secondary" aria-hidden="true">&rarr;</span>
+                                    <span class="visually-hidden">Nilai baru:</span>
+                                    <ins class="text-decoration-none">{{ status_badge(log.new_value) }}</ins>
                                 </div>
                             {% elif log.action == 'technician_assigned' %}
                                 <div class="d-flex align-items-center gap-2 flex-wrap">
-                                    <span class="text-muted text-decoration-line-through">
+                                    <span class="visually-hidden">Nilai lama:</span>
+                                    <del class="text-muted">
                                         {{ log.old_value or 'Belum ditugaskan' }}
-                                    </span>
-                                    <span class="text-secondary">&rarr;</span>
-                                    <span class="fw-semibold text-dark">
+                                    </del>
+                                    <span class="text-secondary" aria-hidden="true">&rarr;</span>
+                                    <span class="visually-hidden">Nilai baru:</span>
+                                    <ins class="fw-semibold text-dark text-decoration-none">
                                         {{ log.new_value or '-' }}
-                                    </span>
+                                    </ins>
                                 </div>
                             {% else %}
                                 <div>
+                                    <span class="visually-hidden">Nilai lama:</span>
                                     <del class="text-danger">{{ log.old_value or '-' }}</del>
-                                    &rarr;
-                                    <strong class="text-success">{{ log.new_value or '-' }}</strong>
+                                    <span aria-hidden="true">&rarr;</span>
+                                    <span class="visually-hidden">Nilai baru:</span>
+                                    <ins class="fw-semibold text-success text-decoration-none">{{ log.new_value or '-' }}</ins>
                                 </div>
                             {% endif %}
                         </td>
@@ -204,11 +212,17 @@
             </table>
         </div>
         {% else %}
-        <div class="p-5 text-center text-muted">
-            <i class="bi bi-inbox fs-1 d-block mb-2" aria-hidden="true"></i>
-            <h2 class="h6 fw-semibold text-dark">Tidak ada riwayat log audit yang ditemukan.</h2>
-            <p class="small mb-3">Belum ada catatan perubahan yang sesuai dengan filter yang diterapkan.</p>
-            <a href="{{ url_for('admin.audit_log_list') }}" class="btn btn-sm btn-outline-secondary">Kembalikan Filter Default</a>
+        <div class="text-center py-5 px-3 px-sm-4">
+            <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-light text-primary p-3 mb-3" aria-hidden="true">
+                <i class="bi bi-journal-x fs-3"></i>
+            </div>
+            <h2 class="h5 fw-semibold mb-2 text-dark">Tidak ada riwayat log audit yang ditemukan</h2>
+            <p class="text-secondary small mb-4">
+                Belum ada catatan perubahan yang sesuai dengan filter yang diterapkan.
+            </p>
+            <a href="{{ url_for('admin.audit_log_list') }}" class="btn btn-sm btn-primary">
+                <i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i>Kembalikan Filter Default
+            </a>
         </div>
         {% endif %}
     </div>

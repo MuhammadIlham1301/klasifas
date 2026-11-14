@@ -75,43 +75,59 @@
 
                 <hr class="my-3 text-muted">
 
-                <div class="row g-3 mb-3">
-                    <div class="col-sm-6">
-                        <label class="form-label text-secondary small mb-1">Pilihan Pelapor</label>
-                        <div>
-                            {% if ticket.reporter_category %}
-                            {{ category_badge(ticket.reporter_category) }}
-                            {% else %}
-                            <span class="small text-muted">Tidak memilih</span>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <label class="form-label text-secondary small mb-1">Rekomendasi AI / ML</label>
-                        <div>
-                            {% if ticket.predicted_category %}
-                            <span class="badge bg-info text-dark">
-                                {{ ticket.predicted_category.code }} - {{ ticket.predicted_category.name }}
-                            </span>
-                            {% if ticket.confidence_score is not none %}
-                            <div class="small text-secondary mt-1">Keyakinan: {{ "%.1f"|format(ticket.confidence_score *
-                                100) }}%</div>
-                            {% endif %}
-                            {% else %}
-                            <span class="small text-muted">Model belum tersedia (Fallback)</span>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-
                 <div class="mb-3">
-                    <label class="form-label text-secondary small mb-1">Kategori Resmi Saat Ini</label>
-                    <div>
-                        {% if ticket.official_category %}
-                        {{ category_badge(ticket.official_category, 'fs-6') }}
-                        {% else %}
-                        <span class="badge kf-badge-neutral fs-6">Belum Diverifikasi</span>
-                        {% endif %}
+                    <label class="form-label text-secondary small mb-2 fw-semibold">Komparasi 3 Kategori Fasilitas</label>
+                    <div class="kf-comparator-card">
+                        <div class="kf-comparator-item">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="small text-secondary fw-semibold text-uppercase">Pilihan Pelapor</span>
+                                <span class="badge bg-light text-secondary border small">Input Awal</span>
+                            </div>
+                            <div>
+                                {% if ticket.reporter_category %}
+                                {{ category_badge(ticket.reporter_category) }}
+                                {% else %}
+                                <span class="small text-muted">Tidak memilih</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="kf-comparator-item {% if ticket.needs_manual_verification %}border-start border-3 border-warning{% endif %}">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="small text-secondary fw-semibold text-uppercase">Rekomendasi AI / ML</span>
+                                {% if ticket.confidence_score is not none %}
+                                <span class="badge bg-info-subtle text-info-emphasis border small">
+                                    Keyakinan: {{ "%.1f"|format(ticket.confidence_score * 100) }}%
+                                </span>
+                                {% endif %}
+                            </div>
+                            <div>
+                                {% if ticket.predicted_category %}
+                                <span class="badge bg-info text-dark">
+                                    {{ ticket.predicted_category.code }} - {{ ticket.predicted_category.name }}
+                                </span>
+                                {% if ticket.confidence_score is not none %}
+                                <div class="small text-secondary mt-1">Keyakinan: {{ "%.1f"|format(ticket.confidence_score * 100) }}%</div>
+                                {% endif %}
+                                {% else %}
+                                <span class="small text-muted">Model belum tersedia (Fallback)</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="kf-comparator-item is-highlight">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="small text-secondary fw-semibold text-uppercase">Kategori Resmi Saat Ini</span>
+                                <span class="badge bg-primary-subtle text-primary border small">Otoritatif</span>
+                            </div>
+                            <div>
+                                {% if ticket.official_category %}
+                                {{ category_badge(ticket.official_category, 'fs-6') }}
+                                {% else %}
+                                <span class="badge kf-badge-neutral fs-6">Belum Diverifikasi</span>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -292,7 +308,7 @@
             <div class="card-body p-0">
                 {% if audit_logs %}
                 <div class="table-responsive">
-                    <table class="table table-sm table-striped align-middle mb-0 small">
+                    <table class="table table-sm table-striped align-middle mb-0 small kf-table-dense">
                         <thead class="table-light">
                             <tr>
                                 <th scope="col">Waktu</th>
