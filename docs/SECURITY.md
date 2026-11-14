@@ -200,24 +200,21 @@ Aturan:
 Contoh pembuatan dan verifikasi token yang aman:
 
 ```python
-import secrets
-import hashlib
-import hmac
+from flask import abort, request
+from app.utils.ticket_identity import generate_access_token, verify_access_token
 
-# 1. Saat tiket pertama kali dibuat: Buat token dan simpan hash-nya di database
-access_token = secrets.token_urlsafe(16)  # Entropi 128-bit
-token_hash = hashlib.sha256(access_token.encode("utf-8")).hexdigest()
-# Simpan token_hash ke kolom database ticket.access_token_hash
+# 1. Saat tiket pertama kali dibuat: buat token dan simpan hash-nya di database.
+# Token asli hanya ditampilkan sekali pada respons POST /lapor.
+access_token, token_hash = generate_access_token()
+# Simpan token_hash ke kolom database ticket.access_token_hash.
 
-# 2. Saat pelapor mengakses endpoint pelacakan (/lacak?kode=...&token=...):
-submitted_token = request.args.get("token", "")
-submitted_hash = hashlib.sha256(submitted_token.encode("utf-8")).hexdigest()
+# 2. Saat pelapor mengirim formulir pelacakan melalui POST /lacak:
+submitted_token = (request.form.get("access_token") or "").strip()
 
-# Gunakan hmac.compare_digest untuk perbandingan aman (constant-time comparison)
-is_valid_access = hmac.compare_digest(ticket.access_token_hash, submitted_hash)
+is_valid_access = verify_access_token(submitted_token, ticket.access_token_hash)
 
 if not is_valid_access:
-    # Tolak akses tanpa membocorkan status keberadaan kode tiket
+    # Tolak akses tanpa membocorkan status keberadaan kode tiket.
     abort(404)
 ```
 
@@ -316,11 +313,12 @@ Provisioning akun staf dilakukan melalui CLI lokal, bukan melalui halaman manaje
 
 Ketentuan:
 
-- CLI digunakan untuk membuat akun awal dan akun berikutnya.
-- CLI mendukung perubahan role, penonaktifan akun, dan reset password.
+- CLI saat ini hanya menyediakan perintah `create-staff` untuk membuat akun awal dan akun berikutnya.
+- Perubahan role, penonaktifan akun, dan reset password belum tersedia melalui CLI dan dicatat sebagai backlog pengembangan lanjutan.
 - Password dimasukkan secara interaktif. Password tidak boleh diberikan melalui argumen command, dicatat pada log, atau disimpan dalam bentuk plaintext.
 - Password disimpan menggunakan `generate_password_hash` dengan algoritma scrypt sesuai Bagian 4.1.
-- Role yang berlaku hanya `reporter`, `admin_sarpras`, `teknisi`, dan `pimpinan`.
+- Role yang didukung CLI hanya `admin_sarpras`, `teknisi`, dan `pimpinan`.
+- Akun `reporter` tidak dibuat melalui CLI ini.
 - Tidak ada registrasi publik.
 - Tidak ada halaman manajemen akun dalam MVP.
 - CLI hanya dijalankan oleh operator lokal yang berwenang dengan konfigurasi lingkungan yang sesuai.

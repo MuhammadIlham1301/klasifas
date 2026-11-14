@@ -5,522 +5,708 @@
 **Institusi:** Universitas Muhammadiyah Prof. Dr. HAMKA (UHAMKA)  
 **Fakultas:** Fakultas Teknologi Industri dan Informatika (FTII)  
 **Kelompok:** 7  
-**Status Dokumen:** Approved Draft — Kelompok 7 Review (v1.3)  
-**Dokumen Acuan:** `docs/PRD.md` v1.3, Proposal Seminar Capstone Pertemuan 5, Laporan Seminar Capstone Pertemuan 6  
+**Status Dokumen:** Revisi Verifikasi Implementasi (v1.4)
+**Dokumen Acuan:** `docs/PRD.md`, `docs/SECURITY.md`, `README.md`, dan verifikasi source code aktual
 
 ---
 
 ## 1. Arsitektur Sistem Global
 
-KlasiFas mengadopsi arsitektur **Modular Monolith** berbasis web multi-tier yang dirancang untuk skala prototipe operasional kampus FTII UHAMKA. Seluruh modul aplikasi (antarmuka, kontrol bisnis, inferensi Machine Learning, dan akses basis data) berjalan dalam satu kesatuan proses aplikasi terpadu (*in-process*) guna meminimalkan latensi jaringan, menyederhanakan konfigurasi deployment, serta memudahkan pemeliharaan kode oleh tim pengembang.
+KlasiFas diimplementasikan sebagai **Modular Monolith** berbasis Flask dengan **Application Factory** (`app/__init__.py`). Seluruh komponen aplikasi berjalan dalam satu proses:
+
+- Rute HTTP berbasis blueprint.
+- Logika bisnis pada lapisan service.
+- Model relasional SQLAlchemy.
+- Pemrosesan teks dan inferensi ML in-process.
+- Penyimpanan foto pada filesystem lokal non-publik.
 
 ```
 +-----------------------------------------------------------------------+
 |                           CLIENT TIER                                 |
-|  - Web Browser (Desktop & Mobile Responsive)                          |
-|  - HTML5, CSS3, Vanilla JavaScript (ES6+), Bootstrap 5, Chart.js      |
+|  Browser Desktop/Mobile: HTML5, CSS3, Jinja2, Bootstrap 5,            |
+|  Bootstrap Icons, Chart.js, dan Vanilla JavaScript                    |
 +-----------------------------------▲-----------------------------------+
-                                    │ HTTP / HTTPS (Form & JSON)
+                                    │ HTTP/HTTPS
 +-----------------------------------▼-----------------------------------+
-|                        APPLICATION SERVER TIER                        |
-|  WSGI Web Server (Gunicorn / Waitress / Werkzeug dev)                 |
-|  Python 3.11 Runtime + Flask Framework                               |
+|                       APPLICATION SERVER TIER                         |
+|  Flask Application Factory (app/__init__.py)                          |
+|  Development server: Flask CLI                                        |
+|  Production WSGI server belum dikunci di requirements.txt             |
 |                                                                       |
 |  [Presentation Layer - app/routes/]                                   |
-|   ├── main.py (Beranda & Pelacakan Mandiri FR-02)                     |
-|   ├── complaints.py (Formulir Pelaporan Keluhan & Upload Foto FR-01)  |
-|   ├── auth.py (Login, Logout, Session Guard RBAC)                     |
-|   ├── admin.py (Verifikasi Tiket FR-04, Penugasan FR-05, Log FR-09)   |
-|   ├── technician.py (Papan Tugas & Pembaruan Status Kerja FR-06)      |
-|   └── dashboard.py (Visualisasi Analitik Manajerial FR-07, Filter FR-08)|
+|   ├── report.py    : "/", "/lapor", "/lapor/sukses", "/lacak"         |
+|   ├── auth.py      : "/auth/login", "/auth/logout"                    |
+|   ├── admin.py     : "/admin/tiket", verifikasi, penugasan, foto,      |
+|   |                  "/admin/audit-log"                               |
+|   ├── technician.py: "/teknisi/tiket", detail, foto, update status    |
+|   └── dashboard.py : "/dashboard", "/dashboard/api/chart-data"        |
 |                                                                       |
 |  [Business Logic & Service Layer - app/services/]                     |
-|   ├── complaint_service.py (Validasi Transisi Status 4 Tahap, Kode)   |
-|   ├── audit_service.py (Pencatatan Riwayat Aktivitas & Perubahan)     |
-|   └── classification_service.py (Pra-pemrosesan Teks & Fallback FR-10)|
+|   ├── ticket_report.py        : validasi form & pembuatan tiket       |
+|   ├── ticket_tracking.py      : sanitasi data pelacakan publik        |
+|   ├── ticket_photo.py         : validasi, simpan, hapus foto         |
+|   ├── complaint_service.py    : transisi status, filter, penugasan    |
+|   ├── audit_service.py        : audit trail                           |
+|   ├── classification_service.py: inferensi ML & fallback FR-10        |
+|   └── dashboard_service.py    : agregasi dashboard FR-07              |
 |                                                                       |
-|  [In-Process Machine Learning Pipeline - app/ml/]                     |
-|   ├── preprocessor.py (Case Folding, Regex Cleaning, PySastrawi)      |
-|   ├── classifier.py (TF-IDF Vectorizer + MultinomialNB .joblib)       |
-|   └── Fallback Handler (Penanda Flag Verifikasi Manual)               |
+|  [In-Process ML & NLP - app/ml/]                                      |
+|   ├── preprocessor.py : case folding, cleaning, slang, stopword,      |
+|   |                     stemming PySastrawi                           |
+|   ├── dictionary.py   : kamus normalisasi slang/singkatan             |
+|   └── classifier.py   : load .joblib, TF-IDF, MultinomialNB           |
 +-----------------------------------▲-----------------------------------+
-                                    │ SQLAlchemy 2.0 (Parameterized Queries)
+                                    │ SQLAlchemy 2.0 / parameter binding
 +-----------------------------------▼-----------------------------------+
 |                            DATA TIER                                  |
-|  - PostgreSQL 15+ (Relational Database)                               |
-|  - Local File System Storage (Bukti Foto Terbatas, .joblib Model)     |
+|  - PostgreSQL melalui psycopg2-binary                                 |
+|  - Tabel: users, categories, tickets, audit_logs                      |
+|  - Filesystem lokal: uploads/ (foto, non-publik)                      |
+|  - Artefak .joblib: app/ml/models/ (belum tersedia saat ini)          |
 +-----------------------------------------------------------------------+
 ```
 
 ### Karakteristik Arsitektur Utama
-1. **In-Process Inference:** Model Machine Learning dimuat langsung ke memori proses Flask saat server *bootstrap* (*startup*). Inferensi teks berlangsung secara lokal tanpa overhead pemanggilan jaringan mikroservis.
-2. **Layered Separation of Concerns:** Pemisahan tegas antara rute pengontrol HTTP (`app/routes/`), logika transaksi bisnis (`app/services/`), representasi entitas relasional (`app/models/`), dan pengolahan teks/ML (`app/ml/`).
-3. **Graceful Fallback (FR-10):** Sistem tetap beroperasi penuh menerima pelaporan tiket apabila modul inferensi ML tidak tersedia atau mendeteksi kegagalan pemuatan artefak.
+
+1. **In-Process Inference:** artefak model dimuat dan dipakai langsung di proses Flask. `app/ml/classifier.py` menyediakan cache model thread-safe dan validasi jalur file.
+2. **Layered Separation of Concerns:** pemisahan rute (`app/routes/`), service (`app/services/`), model (`app/models/`), ML (`app/ml/`), dan utilitas (`app/utils/`).
+3. **Graceful Fallback (FR-10):** bila artefak model tidak tersedia atau inferensi gagal, tiket tetap dibuat dengan `needs_manual_verification = True`.
+4. **Tidak ada `run.py`:** aplikasi dijalankan melalui Flask CLI, misalnya `flask --app "app:create_app('development')" run`.
+5. **Tidak ada folder `scripts/`:** skrip pelatihan/evaluasi belum tersedia di repositori.
 
 ---
 
 ## 2. Pemetaan Komponen Teknologi
 
-| Komponen Sistem | Teknologi Terpilih | Versi Rekomendasi Awal | Peran & Justifikasi Teknis |
+| Komponen Sistem | Teknologi | Rentang Versi di `requirements.txt` | Peran |
 | :--- | :--- | :--- | :--- |
-| **Language Runtime** | Python | 3.11.x | Bahasa pemrograman terpadu untuk backend web dan ekosistem Machine Learning / NLP. |
-| **Backend Framework** | Flask | ^3.0.0 | *Microframework* yang ringan, eksplisit, modular (*Blueprints*), dan efisien untuk arsitektur monolitik terintegrasi. |
-| **Relational Database** | PostgreSQL | 15.x / 16.x | RDBMS utama dengan keandalan integritas relasional, kepatuhan ACID, indeks performa tinggi, dan konsistensi dialek pengujian. |
-| **Database Driver** | psycopg2-binary | ^2.9.9 | Driver PostgreSQL berbasis C untuk Python dengan performa tinggi dan kompatibilitas penuh terhadap SQLAlchemy. |
-| **ORM & Migrations** | Flask-SQLAlchemy, Flask-Migrate | ^3.1.1 (SQLAlchemy 2.0+), ^4.0.5 (Alembic) | Abstraksi relasional objek dengan *parameterized queries* bawaan serta pelacakan skema basis data terkontrol versi. |
-| **UI Framework & Style**| Bootstrap | 5.3.x | Framework antarmuka responsif ramah peramban seluler, sistem *grid* teruji, dan komponen antarmuka siap pakai. |
-| **Visualisasi Dasbor** | Chart.js | 4.4.x | Pustaka JavaScript sisi klien untuk merender grafik distribusi kategori, tren keluhan, dan perbandingan status secara interaktif. |
-| **Frontend Scripting** | Vanilla JavaScript | ES6+ | Menangani interaktivitas DOM, validasi sisi klien, kalkulasi panjang karakter, dan komunikasi asinkron tanpa kerumitan *build tools*. |
-| **ML Classifier** | scikit-learn | ^1.3.0 | Implementasi algoritma `MultinomialNB` dengan *Laplace smoothing* ($ \alpha = 1.0 $) dan ekstraksi fitur `TfidfVectorizer`. |
-| **NLP Stemmer** | PySastrawi (Sastrawi) | ^1.2.0 | Ekstraksi kata dasar berbahasa Indonesia (*Nazief & Adriani stemming*) untuk mereduksi variasi morfologi teks keluhan. |
-| **Data Manipulation** | pandas, numpy | ^2.1.0, ^1.26.0 | Manajemen struktur data tabular saat pelatihan model *offline*, kalkulasi matriks evaluasi, dan persiapan korpus teks. |
-| **Model Persistence** | joblib | ^1.3.0 | Serialisasi dan deserialisasi pipa model scikit-learn secara efisien ke dalam format biner `.joblib`. |
-| **Keamanan & Autentikasi** | Werkzeug Security, Flask-WTF | bawaan Flask, ^1.2.1 | Hashing kredensial dengan fungsi kriptografi `scrypt` dan proteksi serangan *Cross-Site Request Forgery* (CSRF). |
-| **Pengujian Perangkat Lunak** | pytest, pytest-cov | ^7.4.0, ^4.1.0 | Kerangka pengujian unit dan integrasi otomatis dengan pelaporan cakupan baris kode (*coverage report*). |
-| **Version Control** | Git & GitHub | Standar | Manajemen riwayat revisi kode sumber, dokumentasi repositori, dan koordinasi pengembangan tim. |
+| Language Runtime | Python | 3.11 (lingkungan proyek) | Backend web dan NLP/ML. |
+| Backend Framework | Flask | `>=3.0.0,<4.0.0` | Application factory dan blueprint. |
+| Environment Loader | python-dotenv | `>=1.0.0,<2.0.0` | Memuat `.env`. |
+| Relational Database | PostgreSQL | Tidak dipin di requirements | Basis data utama. |
+| Database Driver | psycopg2-binary | `>=2.9.9,<3.0.0` | Driver PostgreSQL. |
+| ORM | SQLAlchemy | `>=2.0.0,<3.0.0` | ORM dan query parameter binding. |
+| Flask ORM Integration | Flask-SQLAlchemy | `>=3.1.1,<4.0.0` | Integrasi SQLAlchemy dengan Flask. |
+| Migrations | Flask-Migrate / Alembic | `>=4.0.5,<5.0.0` | Migrasi skema. |
+| Form Security | Flask-WTF | `>=1.2.1,<2.0.0` | Proteksi CSRF. |
+| Image Validation | Pillow | `>=10.0.0,<12.0.0` | Validasi, decode, dan re-encode foto. |
+| ML Classifier | scikit-learn | `>=1.3.0,<2.0.0` | `TfidfVectorizer` dan `MultinomialNB`. |
+| NLP Stemmer/Stopword | PySastrawi | `>=1.2.0,<2.0.0` | Stemming dan stopword Bahasa Indonesia. |
+| Data Processing | pandas, numpy | `>=2.1.0,<3.0.0`, `>=1.26.0,<2.0.0` | Pengolahan data dan komputasi model. |
+| Model Persistence | joblib | `>=1.3.0,<2.0.0` | Serialisasi artefak model. |
+| Testing | pytest | `>=7.4.0,<8.0.0` | Pengujian otomatis. |
+| Password Hashing | Werkzeug Security | Dependensi transitif Flask | Hash password `scrypt`. |
+| UI Framework | Bootstrap 5 | Aset vendor lokal | Layout dan komponen UI. |
+| UI Icons | Bootstrap Icons | Aset vendor lokal | Ikon antarmuka. |
+| Dashboard Charts | Chart.js | Aset vendor lokal | Grafik dashboard. |
+| Frontend Scripting | Vanilla JavaScript | `app/static/js/` | Interaksi portal dan dashboard. |
+| Font | Public Sans | Aset lokal `app/static/fonts/public-sans/` | Tipografi antarmuka. |
+| Version Control | Git | Standar | Riwayat revisi. |
+
+Catatan:
+
+- Versi di `requirements.txt` adalah rentang yang diizinkan, bukan hasil `pip freeze`.
+- `pytest-cov` dan `flake8` tidak tercantum pada `requirements.txt` saat ini.
+- Bootstrap, Bootstrap Icons, dan Chart.js disajikan dari `app/static/vendor/`, bukan CDN.
+- Server WSGI produksi (Gunicorn/Waitress) belum ditambahkan sebagai dependensi.
 
 ---
 
 ## 3. Spesifikasi Modul Backend & Interaksi Data
 
-### 3.1 Arsitektur Modul Rute (`app/routes/`)
-Sesuai rancangan modular yang disepakati, kontrol rute HTTP diorganisasikan ke dalam modul blueprint pada direktori `app/routes/`:
+### 3.1 Arsitektur Modul Rute Aktual (`app/routes/`)
 
-1. **`main.py` (Portal Publik & Pelacakan Mandiri):**
-   - Menangani beranda informasi sistem (`/`).
-   - Melayani pelacakan status tiket publik berbasis kode pelaporan unik secara aman tanpa proses login yang rumit (`/lacak`) (FR-02).
-2. **`complaints.py` (Formulir Pelaporan Keluhan):**
-   - Menangani formulir pelaporan keluhan fasilitas kampus (`/lapor`) (FR-01).
-   - Validasi input teks deskripsi, pemilihan lokasi (gedung, lantai, ruang), isian kategori opsional pelapor, dan unggahan bukti foto opsional.
-3. **`auth.py` (Autentikasi Staf Internal):**
-   - Menangani login dan logout untuk Admin Sarpras, Teknisi, dan Pimpinan/Kaprodi (`/auth/login`, `/auth/logout`).
-   - Mengelola sesi aman berbasis *cookie* dengan pembatasan hak akses berbasis peran (RBAC).
-4. **`admin.py` (Operasional Sarpras):**
-   - Daftar antrean tiket keluhan terverifikasi dan belum terverifikasi (`/admin/tiket`).
-   - Verifikasi atau koreksi kategori hasil inferensi Machine Learning (`/admin/tiket/<id>/verifikasi`) (FR-04).
-   - Penugasan nama teknisi/unit penanggung jawab ke tiket (`/admin/tiket/<id>/assign`) (FR-05).
-   - Pencarian dan penyaringan data laporan multi-kriteria (`/admin/filter`) (FR-08).
-   - Akses eksklusif pembacaan log audit riwayat aktivitas sistem (`/admin/audit-log`) (FR-09).
-5. **`technician.py` (Papan Tugas Teknisi):**
-   - Daftar tiket yang ditugaskan kepada teknisi login (`/teknisi/tiket`).
-   - Formulir pembaruan status pengerjaan tiket sesuai kewenangan transisi resmi dan penambahan catatan tindakan perbaikan fisik (`/teknisi/tiket/<id>/update-status`) (FR-06).
-6. **`dashboard.py` (Dasbor Pemantauan Manajerial):**
-   - Visualisasi analitik internal untuk **Admin Sarpras** dan **Pimpinan/Kaprodi** (`/dashboard`) (FR-07).
-   - Penyajian data statistik volume keluhan, distribusi 7 kategori fasilitas, tren waktu, dan lokasi sering rusak.
-   - Endpoint internal data JSON untuk rendering Chart.js (`/dashboard/api/chart-data`).
-   - *Catatan:* Dasbor difokuskan secara murni pada visualisasi agregat dan filter data (FR-07 dan FR-08).
+Tidak ada `app/routes/main.py` atau `app/routes/complaints.py`. Rute publik berada di `report.py`.
+
+#### `app/routes/report.py` (FR-01, FR-02)
+
+| Method | Path | Fungsi |
+| :--- | :--- | :--- |
+| GET | `/` | Redirect ke formulir pelaporan `/lapor`. |
+| GET, POST | `/lapor` | Formulir dan penyimpanan laporan. |
+| GET | `/lapor/sukses` | Redirect kembali ke formulir pelaporan. |
+| GET, POST | `/lacak` | Pelacakan tiket dengan kode dan token akses. |
+
+Endpoint `/lacak` menerapkan rate limiter pada seluruh percobaan `POST`, termasuk input tidak valid.
+
+#### `app/routes/auth.py` (FR-02)
+
+| Method | Path | Fungsi |
+| :--- | :--- | :--- |
+| GET, POST | `/auth/login` | Login staf internal. |
+| POST | `/auth/logout` | Logout staf; dilindungi `login_required`. |
+
+Blueprint memuat ulang pengguna dari session pada setiap request melalui hook `before_app_request`. Role aktif diambil dari database, bukan hanya dari session.
+
+#### `app/routes/admin.py` (FR-04, FR-05, FR-08, FR-09)
+
+| Method | Path | Fungsi |
+| :--- | :--- | :--- |
+| GET | `/admin/tiket` | Antrean tiket, pencarian, filter, dan paginasi. Filter merupakan query parameter pada endpoint ini. |
+| GET, POST | `/admin/tiket/<int:ticket_id>/verifikasi` | Form dan proses verifikasi/koreksi kategori. |
+| POST | `/admin/tiket/<int:ticket_id>/penugasan` | Penugasan atau penugasan ulang teknisi. |
+| GET | `/admin/tiket/<int:ticket_id>/foto` | Penyajian foto bukti secara terautentikasi. |
+| GET | `/admin/audit-log` | Daftar audit log dengan filter dan paginasi. |
+
+Tidak ada endpoint `/admin/filter` dan `/admin/tiket/<id>/assign` pada implementasi aktual.
+
+#### `app/routes/technician.py` (FR-06)
+
+| Method | Path | Fungsi |
+| :--- | :--- | :--- |
+| GET | `/teknisi/tiket` | Papan tugas teknisi yang sedang login. |
+| GET | `/teknisi/tiket/<int:ticket_id>` | Detail tiket milik teknisi login. |
+| GET | `/teknisi/tiket/<int:ticket_id>/foto` | Foto bukti tiket milik teknisi login. |
+| POST | `/teknisi/tiket/<int:ticket_id>/status` | Pembaruan status dan catatan perbaikan. |
+
+Akses tiket dibatasi pada `assigned_technician_id` milik teknisi login. Tiket milik teknisi lain menghasilkan 404.
+
+#### `app/routes/dashboard.py` (FR-07, FR-08)
+
+| Method | Path | Fungsi |
+| :--- | :--- | :--- |
+| GET | `/dashboard`, `/dashboard/` | Halaman dashboard untuk `admin_sarpras` dan `pimpinan`. |
+| GET | `/dashboard/api/chart-data` | Payload JSON agregat untuk Chart.js. |
+
+Dashboard bersifat read-only dan tidak memuat PII pelapor.
+
+#### Rute dan Handler Tingkat Aplikasi
+
+- `GET /favicon.ico` mengembalikan redirect 308 ke `static/favicon.svg`.
+- Handler error kustom tersedia untuk 403, 404, dan 500 di `app/utils/error_handlers.py`.
+- Header keamanan dipasang pada setiap respons melalui `after_request`.
 
 ### 3.2 Alur Transisi Status Resmi Tiket
-Sistem secara ketat hanya memberlakukan **empat status resmi** sesuai PRD Bagian 5.2.E:
+
+Status resmi tetap empat:
 
 $$\mathbf{Baru} \longrightarrow \mathbf{Terverifikasi} \longrightarrow \mathbf{Diproses} \longrightarrow \mathbf{Selesai}$$
 
-- **`Baru`:** Tiket berhasil dibuat oleh pelapor melalui formulir web (FR-01) dan telah melalui proses klasifikasi otomatis atau penandaan *fallback*.
-- **`Terverifikasi`:** Kategori operasional tiket telah diperiksa, dikonfirmasi, atau dikoreksi oleh Admin Sarpras (FR-04), dan informasi penanggung jawab teknisi telah disematkan (FR-05).
-- **`Diproses`:** Teknisi yang ditugaskan telah menerima penugasan dan mulai melaksanakan tindakan perbaikan fisik di lapangan (FR-06).
-- **`Selesai`:** Tindakan perbaikan telah tuntas dilaksanakan oleh teknisi, disertai catatan ringkasan penanganan dan stempel waktu selesai (FR-06).
+Aturan implementasi pada `app/services/complaint_service.py`:
 
-> [!IMPORTANT]
-> **Integritas Status Operasional:**  
-> Sistem **tidak menambahkan status di luar empat status resmi** di atas. Penugasan teknisi dicatat sebagai atribut relasional penanggung jawab pada entitas tiket (FR-05), bukan sebagai status baru. Pembatalan atau kendala operasional dicatat pada catatan log audit dan ringkasan tindak lanjut tanpa merusak konsistensi empat status utama.
+- `Baru` → `Terverifikasi`: hanya `admin_sarpras`.
+- `Terverifikasi` → `Diproses`: `teknisi` atau `admin_sarpras`.
+- `Diproses` → `Selesai`: `teknisi` atau `admin_sarpras`.
+- `Selesai` tidak memiliki transisi keluar.
+- Teknisi hanya dapat mengubah tiket yang ditugaskan kepadanya.
+- Transisi ke `Selesai` mewajibkan catatan tindakan perbaikan.
+- Transisi no-op mengembalikan status tanpa mutasi dan tanpa audit log baru.
+- Penugasan teknisi adalah atribut `assigned_technician_id`, bukan status tiket.
 
-### 3.3 Penanganan Kondisi "Perlu Verifikasi Manual" (Flag Proses, Bukan Status Tiket)
-Apabila model Machine Learning mengalami kegagalan proses/artefak tidak tersedia (FR-10), atau skor keyakinan prediksi berada di bawah ambang batas evaluasi (*low confidence score*):
-- Status tiket **tetap berstatus resmi `Baru`**.
-- Sistem menyematkan penanda proses klasifikasi internal: `needs_manual_verification = True`.
-- Rekomendasi kategori diberi label penanda khusus `Perlu Verifikasi Manual` pada antrean Admin Sarpras agar menjadi prioritas pemeriksaan manusia sebelum tiket diverifikasi menjadi `Terverifikasi`.
+### 3.3 Flag "Perlu Verifikasi Manual"
 
-### 3.4 Keamanan Kueri Basis Data & Parameter Binding
-Interaksi basis data menggunakan **Flask-SQLAlchemy** (SQLAlchemy 2.0). 
-- Seluruh kueri yang dieksekusi melalui SQLAlchemy ORM secara otomatis menggunakan **parameter binding / parameterized queries** untuk memitigasi risiko *SQL Injection*.
-- Apabila terdapat kueri berbasis *raw SQL* untuk kebutuhan agregasi analitik dasbor, pengembang diwajibkan menggunakan konstruksi `db.session.execute(text("..."), params)` dengan parameter binding eksplisit.
+Jika model tidak tersedia, preprocessing gagal, tidak ada token valid, inferensi gagal, kategori hasil prediksi tidak ditemukan, atau skor keyakinan di bawah `ML_CONFIDENCE_THRESHOLD`:
 
-### 3.5 Spesifikasi Format Kode Tiket
-- **Format:** Prefix **`KF-`** diikuti **6 karakter acak alfanumerik kapital** (contoh: `KF-8X9B2M`).
-- **Panjang Karakter:** Tepat 8 karakter alfanumerik (di luar tanda hubung `-`).
-- **Keamanan:** Dibuat menggunakan modul kriptografis `secrets` (alfabet non-ambigu seperti `23456789ABCDEFGHJKLMNPQRSTUVWXYZ` tanpa karakter yang mudah tertukar seperti `0/O` atau `1/I`) guna mencegah serangan tebakan nomor urut (*sequential enumeration attack*). Endpoint pelacakan publik dilindungi pembatasan frekuensi pencarian (*rate limiting*).
+- Status tiket tetap `Baru`.
+- `needs_manual_verification` diset `True`.
+- Tiket tetap disimpan dan masuk antrean verifikasi Admin Sarpras.
+
+Flag ini adalah penanda proses, bukan status tiket tambahan.
+
+### 3.4 Keamanan Kueri Basis Data
+
+- Seluruh akses data menggunakan SQLAlchemy ORM dan parameter binding.
+- Tidak ada penyusunan SQL dari input pengguna.
+- Paginasi menggunakan `db.paginate`.
+- Relasi many-to-one dimuat dengan `joinedload` pada beberapa query untuk menghindari N+1.
+
+### 3.5 Format Kode Tiket dan Token Pelacakan
+
+- Kode tiket: `KF-` diikuti 6 karakter dari alfabet `23456789ABCDEFGHJKLMNPQRSTUVWXYZ`.
+- Panjang total 9 karakter termasuk tanda hubung.
+- Pola database dan validasi pelacakan: `^KF-[23456789A-HJ-NP-Z]{6}$`.
+- Token akses dibuat dengan `secrets.token_urlsafe(16)` (128 bit).
+- Yang disimpan di database hanya hash SHA-256 token (`access_token_hash`), bukan token asli.
+- Verifikasi token menggunakan `hmac.compare_digest`.
+- Respons pelacakan yang gagal selalu generik (404) untuk mengurangi enumerasi.
+- Endpoint `POST /lacak` dilindungi rate limiter.
+
+### 3.6 Modul Service Aktual (`app/services/`)
+
+| Modul | Tanggung Jawab |
+| :--- | :--- |
+| `ticket_report.py` | Validasi form laporan, validasi kategori aktif, pembuatan kode/token, pembuatan tiket, klasifikasi awal. |
+| `ticket_tracking.py` | Validasi kode/token pelacakan dan sanitasi data publik. |
+| `ticket_photo.py` | Validasi ekstensi, MIME, magic number, dimensi, decode/re-encode, penyimpanan nama acak, penghapusan file. |
+| `complaint_service.py` | State machine status, verifikasi kategori, penugasan teknisi, filter admin, query teknisi, penyajian foto terautentikasi. |
+| `audit_service.py` | Sanitasi catatan audit, pencatatan perubahan kategori/status/penugasan, query audit log terpaginasi. |
+| `classification_service.py` | Orkestrasi preprocessing, pemuatan model, inferensi, threshold, dan fallback FR-10. |
+| `dashboard_service.py` | Agregasi KPI, distribusi kategori, tren waktu, distribusi lokasi, dan payload Chart.js. |
+
+Catatan audit: `VALID_AUDIT_ACTIONS` pada `audit_service.py` mencakup `category_changed`, `status_changed`, dan `technician_assigned`. Konstanta `AUDIT_ACTIONS` pada `app/models/audit_log.py` masih mencantumkan dua aksi dan memiliki komentar bahwa penugasan teknisi belum diputuskan.
+
+### 3.7 Modul Utilitas Aktual (`app/utils/`)
+
+| Modul | Tanggung Jawab |
+| :--- | :--- |
+| `decorators.py` | `STAFF_ROLES`, `login_required`, `role_required`. |
+| `error_handlers.py` | Halaman error 403, 404, 500. |
+| `password.py` | Hash dan verifikasi password dengan Werkzeug `scrypt`. |
+| `rate_limiter.py` | Sliding-window rate limiter in-memory. |
+| `security_headers.py` | Header keamanan respons; tidak termasuk HSTS. |
+| `ticket_identity.py` | Generator kode tiket, token akses, hash SHA-256, dan verifikasi constant-time. |
 
 ---
 
 ## 4. Pipeline Machine Learning & Pengolahan Teks (FR-03)
 
-### 4.1 Tahapan Pra-pemrosesan Teks & Klasifikasi
-Proses klasifikasi teks keluhan berlangsung secara lokal (*in-process*) di memori aplikasi pada saat pelapor mengirimkan keluhan (FR-03):
+### 4.1 Tahapan Pra-pemrosesan Aktual
+
+Implementasi berada di `app/ml/preprocessor.py` dengan kamus slang di `app/ml/dictionary.py`.
 
 ```
-Teks Keluhan Mentah (Deskripsi)
+Teks Keluhan Mentah
         │
         ▼
-[1. Case Folding] ─── Mengubah seluruh teks deskripsi menjadi huruf kecil (lowercase).
+[1. Case Folding]
         │
         ▼
-[2. Regex Cleaning] ─ Menghapus URL, tanda baca, simbol, spasi berlebih, dan angka.
-                      *Penegasan Khusus: Pembersihan angka HANYA diterapkan pada teks deskripsi
-                       keluhan dan SAMA SEKALI TIDAK MENGUBAH data angka lokasi (Gedung, Lantai, Ruang).
+[2. Penghapusan URL]
         │
         ▼
-[3. Stopwords Removal] Menghapus kata umum non-substantif menggunakan daftar stopword Indonesia.
+[3. Normalisasi Slang/Singkatan]  ← app/ml/dictionary.py
         │
         ▼
-[4. Sastrawi Stemming] Meretensi kata dasar bahasa Indonesia (PySastrawi: Nazief & Adriani).
+[4. Regex Cleaning]
+   Menghapus karakter non-huruf, termasuk angka, dari teks deskripsi.
         │
         ▼
-[5. TF-IDF Vectorizer] Transformasi teks bersih ke bobot fitur unigram/bigram (.joblib artifact).
+[5. Stopword Removal]             ← PySastrawi
         │
         ▼
-[6. Multinomial Naive Bayes] Komputasi probabilitas posterior tiap kelas K1–K7 (.joblib artifact).
+[6. Stemming Nazief-Adriani]      ← PySastrawi
         │
-        ├── Kategori Prediksi Rekomendasi (Probabilitas Terbesar)
-        └── Nilai Confidence Score (Data pendukung telaah Admin Sarpras)
+        ▼
+[TF-IDF Vectorizer]               → vectorizer.joblib (diharapkan)
+        │
+        ▼
+[Multinomial Naive Bayes]         → model.joblib (diharapkan)
+        │
+        ├── Kode kategori prediksi K1–K7
+        └── Confidence score
 ```
 
-### 4.2 Siklus Hidup dan Keamanan Artefak Model (.joblib)
-1. **Pelatihan & Evaluasi Offline:**
-   - Pelatihan dan pengujian model scikit-learn dilakukan secara *offline* di lingkungan pengembangan lokal (`scripts/train_model.py`) setelah dataset penelitian (target perencanaan 600 sampel) selesai dihimpun, memperoleh izin institusi, dan dianomimkan dari data pribadi (*PII*).
-   - Evaluasi menghasilkan metrik performa formal (Akurasi, Macro-F1, Recall per kelas).
-2. **Penyalinan Terkontrol ke Direktori Aplikasi:**
-   - Artefak yang telah lolos verifikasi performa (`model.joblib` dan `vectorizer.joblib`) disalin secara terkontrol ke direktori `app/ml/models/`.
-3. **Aturan Keamanan Deserialisasi:**
-   - **Prinsip Keamanan Mutlak:** Aplikasi **hanya diizinkan memuat** file biner `.joblib` yang bersumber langsung dari pipa pelatihan internal pengembang tepercaya. Aplikasi dilarang keras memuat atau mengeksekusi file `.joblib` dari masukan pengguna, pihak ketiga, atau jaringan eksternal untuk mencegah celah eksekusi kode sembarang (*Arbitrary Code Execution*).
-4. **Fallback Handler (FR-10):**
-   - Modul `classification_service.py` membungkus pemuatan model dan inferensi dalam blok penanganan eksepsi (`try-except`).
-   - Apabila artefak `.joblib` belum tersedia atau terjadi galat komputasi, sistem secara otomatis menandai tiket dengan flag `needs_manual_verification = True` tanpa menggagalkan proses penyimpanan laporan pelapor ke basis data.
+Pembersihan angka hanya berlaku pada teks deskripsi yang dipakai untuk fitur NLP. Nilai numerik lokasi (gedung, lantai, ruang) tidak diubah oleh preprocessor.
+
+### 4.2 Siklus Hidup Artefak Model
+
+1. **Pelatihan dan evaluasi: rencana, belum tersedia.**
+   - Tidak ada folder `scripts/`.
+   - Tidak ada `train_model.py`, `evaluate_model.py`, dataset, atau artefak model di repositori.
+   - Pelatihan dan evaluasi offline masih perlu diselesaikan sebelum model dapat dipakai.
+   - Target metrik dan target jumlah dataset bukan hasil aktual.
+
+2. **Lokasi artefak yang diharapkan:**
+   - `app/ml/models/model.joblib`
+   - `app/ml/models/vectorizer.joblib`
+   - Direktori `app/ml/models/` belum ada saat ini.
+   - File `*.joblib` masuk `.gitignore`.
+
+3. **Pemuatan artefak:**
+   - `app/ml/classifier.py` memvalidasi bahwa path model berada di dalam direktori model yang diizinkan.
+   - Model dan vectorizer di-cache di memori secara thread-safe.
+   - Aplikasi hanya boleh memuat `.joblib` dari lokasi internal tepercaya.
+   - Jika artefak tidak tersedia, `ModelNotAvailableError` ditangani sebagai fallback manual.
+
+4. **Inferensi:**
+   - `predict_category()` memanggil `vectorizer.transform()` dan `model.predict_proba()`.
+   - Kategori dengan probabilitas tertinggi dipakai sebagai rekomendasi.
+   - `ML_CONFIDENCE_THRESHOLD` default `0.60` masih placeholder.
 
 ---
 
-## 5. Struktur Direktori Proyek
+## 5. Struktur Direktori Proyek Aktual
 
-Struktur folder mengimplementasikan pola Modular Monolith yang terstruktur rapi, mempertahankan konsistensi `app/config.py` dan `app/routes/`:
-
-```
-klasifas/
-├── app/                            # Paket Utama Aplikasi Flask
-│   ├── __init__.py                 # Application Factory (create_app) & Inisialisasi Ekstensi
-│   ├── config.py                   # Konfigurasi Kelas Aplikasi & Hook Validasi Lingkungan
-│   ├── models/                     # Deklarasi Entitas Basis Data (Flask-SQLAlchemy)
+```text
+Klasifas/
+├── app/                                  # Paket utama Flask
+│   ├── __init__.py                       # Application Factory & registrasi blueprint
+│   ├── cli.py                            # Perintah CLI create-staff
+│   ├── config.py                         # Kelas konfigurasi & validasi environment
+│   ├── extensions.py                     # db, migrate, csrf
+│   ├── models/                           # Model SQLAlchemy
 │   │   ├── __init__.py
-│   │   ├── user.py                 # Entitas Pengguna (Admin Sarpras, Teknisi, Pimpinan/Kaprodi)
-│   │   ├── ticket.py               # Entitas Tiket Keluhan & Log 4 Status Resmi
-│   │   ├── category.py             # Entitas Referensi 7 Kategori Fasilitas (K1–K7)
-│   │   └── audit_log.py            # Entitas Riwayat Audit Perubahan Sistem (FR-09)
-│   ├── routes/                     # Modul Blueprint Pengontrol HTTP
+│   │   ├── base.py                       # Declarative base & naming convention
+│   │   ├── user.py                       # User & role RBAC
+│   │   ├── category.py                   # Kategori K1–K7
+│   │   ├── ticket.py                     # Tiket keluhan
+│   │   └── audit_log.py                  # Audit log
+│   ├── routes/                           # Blueprint HTTP
 │   │   ├── __init__.py
-│   │   ├── main.py                 # Beranda & Pelacakan Mandiri Publik (FR-02)
-│   │   ├── complaints.py           # Formulir Pelaporan & Upload Foto (FR-01)
-│   │   ├── auth.py                 # Login, Logout, & Session Guard Internal
-│   │   ├── admin.py                # Verifikasi Kategori, Penugasan, Filter, Log Audit
-│   │   ├── technician.py           # Papan Tugas Teknisi & Pembaruan Status (FR-06)
-│   │   └── dashboard.py            # Dasbor Pemantauan Manajerial & API Grafik (FR-07)
-│   ├── services/                   # Lapisan Logika Bisnis (Business Logic Layer)
+│   │   ├── auth.py
+│   │   ├── report.py                     # Rute publik /, /lapor, /lacak
+│   │   ├── admin.py
+│   │   ├── technician.py
+│   │   └── dashboard.py
+│   ├── services/                         # Logika bisnis
 │   │   ├── __init__.py
-│   │   ├── complaint_service.py    # Logika Tiket, Validasi Transisi 4 Status, Generator Kode
-│   │   ├── audit_service.py        # Pencatatan Audit Trail Perubahan Status/Kategori
-│   │   └── classification_service.py # Orkestrasi NLP, Inferensi Model, & Fallback (FR-10)
-│   ├── ml/                         # Paket Machine Learning & NLP (In-Process)
+│   │   ├── audit_service.py
+│   │   ├── classification_service.py
+│   │   ├── complaint_service.py
+│   │   ├── dashboard_service.py
+│   │   ├── ticket_photo.py
+│   │   ├── ticket_report.py
+│   │   └── ticket_tracking.py
+│   ├── ml/                               # NLP & ML in-process
 │   │   ├── __init__.py
-│   │   ├── preprocessor.py         # Case Folding, Regex Cleaning, Sastrawi Stemming
-│   │   ├── classifier.py           # Deserialisasi .joblib & Komputasi Probabilitas
-│   │   └── models/                 # Direktori Artefak Biner (.gitignored)
-│   │       ├── .gitkeep
-│   │       ├── model.joblib        # [Artefak Terkontrol] Trained Naive Bayes
-│   │       └── vectorizer.joblib   # [Artefak Terkontrol] Trained TF-IDF
-│   ├── static/                     # Aset Statis Web
+│   │   ├── classifier.py
+│   │   ├── dictionary.py
+│   │   └── preprocessor.py
+│   │   # app/ml/models/ belum ada; dibuat saat artefak model tersedia
+│   ├── static/                           # Aset statis
 │   │   ├── css/
-│   │   │   └── style.css           # Kustomisasi Tampilan & Penyesuaian Antarmuka
+│   │   │   └── klasifas.css
+│   │   ├── favicon.svg
+│   │   ├── fonts/
+│   │   │   └── public-sans/
+│   │   │       ├── OFL.txt
+│   │   │       ├── PublicSans-Bold.woff2
+│   │   │       ├── PublicSans-Medium.woff2
+│   │   │       ├── PublicSans-Regular.woff2
+│   │   │       └── PublicSans-SemiBold.woff2
 │   │   ├── js/
-│   │   │   ├── main.js             # Validasi Form, Interaksi DOM, Modal Konfirmasi
-│   │   │   └── dashboard.js        # Inisialisasi & Rendering Grafik Chart.js
-│   │   └── img/                    # Logo Resmi UHAMKA, FTII, & Ikon Fasilitas
-│   ├── templates/                  # Template Jinja2 (HTML5 Responsif)
-│   │   ├── base.html               # Layout Induk (Navigasi, Notifikasi Flash, Footer)
-│   │   ├── public/                 # Tampilan Beranda & Pelacakan Tiket Mandiri
-│   │   ├── complaints/             # Tampilan Formulir Pelaporan Keluhan
-│   │   ├── auth/                   # Tampilan Form Login Staf Internal
-│   │   ├── admin/                  # Antrean Verifikasi Tiket, Penugasan, & Log Audit
-│   │   ├── technician/             # Antrean Kerja & Form Pembaruan Status Teknisi
-│   │   └── dashboard/              # Dasbor Analitik Manajerial & Grafik Statistik
-│   └── utils/                      # Helper & Fungsi Pembantu
+│   │   │   ├── dashboard.js
+│   │   │   └── portal.js
+│   │   └── vendor/
+│   │       ├── bootstrap/
+│   │       ├── bootstrap-icons/
+│   │       └── chartjs/
+│   ├── templates/                        # Template Jinja2
+│   │   ├── base.html
+│   │   ├── components/
+│   │   │   ├── _code_box.html
+│   │   │   └── _macros.html
+│   │   ├── errors/
+│   │   │   └── error.html
+│   │   ├── report/
+│   │   │   ├── form.html
+│   │   │   ├── success.html
+│   │   │   └── track.html
+│   │   ├── auth/
+│   │   │   └── login.html
+│   │   ├── admin/
+│   │   │   ├── audit_log.html
+│   │   │   ├── queue.html
+│   │   │   └── verify.html
+│   │   ├── technician/
+│   │   │   ├── detail.html
+│   │   │   └── queue.html
+│   │   └── dashboard/
+│   │       └── index.html
+│   └── utils/
 │       ├── __init__.py
-│       ├── decorators.py           # Dekorator Pembatasan Akses RBAC (@role_required)
-│       └── security_helpers.py     # Generator Token Acak Tiket & Sanitasi File
-├── migrations/                     # Direktori Migrasi Skema Basis Data (Flask-Migrate/Alembic)
-├── scripts/                        # Skrip Utilitas Offline & Otomasi
-│   ├── train_model.py              # Pelatihan Offline Model & Serialisasi .joblib
-│   ├── evaluate_model.py           # Kalkulasi Metrik Evaluasi & Confusion Matrix
-│   └── cli.py                      # Perintah CLI lokal: provisioning akun staf
-├── tests/                          # Paket Pengujian Perangkat Lunak (pytest)
-│   ├── conftest.py                 # Fixture Pengujian & Koneksi Database Test
-│   ├── test_preprocessing.py       # Unit Test Case Folding, Stopwords, Stemming, Regex
-│   ├── test_classifier.py          # Unit Test Inferensi Model ML & Fallback FR-10
-│   ├── test_complaint_flow.py      # Integration Test Alur 4 Status Tiket & Transisi
-│   └── test_rbac_security.py       # Security Test Sesi, Hak Akses, & Audit Log
-├── uploads/                        # Direktori Penyimpanan Foto Bukti Keluhan (.gitignored)
-├── .env.example                    # Template Variabel Lingkungan
-├── .gitignore                      # Aturan Pengecualian Berkas Repositori
-├── requirements.txt                # Daftar Dependensi Pustaka Python Resmi
-├── README.md                       # Dokumentasi Utama Repositori
-└── run.py                          # Titik Masuk Eksekusi Aplikasi Flask (Entry Point)
+│       ├── decorators.py
+│       ├── error_handlers.py
+│       ├── password.py
+│       ├── rate_limiter.py
+│       ├── security_headers.py
+│       └── ticket_identity.py
+├── docs/
+│   ├── DESIGN.md
+│   ├── PRD.md
+│   ├── SECURITY.md
+│   ├── SKILLS.md
+│   ├── TASKS.md
+│   ├── TECHSTACK.md
+│   └── ui-ux-reference/
+├── migrations/                           # Flask-Migrate / Alembic
+│   ├── alembic.ini
+│   ├── env.py
+│   ├── README
+│   ├── script.py.mako
+│   └── versions/
+│       ├── 0001_initial_schema.py
+│       └── 0002_seed_categories.py
+├── tests/                                # 34 file pengujian pytest
+├── uploads/                              # Foto bukti; gitignored
+├── .env.example                          # Template environment
+├── .gitignore
+├── AGENTS.md
+├── README.md
+├── requirements.txt
+└── test-results.txt                      # Artefak baseline pytest lokal
 ```
 
----
+Catatan struktur:
+
+- Tidak ada folder `scripts/`.
+- Tidak ada `run.py`.
+- Tidak ada `app/templates/public/`, `app/templates/complaints/`, atau `app/static/img/` seperti pada rancangan lama.
+- Nama file aktual adalah `report.py`, `klasifas.css`, `portal.js`, dan `favicon.svg`.
 
 ### 5.1 Provisioning Akun Staf (CLI)
 
-Akun staf internal dibuat melalui perintah Flask CLI lokal, bukan halaman pengelolaan akun:
+Akun staf internal dibuat melalui Flask CLI, bukan halaman registrasi publik:
 
-```
-python -m flask create-staff --username <username> --role <role> --full-name "<nama>"
+```powershell
+flask --app "app:create_app('development')" create-staff --username <username> --role <role> --full-name "<nama>"
 ```
 
-- Implementasi berada di `app/cli.py` dan didaftarkan pada `app.cli` di dalam `create_app()`.
-- Password dimasukkan melalui prompt tersembunyi dengan konfirmasi; password tidak pernah menjadi argumen CLI dan tidak dicetak.
-- Hash password menggunakan `app.utils.password.hash_password` (Werkzeug scrypt).
-- Role yang diterima: `admin_sarpras`, `teknisi`, `pimpinan` (sumber: `app.utils.decorators.STAFF_ROLES`).
-- Tidak ada akun default yang dibuat otomatis saat aplikasi start, migrasi, atau impor modul.
-- Cakupan perintah ini hanya pembuatan akun; reset password, penonaktifan, dan perubahan role belum diimplementasikan.
+Ketentuan implementasi `app/cli.py`:
+
+- Perintah didaftarkan melalui `register_cli(app)` di `create_app()`.
+- Username dinormalisasi ke huruf kecil dan divalidasi dengan pola `^[a-z0-9._-]{3,64}$`.
+- Role yang diterima: `admin_sarpras`, `teknisi`, `pimpinan`.
+- Password dimasukkan melalui prompt tersembunyi dengan konfirmasi.
+- Password minimal 12 karakter dan tidak boleh sama dengan username.
+- Password tidak pernah menjadi argumen CLI dan tidak dicetak.
+- Hash password menggunakan `app/utils/password.py` dengan Werkzeug `scrypt`.
+- Perintah hanya membuat akun; reset password, penonaktifan, dan perubahan role belum tersedia.
+- Tidak ada akun default yang dibuat otomatis.
+
+---
+
 ## 6. Spesifikasi Dependensi (`requirements.txt`)
 
-Versi pustaka yang dicantumkan merupakan **batas versi rekomendasi awal**. Dependensi dibatasi secara ketat hanya pada pustaka yang benar-benar dibutuhkan oleh sistem. Pengujian kompatibilitas aktual dilakukan saat penyiapan lingkungan pengembangan, dan versi final akan dikunci (*pinned*) setelah seluruh pengujian lulus:
+Isi aktual `requirements.txt`:
 
 ```text
-# Web Framework & Core Extensions
-Flask>=3.0.0,<3.1.0
-Flask-SQLAlchemy>=3.1.1,<3.2.0
-Flask-Migrate>=4.0.5,<4.1.0
-Flask-WTF>=1.2.1,<1.3.0
-WTForms>=3.1.1,<3.2.0
+# --- Web Framework & Core ---
+Flask>=3.0.0,<4.0.0
+python-dotenv>=1.0.0,<2.0.0
 
-# Database Driver
+# --- Database & Object-Relational Mapping ---
+SQLAlchemy>=2.0.0,<3.0.0
+Flask-SQLAlchemy>=3.1.1,<4.0.0
+Flask-Migrate>=4.0.5,<5.0.0
 psycopg2-binary>=2.9.9,<3.0.0
 
-# Machine Learning & Natural Language Processing
-scikit-learn>=1.3.0,<1.4.0
-PySastrawi>=1.2.0,<1.3.0
-pandas>=2.1.0,<2.2.0
-numpy>=1.26.0,<1.27.0
-joblib>=1.3.0,<1.4.0
+# --- Form Security ---
+Flask-WTF>=1.2.1,<2.0.0
 
-# Security & Utilities
-Werkzeug>=3.0.1,<3.1.0
-python-dotenv>=1.0.0,<1.1.0
+# --- Image Validation ---
+Pillow>=10.0.0,<12.0.0
 
-# Testing & Code Quality
+# --- NLP & Machine Learning Ecosystem ---
+PySastrawi>=1.2.0,<2.0.0
+scikit-learn>=1.3.0,<2.0.0
+pandas>=2.1.0,<3.0.0
+numpy>=1.26.0,<2.0.0
+joblib>=1.3.0,<2.0.0
+
+# --- Automated Testing Suite ---
 pytest>=7.4.0,<8.0.0
-pytest-cov>=4.1.0,<5.0.0
-flake8>=6.1.0,<7.0.0
 ```
+
+Catatan:
+
+- Tidak ada `pytest-cov`, `flake8`, atau `pytest-flask`.
+- Tidak ada dependensi server produksi seperti Gunicorn atau Waitress.
+- `Werkzeug` tidak dipin eksplisit; digunakan melalui Flask untuk hashing password.
+- `Pillow` digunakan untuk validasi dan pemrosesan ulang foto.
 
 ---
 
 ## 7. Konfigurasi Lingkungan (`app/config.py` & `.env`)
 
-### 7.1 Pemuatan dan Validasi Konfigurasi Terisolasi
-Modul `app/config.py` memuat berkas `.env` menggunakan `python-dotenv` sebelum kelas konfigurasi dievaluasi. Validasi spesifik lingkungan dipisahkan ke dalam metode kelas `init_app(app)` agar evaluasi variabel yang bersifat eksklusif (seperti `DATABASE_URL` pada produksi) **hanya dieksekusi ketika kelas konfigurasi tersebut benar-benar diaktifkan** oleh *Application Factory* (`create_app`), sehingga tidak mengganggu `DevelopmentConfig` maupun `TestingConfig`:
+### 7.1 Pemuatan dan Validasi Konfigurasi
 
-```python
-import os
-from datetime import timedelta
-from dotenv import load_dotenv
+`app/config.py` memuat `.env` menggunakan `python-dotenv`, kecuali `PYTHON_DOTENV_DISABLED=true`.
 
-# Pemuatan .env secara eksplisit sebelum pembacaan os.environ
-load_dotenv()
+Prinsip implementasi aktual:
 
-class Config:
-    """Konfigurasi dasar umum (Base Configuration)."""
-    SECRET_KEY = os.environ.get('SECRET_KEY')
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    
-    # Batas ukuran upload berkas (Rekomendasi awal 5 MB; parameter sementara yang difinalisasi pada docs/SECURITY.md)
-    MAX_CONTENT_LENGTH = 5 * 1024 * 1024
-    
-    BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-    UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
-    ML_MODEL_PATH = os.path.join(BASE_DIR, 'app', 'ml', 'models', 'model.joblib')
-    ML_VECTORIZER_PATH = os.path.join(BASE_DIR, 'app', 'ml', 'models', 'vectorizer.joblib')
-    
-    # Placeholder ambang batas keyakinan (dievaluasi setelah model selesai dilatih)
-    ML_CONFIDENCE_THRESHOLD = float(os.environ.get('ML_CONFIDENCE_THRESHOLD', '0.60'))
+- `FLASK_CONFIG` wajib disetel atau nama konfigurasi harus diberikan eksplisit saat memanggil `create_app()`.
+- Tidak ada silent fallback ke `development`.
+- `SECRET_KEY` wajib ada dan harus tepat 64 karakter heksadesimal.
+- `DevelopmentConfig` dan `TestingConfig` membaca URI database dari environment tanpa nilai default.
+- `TestingConfig` mewajibkan `TEST_DATABASE_URL` dan menolak URI yang sama dengan `DEV_DATABASE_URL` atau `DATABASE_URL`.
+- `ProductionConfig` mewajibkan `DATABASE_URL`.
+- `ProxyFix` hanya dipasang jika `TRUSTED_PROXIES_COUNT > 0`.
 
-    @classmethod
-    def init_app(cls, app):
-        """Validasi umum saat inisialisasi aplikasi."""
-        if not cls.SECRET_KEY:
-            raise ValueError(
-                "CRITICAL: Variabel lingkungan 'SECRET_KEY' belum disetel. "
-                "Aplikasi dihentikan demi keamanan sesi."
-            )
+Ringkasan kelas konfigurasi:
 
-class DevelopmentConfig(Config):
-    """Konfigurasi khusus lingkungan pengembangan lokal."""
-    DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
-        'DEV_DATABASE_URL',
-        'postgresql://postgres:postgres@localhost:5432/klasifas_dev_db'
-    )
-    # Mendukung pengujian dan demonstrasi lokal berbasis protokol HTTP
-    SESSION_COOKIE_SECURE = False
+| Kelas | Karakteristik Aktual |
+| :--- | :--- |
+| `Config` | `SECRET_KEY`, `SQLALCHEMY_TRACK_MODIFICATIONS=False`, cookie HttpOnly, SameSite `Lax`, path upload/model, batas foto, MIME, threshold ML, `TRUSTED_PROXIES_COUNT`, variabel rate limit (belum dipakai). |
+| `DevelopmentConfig` | `DEBUG=True`, URI dari `DEV_DATABASE_URL`, `SESSION_COOKIE_SECURE=False`. |
+| `TestingConfig` | `TESTING=True`, `DEBUG=False`, CSRF dinonaktifkan, URI dari `TEST_DATABASE_URL`, validasi isolasi database. |
+| `ProductionConfig` | `DEBUG=False`, URI dari `DATABASE_URL`, `SESSION_COOKIE_SECURE=True`, `PERMANENT_SESSION_LIFETIME=2 jam`. |
 
-    @classmethod
-    def init_app(cls, app):
-        super().init_app(app)
+Nilai batas foto aktual:
 
-class TestingConfig(Config):
-    """Konfigurasi khusus pengujian otomatis (pytest)."""
-    TESTING = True
-    DEBUG = False
-    WTF_CSRF_ENABLED = False  # Dinonaktifkan khusus untuk kemudahan automated testing form
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
-        'TEST_DATABASE_URL',
-        'postgresql://postgres:postgres@localhost:5432/klasifas_test_db'
-    )
-    SESSION_COOKIE_SECURE = False
-
-    @classmethod
-    def init_app(cls, app):
-        super().init_app(app)
-
-class ProductionConfig(Config):
-    """Konfigurasi khusus lingkungan produksi/deployment resmi."""
-    DEBUG = False
-    TESTING = False
-    
-    # Membaca variabel DATABASE_URL tanpa memicu error saat modul config diimpor
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
-    
-    # Keamanan Cookie Sesi:
-    # Wajib bernilai True pada deployment resmi untuk memastikan transmisi cookie hanya melalui HTTPS
-    SESSION_COOKIE_SECURE = True
-    SESSION_COOKIE_HTTPONLY = True
-    SESSION_COOKIE_SAMESITE = 'Lax'
-    PERMANENT_SESSION_LIFETIME = timedelta(hours=2)
-
-    @classmethod
-    def init_app(cls, app):
-        super().init_app(app)
-        
-        # Validasi Ketat Khusus Produksi:
-        # Hanya dieksekusi ketika ProductionConfig dipilih saat runtime
-        if not os.environ.get('DATABASE_URL'):
-            raise ValueError(
-                "CRITICAL: Variabel lingkungan 'DATABASE_URL' wajib disetel saat menggunakan ProductionConfig. "
-                "Aplikasi dihentikan karena basis data produksi tidak terdefinisi."
-            )
-
-config_by_name = {
-    'development': DevelopmentConfig,
-    'testing': TestingConfig,
-    'production': ProductionConfig
-}
-```
-
-### Pola Penerapan pada Application Factory (`app/__init__.py`)
-Saat aplikasi diinisialisasi, fungsi pabrik (*factory*) memvalidasi nama konfigurasi secara ketat (*fail-fast*) tanpa *silent fallback* guna mencegah kesalahan penulisan lingkungan operasional:
-
-```python
-import os
-from flask import Flask
-from app.config import config_by_name
-
-def create_app(config_name=None):
-    """
-    Application Factory KlasiFas.
-    Menginisialisasi instance Flask dengan validasi konfigurasi yang aman dan ketat.
-    """
-    # 1. Jika konfigurasi tidak ditentukan di argumen maupun environment, gunakan 'development' secara eksplisit
-    if config_name is None:
-        config_name = os.environ.get('FLASK_CONFIG', 'development')
-    
-    # 2. Validasi fail-fast: Mencegah silent fallback jika terjadi salah ketik (misal: 'prodution')
-    if config_name not in config_by_name:
-        valid_keys = ', '.join([f"'{k}'" for k in config_by_name.keys()])
-        raise ValueError(
-            f"CRITICAL: Lingkungan konfigurasi '{config_name}' tidak dikenali. "
-            f"Pilihan valid adalah: {valid_keys}. "
-            "Aplikasi dihentikan demi keamanan untuk mencegah pengalihan mode tanpa izin."
-        )
-
-    # 3. Ambil kelas konfigurasi yang valid secara eksplisit
-    config_class = config_by_name[config_name]
-    
-    app = Flask(__name__)
-    app.config.from_object(config_class)
-    
-    # 4. Eksekusi validasi spesifik lingkungan (SECRET_KEY untuk semua, DATABASE_URL untuk produksi)
-    config_class.init_app(app)
-    
-    # Inisialisasi ekstensi (db, migrate, csrf) dan registrasi blueprints (app/routes/)...
-    # ...
-    
-    return app
-```
+- `MAX_PHOTO_SIZE_BYTES = 3 * 1024 * 1024` (3 MB).
+- `MAX_PHOTO_DIMENSION = 6000`.
+- `MAX_CONTENT_LENGTH = MAX_PHOTO_SIZE_BYTES + 1 MB` (efektif 4 MB).
+- Ekstensi diizinkan: `jpg`, `jpeg`, `png`.
+- MIME diizinkan: `image/jpeg`, `image/png`.
 
 ### 7.2 Panduan Variabel Lingkungan (`.env.example`)
-Template variabel lingkungan disediakan tanpa menyertakan kredensial riil:
+
+Template aktual memuat:
 
 ```bash
-# Mode Konfigurasi: development | testing | production
-# PERINGATAN: Lingkungan server deployment resmi WAJIB menyetel FLASK_CONFIG=production
+# Mode Lingkungan: development | testing | production
 FLASK_CONFIG=development
 
-# Kunci Rahasia Sesi Kriptografis (Wajib di-generate unik, misal: python -c "import secrets; print(secrets.token_hex(32))")
+# Kunci Rahasia Sesi Kriptografis
+# Wajib 64 karakter heksadesimal (32 bytes).
 SECRET_KEY=
 
-# Koneksi Database PostgreSQL Utama (Wajib diisi HANYA jika FLASK_CONFIG=production)
-DATABASE_URL=postgresql://klasifas_user:password_rahasia@localhost:5432/klasifas_db
-DEV_DATABASE_URL=postgresql://postgres:postgres@localhost:5432/klasifas_dev_db
-TEST_DATABASE_URL=postgresql://postgres:postgres@localhost:5432/klasifas_test_db
+# Koneksi PostgreSQL
+DATABASE_URL=postgresql+psycopg2://klasifas_user:password_rahasia@localhost:5432/klasifas_db
+DEV_DATABASE_URL=postgresql+psycopg2://postgres:postgres@localhost:5432/klasifas_dev_db
+TEST_DATABASE_URL=postgresql+psycopg2://postgres:postgres@localhost:5432/klasifas_test_db
 
-# Konfigurasi Machine Learning (Placeholder nilai ambang keyakinan)
+# Ambang batas keyakinan klasifikasi
 ML_CONFIDENCE_THRESHOLD=0.60
 ```
+
+Catatan:
+
+- `TRUSTED_PROXIES_COUNT`, `TRACK_RATE_LIMIT_PER_MINUTE`, dan `TRACK_RATE_LIMIT_WINDOW_SECONDS` didukung oleh `config.py`, tetapi tidak tercantum di `.env.example`.
+- `TRACK_RATE_LIMIT_PER_MINUTE` dan `TRACK_RATE_LIMIT_WINDOW_SECONDS` **belum digunakan** oleh implementasi rate limiter saat ini.
+
+### 7.3 Application Factory
+
+`create_app(config_name=None)`:
+
+1. Menentukan kelas konfigurasi melalui `get_config_class()`.
+2. Membuat instance Flask dan memuat konfigurasi.
+3. Menjalankan validasi konfigurasi.
+4. Menginisialisasi `db`, `migrate`, dan `csrf`.
+5. Memasang `ProxyFix` secara kondisional.
+6. Mendaftarkan blueprint `auth`, `admin`, `report`, `technician`, dan `dashboard`.
+7. Mendaftarkan redirect `/favicon.ico`.
+8. Mendaftarkan handler error 403/404/500.
+9. Mendaftarkan CLI `create-staff`.
+10. Memasang header keamanan melalui `after_request`.
 
 ---
 
 ## 8. Strategi Pengujian & Penjaminan Mutu
 
-1. **Konsistensi Lingkungan Basis Data Pengujian:**
-   - Seluruh pengujian otomatis (`pytest`) dieksekusi menggunakan basis data PostgreSQL pengujian khusus (`klasifas_test_db`) untuk menjaga konsistensi dialek SQL, integritas *foreign key*, dan perilaku transaksi relasional yang identik dengan lingkungan operasional.
-2. **Cakupan Pengujian Terfokus:**
-   - **Unit Testing Preprocessing (FR-03):** Memvalidasi fungsi *regex cleaning* secara presisi membersihkan teks deskripsi tanpa mengubah angka pada entitas lokasi gedung/lantai/ruang, serta memverifikasi hasil *stemming* Sastrawi.
-   - **Unit Testing Klasifikasi & Fallback (FR-03, FR-10):** Menguji akurasi inferensi saat model valid tersedia, serta memastikan flag `needs_manual_verification = True` terpasang saat model tidak tersedia.
-   - **Integration Testing Alur Tiket (FR-01, FR-04, FR-05, FR-06):** Memvalidasi transisi status tiket yang ketat (hanya `Baru` $\rightarrow$ `Terverifikasi` $\rightarrow$ `Diproses` $\rightarrow$ `Selesai`) dan mencatat stempel waktu serta penanggung jawab dengan benar.
-   - **Security Testing (FR-09):** Memverifikasi bahwa hanya Admin Sarpras yang dapat membaca log audit, memvalidasi enkripsi hash password (`scrypt`), menguji batas ukuran berkas unggahan, dan memastikan pembatasan hak akses peran (*RBAC*).
+### 8.1 Lingkungan Pengujian
+
+- Kerangka pengujian: `pytest`.
+- Database pengujian: PostgreSQL terpisah melalui `TEST_DATABASE_URL`.
+- `TestingConfig` menolak URI pengujian yang sama dengan database development atau produksi.
+- Tidak ada `tests/conftest.py`; fixture didefinisikan di masing-masing file pengujian.
+- Baseline yang tercatat pada `test-results.txt`: **545 passed**.
+- Baseline tersebut adalah catatan historis, bukan hasil verifikasi ulang dokumen ini.
+
+### 8.2 Cakupan File Pengujian
+
+Terdapat 34 file pengujian:
+
+| Area | File |
+| :--- | :--- |
+| Factory & config | `test_factory.py`, `test_config.py` |
+| Model & migrasi | `test_models_f1_04.py` |
+| Autentikasi & keamanan | `test_auth_f2_01.py`, `test_security_f2_02.py`, `test_rbac_f2_03.py`, `test_security_f2_04.py` |
+| Pelaporan & pelacakan | `test_report_f3_01.py`, `test_report_f3_02.py`, `test_ticket_identity_f3_03.py`, `test_track_f3_04.py`, `test_tracking_e2e_f3_05.py` |
+| ML & NLP | `test_ml_f4_05.py` |
+| Admin | `test_admin_f5_01.py`, `test_admin_f5_02.py`, `test_admin_f5_03.py` |
+| Audit | `test_audit_f5_04.py`, `test_audit_f5_05.py`, `test_audit_f6_03.py` |
+| Teknisi | `test_technician_f6_01.py`, `test_technician_f6_02.py` |
+| Dashboard | `test_dashboard_f7_01.py`, `test_dashboard_f7_02.py`, `test_dashboard_f7_03.py`, `test_dashboard_f7_04.py` |
+| CLI | `test_cli_create_staff.py` |
+| Error pages | `test_error_pages_vq21.py` |
+| UI/aset publik | `test_ui_cards.py`, `test_ui_container.py`, `test_ui_favicon.py`, `test_ui_inputs.py`, `test_ui_responsive.py`, `test_ui_toggler.py`, `test_ui_typography.py` |
+
+### 8.3 Fokus Verifikasi
+
+- Preprocessing: case folding, slang normalization, stopword removal, stemming, dan integritas data lokasi.
+- Model loader: validasi path dan fallback saat artefak tidak tersedia.
+- Alur tiket: transisi status, verifikasi kategori, penugasan, dan audit log.
+- Keamanan: RBAC, session, CSRF, validasi upload, token pelacakan, dan rate limit.
+- Dashboard: agregasi, filter, dan sanitasi data.
+- UI: struktur halaman, input, responsivitas, dan favicon.
 
 ---
 
 ## 9. Prinsip Keamanan & Integritas Repositori
 
-1. **Proteksi Kredensial & Privasi Data:**
-   - Berkas konfigurasi `.env`, data mentah berisi identitas pribadi (*PII*) pelapor, direktori bukti foto tiket (`uploads/`), artefak biner model (`.joblib`), dan direktori virtual environment (`venv/`) dilarang diunggah ke repositori Git melalui konfigurasi `.gitignore`.
-2. **Penyimpanan Password Pengguna Internal:**
-   - Kredensial seluruh akun staf internal (Admin Sarpras, Teknisi, Pimpinan/Kaprodi) disimpan dalam bentuk *hash* kriptografis menggunakan algoritma `scrypt` bawaan Werkzeug.
-3. **Validasi File Bukti Unggahan (Parameter Sementara):**
-   - Foto bukti keluhan diperiksa ekstensi berkasnya (`.jpg`, `.jpeg`, `.png`), nama berkas diamankan menggunakan `werkzeug.utils.secure_filename`, dan ukuran berkas dibatasi sementara dengan rekomendasi awal maksimum 5 MB (`MAX_CONTENT_LENGTH = 5 MB`), yang akan difinalisasi dalam rentang 2–5 MB pada dokumen `docs/SECURITY.md`.
-4. **Pencegahan SQL Injection:**
-   - Seluruh operasi basis data wajib memanfaatkan mekanisme *parameter binding* bawaan SQLAlchemy. Kueri mentah dengan metode penggabungan string (*string formatting/concatenation*) dilarang keras.
-5. **Pembatasan Hak Akses Khusus:**
-   - Dasbor analitik (FR-07) hanya dapat diakses oleh **Admin Sarpras** dan **Pimpinan/Kaprodi**. Teknisi dan pelapor tidak memiliki akses ke dasbor ini.
-   - Log audit operasional (FR-09) hanya dapat dibaca oleh **Admin Sarpras**.
+### 9.1 Header Keamanan
+
+`app/utils/security_headers.py` memasang header berikut pada seluruh respons:
+
+- `X-Content-Type-Options: nosniff`
+- `X-Frame-Options: SAMEORIGIN`
+- `Referrer-Policy: strict-origin-when-cross-origin`
+- `Content-Security-Policy` dengan `default-src 'self'`, `script-src 'self'`, `style-src 'self'`, `img-src 'self' data:`, dan `font-src 'self'`.
+
+**HSTS tidak tersedia.** Tidak ada header `Strict-Transport-Security` pada implementasi. `tests/test_security_f2_04.py` secara eksplisit memverifikasi bahwa header tersebut tidak ada.
+
+### 9.2 Rate Limiter `/lacak`
+
+Implementasi aktual:
+
+- Singleton `track_limiter = SlidingWindowRateLimiter(limit=15, window_seconds=60)`.
+- Batas **hardcoded 15 request per 60 detik per alamat IP**.
+- Key menggunakan `request.remote_addr`.
+- Berlaku untuk seluruh `POST /lacak`, termasuk percobaan dengan input tidak valid.
+- Respons pelanggaran: HTTP 429 dengan header `Retry-After`.
+- Penyimpanan riwayat in-memory dan per proses.
+- Keterbatasan: pada server multi-worker, kuota efektif dapat menjadi N x limit; restart proses mereset riwayat.
+- `TRACK_RATE_LIMIT_PER_MINUTE` dan `TRACK_RATE_LIMIT_WINDOW_SECONDS` di `config.py` belum dihubungkan ke limiter.
+- `ProxyFix` hanya aktif jika `TRUSTED_PROXIES_COUNT > 0`.
+
+### 9.3 Autentikasi dan Otorisasi
+
+- Password staf di-hash dengan Werkzeug `scrypt`.
+- Login gagal selalu menampilkan pesan generik.
+- Role pengguna dimuat ulang dari database pada setiap request.
+- `role_required` menerapkan otorisasi server-side dengan prinsip deny-by-default.
+- Logout menggunakan `POST` dan dilindungi CSRF.
+- Tidak ada registrasi publik atau halaman pengelolaan akun.
+
+### 9.4 Validasi Upload Foto
+
+- Ekstensi: `jpg`, `jpeg`, `png`.
+- MIME klien: `image/jpeg` atau `image/png`.
+- Magic number diperiksa.
+- Gambar di-decode dan di-re-encode dengan Pillow.
+- Dimensi maksimum 6000 x 6000 piksel.
+- Ukuran maksimum 3 MB; `MAX_CONTENT_LENGTH` efektif 4 MB.
+- Nama file disimpan sebagai token heksadesimal acak.
+- Lokasi penyimpanan `uploads/` non-publik dan gitignored.
+- Penyajian foto hanya melalui endpoint terautentikasi.
+- Path traversal dan symlink escape diperiksa saat penyajian.
+
+### 9.5 Perlindungan Data dan Repositori
+
+`.gitignore` mengecualikan:
+
+- `.env` dan turunannya, kecuali `.env.example`.
+- `uploads/`.
+- `data/raw/` dan `data/private/`.
+- `*.joblib`, `*.sqlite`, `*.db`.
+- `venv/`, `.venv/`, `__pycache__/`, `.pytest_cache/`, dan artefak coverage.
+
+### 9.6 Pembatasan Akses Data
+
+- Dashboard: `admin_sarpras` dan `pimpinan`.
+- Audit log: `admin_sarpras`.
+- Verifikasi kategori dan penugasan: `admin_sarpras`.
+- Papan tugas dan pembaruan status: `teknisi` dengan pembatasan kepemilikan tiket.
+- Data pelacakan publik tidak memuat nama/kontak pelapor, teknisi, hash token, confidence score, atau nama file foto internal.
 
 ---
 
-## Ringkasan Perubahan Minor (Changelog v1.3 Refinement)
+## 10. Batasan Implementasi Aktual dan Pekerjaan Lanjutan
 
-1. **Isolasi Validasi `DATABASE_URL` (Bagian 7.1):**
-   - Memindahkan pemeriksaan variabel `DATABASE_URL` dari *body* kelas `ProductionConfig` ke dalam metode kelas `init_app(app)`.
-   - Validasi ini sekarang **hanya dieksekusi ketika `ProductionConfig` dipilih** saat *runtime*. Mengimpor modul `app.config` di lingkungan `DevelopmentConfig` (yang menggunakan `DEV_DATABASE_URL`) atau `TestingConfig` (yang menggunakan `TEST_DATABASE_URL`) tidak akan memicu galat palsu akibat ketiadaan `DATABASE_URL`.
-2. **Eliminasi Silent Fallback pada Application Factory (Bagian 7.1):**
-   - Mengganti penggunaan `config_by_name.get(config_name, config_by_name['default'])` dengan validasi eksplisit `if config_name not in config_by_name: raise ValueError(...)`.
-   - Mencegah salah ketik konfigurasi produksi beralih secara diam-diam ke konfigurasi *development*.
-3. **Penegasan Status Parameter Unggah Berkas (Bagian 7.1 & 9.3):**
-   - Menandai batas ukuran 5 MB pada `MAX_CONTENT_LENGTH` dan validasi foto sebagai **parameter rekomendasi awal / sementara**, selaras dengan PRD v1.3 yang menetapkan bahwa kebijakan ukuran berkas (rentang 2–5 MB) akan difinalisasi pada dokumen `docs/SECURITY.md`.
-4. **Pembersihan Dependensi & Format Rute (Bagian 2, 5, & 6):**
-   - Menghapus pustaka `email-validator` dari daftar dependensi.
-   - Mempertahankan struktur rute modular `app/routes/` dan konfigurasi `app/config.py`.
+1. **HSTS tidak diterapkan.** Jangan mengklaim HSTS tersedia sampai header ditambahkan dan diuji.
+2. **Rate limiter hardcoded.** Nilai 15 request/60 detik belum dapat dikonfigurasi melalui environment.
+3. **Variabel rate limit belum digunakan.** `TRACK_RATE_LIMIT_PER_MINUTE` dan `TRACK_RATE_LIMIT_WINDOW_SECONDS` hanya didefinisikan di `config.py`.
+4. **Training dan evaluasi ML belum tersedia.** Tidak ada folder `scripts/`, dataset, skrip pelatihan, skrip evaluasi, atau metrik aktual.
+5. **Artefak model belum tersedia.** Direktori `app/ml/models/` belum ada; sistem berjalan melalui fallback manual.
+6. **Tidak ada `run.py`.** Entry point menggunakan Flask CLI.
+7. **Tidak ada `conftest.py`.** Fixture pengujian berada di file masing-masing.
+8. **Audit action constant tidak konsisten.** Service memakai tiga aksi, sedangkan konstanta model masih mencantumkan dua aksi.
+9. **Server produksi belum dipilih.** Tidak ada dependensi Gunicorn/Waitress pada `requirements.txt`.
+10. **Keputusan TBD tetap terbuka:** threshold final `ML_CONFIDENCE_THRESHOLD`, hosting demonstrasi, dan kebijakan retensi/batas final foto.
 
 ---
 
-### Keputusan Teknis Terbuka (TBD) untuk Tahap Selanjutnya:
-1. **Target Lingkungan Hosting Demonstrasi Prototipe:** Menentukan apakah demonstrasi capstone akan dijalankan pada mesin lokal tim pengembang atau pada VPS berbasis Linux (akan difinalkan saat menyusun `docs/TASKS.md` dan `README.md`).
-2. **Nilai Ambang Batas Keyakinan Model (`ML_CONFIDENCE_THRESHOLD`):** Menentukan nilai definitif ambang probabilitas untuk flag verifikasi manual setelah model selesai dilatih dan dievaluasi menggunakan dataset teranotasi.
-3. **Kebijakan Batas Retensi & Finalisasi Ukuran File Bukti Foto:** Menentukan masa simpan file foto keluhan pada direktori `uploads/` dan menetapkan batas pasti ukuran berkas dalam rentang 2–5 MB (akan diatur mendalam pada `docs/SECURITY.md`).
+## Ringkasan Revisi v1.4
+
+1. Struktur direktori disesuaikan dengan file aktual: `report.py`, `app/cli.py`, `app/extensions.py`, `dictionary.py`, service tambahan, template `report/`, aset `klasifas.css`/`portal.js`/`favicon.svg`, dan font Public Sans.
+2. Folder `scripts/` dihapus dari struktur karena tidak ada di repositori.
+3. Rute diperbarui ke endpoint aktual: `/lapor`, `/lacak`, `/admin/tiket`, `/admin/tiket/<id>/penugasan`, `/teknisi/tiket/<id>/status`, dan `/dashboard/api/chart-data`.
+4. Rate limiter dijelaskan sebagai hardcoded 15 request/60 detik per IP, in-memory per proses.
+5. Variabel `TRACK_RATE_LIMIT_PER_MINUTE` dan `TRACK_RATE_LIMIT_WINDOW_SECONDS` dicatat sebagai belum digunakan.
+6. Klaim HSTS dihapus; ditegaskan bahwa HSTS tidak tersedia dan diuji absen.
+7. Training dan evaluasi ML dicatat sebagai rencana; tidak ada artefak model atau dataset di repositori.
+8. Dependensi disesuaikan dengan `requirements.txt` aktual, termasuk Pillow dan penghapusan `pytest-cov`/`flake8`.
+9. Konfigurasi environment disesuaikan dengan `config.py` dan `.env.example`, termasuk validasi `SECRET_KEY` 64 heksadesimal dan isolasi database pengujian.
+10. Bagian pengujian diperbarui dengan 34 file aktual dan baseline 545 test lulus.

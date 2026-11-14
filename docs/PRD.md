@@ -7,7 +7,7 @@
 **Fakultas:** Fakultas Teknologi Industri dan Informatika (FTII)  
 **Kelompok:** 7  
 **Status:** Approved Draft — Kelompok 7 Review  
-**Versi:** 1.3  
+**Versi:** 1.4
 
 ---
 
@@ -84,7 +84,7 @@ Mengacu langsung pada dokumen resmi Pertemuan 6 (Halaman 4) dengan penegasan ope
 | **FR-05** | Admin dapat menugaskan atau meneruskan keluhan kepada unit/petugas yang sesuai. | Admin Sarpras | Laporan terhubung dengan identitas penanggung jawab teknisi/unit definitif tanpa menambah status baru di luar empat status resmi. |
 | **FR-06** | Teknisi dapat memperbarui status tindak lanjut dan menambahkan catatan penyelesaian. | Teknisi | Pembaruan status dan penambahan catatan perbaikan hanya dapat dilakukan oleh teknisi yang ditugaskan, mengikuti aturan transisi yang divalidasi, serta tersimpan beserta stempel waktu. |
 | **FR-07** | Sistem menyediakan dasbor jumlah keluhan menurut kategori, lokasi, status, dan periode. | Admin Sarpras, Pimpinan Fakultas, Kaprodi | Visualisasi agregat dihitung dinamis dari data tersimpan di basis data dan dapat difilter; hak akses terbatas pada peran manajerial (tidak dapat diakses oleh teknisi atau publik). |
-| **FR-08** | Sistem menyediakan pencarian/filter riwayat dan ringkasan laporan. | Admin Sarpras, Pimpinan | Hasil pencarian kata kunci dan penyaringan data laporan tampil presisi sesuai kriteria filter yang dipilih (terpisah dari fitur ekspor). |
+| **FR-08** | Sistem menyediakan pencarian/filter tiket operasional pada antrean Admin Sarpras. | Admin Sarpras | Pencarian dan filter pada `/admin/tiket` menggunakan tujuh parameter (`keyword`, `status`, `category_id`, `floor_number`, `room_name`, `date_from`, `date_to`) dan hasilnya tampil presisi; Pimpinan/Kaprodi tidak memiliki akses FR-08 dan hanya menggunakan dashboard agregat FR-07 (terpisah dari fitur ekspor). |
 | **FR-09** | Sistem mencatat perubahan penting pada kategori dan status untuk mendukung penelusuran. | Admin Sarpras (Pembaca Hak Akses), Teknisi (Aktor Tercatat) | Riwayat perubahan (siapa pengguna, waktu perubahan, nilai sebelum dan sesudah) tersimpan dalam log audit operasional; hanya Admin Sarpras yang memiliki hak akses membaca log audit tersebut. |
 | **FR-10** | Sistem menampilkan pesan yang sesuai jika model tidak tersedia atau prediksi tidak dapat dihasilkan. | Admin Sarpras, Pelapor | Laporan tetap tersimpan utuh di basis data dan dapat diproses verifikasinya secara manual tanpa kehilangan data keluhan. |
 
@@ -151,9 +151,19 @@ Tahapan pipeline NLP teks keluhan:
 * **Perlindungan Privasi:** Dasbor hanya menyajikan data statistik agregat dan **tidak pernah menampilkan identitas pribadi pelapor** (nama/kontak).
 * **Integritas Analisis:** Dasbor menyajikan data apa adanya dari basis data; dilarang membuat kesimpulan tren apabila volume data belum mencukupi.
 
-#### H. Pencarian dan Filter Laporan Terpusat (FR-08)
-* Sistem menyediakan panel pencarian berbasis kata kunci dan filter multi-kriteria (kategori fasilitas, lokasi gedung, rentang tanggal, dan status penanganan).
-* Fitur ini murni ditujukan untuk penelusuran data operasional dan ringkasan keluhan di lingkungan antarmuka sistem oleh Admin Sarpras dan Pimpinan.
+#### H. Pencarian dan Filter Tiket Operasional (FR-08)
+* Sistem menyediakan pencarian dan filter tiket operasional yang terintegrasi pada halaman antrean Admin Sarpras di `/admin/tiket`. Tidak ada rute `/admin/filter` terpisah.
+* Filter menggunakan tujuh parameter aktual:
+  1. `keyword` — pencarian pada kode tiket dan deskripsi keluhan.
+  2. `status` — status resmi `Baru`, `Terverifikasi`, `Diproses`, `Selesai`, atau seluruh status.
+  3. `category_id` — kategori resmi aktif K1–K7.
+  4. `floor_number` — lantai 1–4.
+  5. `room_name` — nama atau nomor ruangan.
+  6. `date_from` — tanggal awal rentang (`YYYY-MM-DD`).
+  7. `date_to` — tanggal akhir rentang (`YYYY-MM-DD`).
+* Paginasi (`page`, `per_page`) bukan parameter filter dan tidak mengubah kriteria pencarian.
+* Halaman detail `/admin/tiket/<id>/verifikasi` tetap tersedia untuk verifikasi atau koreksi kategori dan penugasan teknisi.
+* FR-08 hanya untuk **Admin Sarpras**. **Pimpinan/Kaprodi** tidak memiliki akses ke pencarian/filter tiket individual dan hanya memperoleh statistik agregat melalui dashboard FR-07.
 
 #### I. Ekspor Ringkasan Laporan — PDF dan CSV (Fitur Opsional / Could Have)
 * Terpisah dari fungsi pencarian/filter utama, sistem merencanakan fitur pengunduhan data ringkasan laporan yang tersaring ke dalam format **PDF dan CSV**.
@@ -228,7 +238,7 @@ Fitur dan batasan berikut **secara tegas tidak termasuk** dalam ruang lingkup pr
   * *Pelapor:* Mengisi formulir pelaporan dan memantau status laporannya sendiri via nomor/kode laporan.
   * *Admin Sarpras:* Akses penuh verifikasi kategori, penugasan teknisi, manajemen data master, pencarian/filter, membaca log audit (FR-09), dan ekspor ringkasan laporan.
   * *Teknisi:* Akses terbatas hanya pada daftar tugas penanganan yang diberikan kepadanya dan pembaruan status pengerjaan sesuai aturan transisi yang divalidasi. Teknisi **tidak memiliki hak akses** ke dasbor analitik eksekutif dan **tidak memiliki hak akses** membaca log audit sistem.
-  * *Pimpinan Fakultas / Kaprodi:* Akses baca (*read-only*) terhadap statistik agregat dasbor pemantauan internal dan ringkasan laporan.
+  * *Pimpinan Fakultas / Kaprodi:* Akses baca (*read-only*) terhadap statistik agregat dasbor pemantauan internal (FR-07). Tidak memiliki akses pencarian/filter tiket individual (FR-08) atau data tiket operasional.
 * **Pengamanan Akses Tiket Tanpa Login:** Sistem pelacakan mandiri tanpa login wajib diamankan dengan kode laporan acak unik (*cryptographically secure/unguessable token*) dan perlindungan pembatasan frekuensi percobaan (*rate limiting*) untuk mencegah serangan penelusuran tiket (*brute-force enumeration*) oleh pihak luar.
 * **Penyimpanan Kredensial:** Kata sandi pengguna terdaftar (Admin, Teknisi, Pimpinan) wajib disimpan dalam bentuk nilai *hash* yang aman (misalnya bcrypt) dan dilarang disimpan dalam bentuk teks biasa (*plain text*).
 
@@ -309,7 +319,7 @@ Berdasarkan dokumen Pertemuan 4 (Tabel 4.1) dan Pertemuan 6 (FR-01 s.d. FR-10):
   * Pembatasan hak akses berbasis peran (RBAC) dan keamanan kata sandi hash.
 
 * **Should Have (Prioritas Tambahan — Sangat Dianjurkan):**
-  * FR-08: Pencarian dan filter laporan multi-kriteria secara terpusat.
+  * FR-08: Pencarian dan filter tiket operasional multi-kriteria pada `/admin/tiket` untuk Admin Sarpras.
   * FR-09: Pencatatan log riwayat perubahan kategori dan status (*audit trail* operasional; hak baca dibatasi untuk Admin Sarpras).
   * Penandaan khusus (*flagging*) terhadap keluhan dengan probabilitas di bawah ambang keyakinan.
   * Penandaan prioritas keluhan berdasarkan kata kunci darurat (misal: "korsleting", "bocor", "padam").
@@ -348,4 +358,4 @@ Berdasarkan dokumen Pertemuan 4 (Tabel 4.1) dan Pertemuan 6 (FR-01 s.d. FR-10):
 ---
 
 > **Pernyataan Batasan Dokumen:**  
-> Dokumen PRD Revisi v1.3 ini merupakan spesifikasi kebutuhan dan panduan perancangan sistem. Dokumen ini **tidak menyatakan** bahwa sistem aplikasi, dataset keluhan, model Machine Learning, maupun pengujian telah selesai diimplementasikan.
+> Dokumen PRD Revisi v1.4 ini merupakan spesifikasi kebutuhan dan panduan perancangan sistem. Dokumen ini **tidak menyatakan** bahwa sistem aplikasi, dataset keluhan, model Machine Learning, maupun pengujian telah selesai diimplementasikan.
