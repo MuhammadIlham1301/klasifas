@@ -23,6 +23,10 @@ def isolate_environment(monkeypatch):
     monkeypatch.delenv("DATABASE_URL", raising=False)
     monkeypatch.delenv("DEV_DATABASE_URL", raising=False)
     monkeypatch.delenv("TEST_DATABASE_URL", raising=False)
+    monkeypatch.delenv("ML_CONFIDENCE_THRESHOLD", raising=False)
+    monkeypatch.delenv("TRUSTED_PROXIES_COUNT", raising=False)
+    monkeypatch.delenv("TRACK_RATE_LIMIT_PER_MINUTE", raising=False)
+    monkeypatch.delenv("TRACK_RATE_LIMIT_WINDOW_SECONDS", raising=False)
 
     yield
 
@@ -38,6 +42,14 @@ def get_isolated_config():
     """Helper untuk memuat modul app.config di bawah lingkungan monkeypatch aktif."""
     import app.config
     return importlib.reload(app.config)
+
+
+VALID_SECRET_KEY = "0123456789abcdef" * 4
+
+
+class MockFlask:
+    def __init__(self, **overrides):
+        self.config = {"SECRET_KEY": VALID_SECRET_KEY, **overrides}
 
 
 # --- Skenario 1: Penolakan None, Kosong, dan Whitespace Tanpa Strip ---
@@ -99,6 +111,95 @@ def test_secret_key_valid_passes(monkeypatch, valid_secret):
     monkeypatch.setenv("SECRET_KEY", valid_secret)
     cfg = get_isolated_config()
     cfg.Config.init_app()  # Tidak melempar exception
+
+
+# --- Skenario 4b: Validasi Konfigurasi Numerik ---
+def test_numeric_config_defaults_are_valid(monkeypatch):
+    monkeypatch.setenv("SECRET_KEY", VALID_SECRET_KEY)
+    cfg = get_isolated_config()
+
+    assert cfg.Config.ML_CONFIDENCE_THRESHOLD == pytest.approx(0.60)
+    assert cfg.Config.TRUSTED_PROXIES_COUNT == 0
+    assert cfg.Config.TRACK_RATE_LIMIT_PER_MINUTE == 15
+    assert cfg.Config.TRACK_RATE_LIMIT_WINDOW_SECONDS == 60
+    cfg.Config.init_app()
+
+
+@pytest.mark.parametrize("overrides", [
+    {"ML_CONFIDENCE_THRESHOLD": 0.0},
+    {"ML_CONFIDENCE_THRESHOLD": 1.0},
+    {"ML_CONFIDENCE_THRESHOLD": 0.60},
+    {"TRUSTED_PROXIES_COUNT": 0},
+    {"TRUSTED_PROXIES_COUNT": 1},
+    {"TRACK_RATE_LIMIT_PER_MINUTE": 1},
+    {"TRACK_RATE_LIMIT_WINDOW_SECONDS": 1},
+])
+def test_numeric_config_valid_values(monkeypatch, overrides):
+    monkeypatch.setenv("SECRET_KEY", VALID_SECRET_KEY)
+    cfg = get_isolated_config()
+    cfg.Config.init_app(MockFlask(**overrides))
+
+
+@pytest.mark.parametrize("value", [
+    -0.01,
+    1.01,
+    float("nan"),
+    float("inf"),
+    float("-inf"),
+    True,
+    "0.60",
+    None,
+])
+def test_ml_confidence_threshold_invalid(monkeypatch, value):
+    monkeypatch.setenv("SECRET_KEY", VALID_SECRET_KEY)
+    cfg = get_isolated_config()
+
+    with pytest.raises(ValueError, match="ML_CONFIDENCE_THRESHOLD"):
+        cfg.Config.init_app(MockFlask(ML_CONFIDENCE_THRESHOLD=value))
+
+
+@pytest.mark.parametrize("value", [-1, 1.0, "1", True, None])
+def test_trusted_proxies_count_invalid(monkeypatch, value):
+    monkeypatch.setenv("SECRET_KEY", VALID_SECRET_KEY)
+    cfg = get_isolated_config()
+
+    with pytest.raises(ValueError, match="TRUSTED_PROXIES_COUNT"):
+        cfg.Config.init_app(MockFlask(TRUSTED_PROXIES_COUNT=value))
+
+
+@pytest.mark.parametrize("key,value", [
+    ("TRACK_RATE_LIMIT_PER_MINUTE", 0),
+    ("TRACK_RATE_LIMIT_PER_MINUTE", -1),
+    ("TRACK_RATE_LIMIT_PER_MINUTE", 1.5),
+    ("TRACK_RATE_LIMIT_PER_MINUTE", "15"),
+    ("TRACK_RATE_LIMIT_PER_MINUTE", True),
+    ("TRACK_RATE_LIMIT_WINDOW_SECONDS", 0),
+    ("TRACK_RATE_LIMIT_WINDOW_SECONDS", -1),
+    ("TRACK_RATE_LIMIT_WINDOW_SECONDS", 1.5),
+    ("TRACK_RATE_LIMIT_WINDOW_SECONDS", "60"),
+    ("TRACK_RATE_LIMIT_WINDOW_SECONDS", True),
+])
+def test_rate_limit_config_invalid(monkeypatch, key, value):
+    monkeypatch.setenv("SECRET_KEY", VALID_SECRET_KEY)
+    cfg = get_isolated_config()
+
+    with pytest.raises(ValueError, match=key):
+        cfg.Config.init_app(MockFlask(**{key: value}))
+
+
+@pytest.mark.parametrize("key,value", [
+    ("ML_CONFIDENCE_THRESHOLD", "not-a-number"),
+    ("TRUSTED_PROXIES_COUNT", "not-an-integer"),
+    ("TRACK_RATE_LIMIT_PER_MINUTE", "many"),
+    ("TRACK_RATE_LIMIT_WINDOW_SECONDS", "0"),
+])
+def test_numeric_env_invalid_fails_at_init(monkeypatch, key, value):
+    monkeypatch.setenv("SECRET_KEY", VALID_SECRET_KEY)
+    monkeypatch.setenv(key, value)
+    cfg = get_isolated_config()
+
+    with pytest.raises(ValueError, match=key):
+        cfg.Config.init_app()
 
 
 # --- Skenario 5: Konsistensi Konfigurasi Efektif (cls.SECRET_KEY vs app.config) ---
@@ -171,6 +272,40 @@ def test_production_database_uri_validation(monkeypatch):
     mock_app_override_empty = MockFlask(db_uri="")
     with pytest.raises(ValueError, match="Konfigurasi basis data produksi 'SQLALCHEMY_DATABASE_URI'"):
         cfg.ProductionConfig.init_app(mock_app_override_empty)
+
+
+# --- Skenario 7b: Validasi Nilai Efektif DevelopmentConfig SQLALCHEMY_DATABASE_URI ---
+def test_development_database_uri_validation(monkeypatch):
+    valid_secret = "0123456789abcdef" * 4
+    monkeypatch.setenv("SECRET_KEY", valid_secret)
+    monkeypatch.delenv("DEV_DATABASE_URL", raising=False)
+    cfg = get_isolated_config()
+
+    class MockFlask:
+        def __init__(self, db_uri=None):
+            self.config = {'SECRET_KEY': valid_secret}
+            if db_uri is not None:
+                self.config['SQLALCHEMY_DATABASE_URI'] = db_uri
+
+    # 1. Tanpa DEV_DATABASE_URL dan tanpa app.config['SQLALCHEMY_DATABASE_URI'] -> ValueError
+    mock_app_empty = MockFlask()
+    with pytest.raises(ValueError, match="Konfigurasi basis data development 'SQLALCHEMY_DATABASE_URI'"):
+        cfg.DevelopmentConfig.init_app(mock_app_empty)
+
+    # 2. Standalone tanpa DEV_DATABASE_URL -> ValueError
+    with pytest.raises(ValueError, match="Konfigurasi basis data development 'SQLALCHEMY_DATABASE_URI'"):
+        cfg.DevelopmentConfig.init_app()
+
+    # 3. app.config['SQLALCHEMY_DATABASE_URI'] terisi -> Lolos tanpa koneksi ke DB
+    mock_app_valid = MockFlask(db_uri="postgresql+psycopg2://postgres:postgres@localhost:5432/klasifas_dev_db")
+    cfg.DevelopmentConfig.init_app(mock_app_valid)
+
+    # 4. app.config['SQLALCHEMY_DATABASE_URI'] bernilai kosong padahal os.environ terisi -> Tetap ditolak
+    monkeypatch.setenv("DEV_DATABASE_URL", "postgresql+psycopg2://postgres:postgres@localhost:5432/klasifas_dev_db")
+    mock_app_override_empty = MockFlask(db_uri="")
+    with pytest.raises(ValueError, match="Konfigurasi basis data development 'SQLALCHEMY_DATABASE_URI'"):
+        cfg.DevelopmentConfig.init_app(mock_app_override_empty)
+
 
 
 # --- Skenario 8: Isolasi Subprocess Mandiri (Hermetik dari .env fisik) ---

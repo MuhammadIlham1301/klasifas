@@ -175,6 +175,32 @@ def test_preprocessor_sastrawi_stemming_and_stopwords():
     assert "kursi" in result.tokens
 
 
+def test_preprocessor_preserves_standard_negation_words():
+    """Kata negasi baku tidak boleh dihapus sebagai stopword."""
+    raw = (
+        "Lampu yang tidak menyala, bukan karena saklar, belum diperbaiki, "
+        "tanpa teknisi, tak ada respons, jangan dibiarkan"
+    )
+    result = preprocess_text(raw)
+    for word in ("tidak", "bukan", "belum", "tanpa", "jangan"):
+        assert word in result.tokens
+    assert result.tokens.count("tidak") == 2
+    assert "tak" not in result.tokens
+    assert "yang" not in result.tokens
+
+
+def test_preprocessor_preserves_negation_from_slang():
+    """Negasi slang harus dinormalisasi lalu tetap dipertahankan."""
+    raw = (
+        "AC gak dingin, lampu nggak nyala, keran ndak keluar air, "
+        "blm diperbaiki, bkn salah, belom diganti, tdk ada respons"
+    )
+    result = preprocess_text(raw)
+    assert result.tokens.count("tidak") == 4
+    assert result.tokens.count("bukan") == 1
+    assert result.tokens.count("belum") == 2
+
+
 def test_preprocessor_empty_or_whitespace():
     assert preprocess_text("") == PreprocessResult(cleaned_text="", tokens=[], token_count=0)
     assert preprocess_text("   \n\t  ") == PreprocessResult(cleaned_text="", tokens=[], token_count=0)

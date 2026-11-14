@@ -18,7 +18,7 @@ import secrets
 from unittest.mock import patch
 
 import pytest
-from sqlalchemy import delete, event, select
+from sqlalchemy import delete, event, select, update
 from werkzeug.security import generate_password_hash
 
 from app.extensions import db
@@ -27,6 +27,7 @@ from app.models.category import Category
 from app.models.ticket import TICKET_STATUSES, Ticket
 from app.models.user import User
 from app.services.audit_service import (
+    MAX_PAGE,
     VALID_AUDIT_ACTIONS,
     get_all_categories_map,
     get_audit_logs_paginated,
@@ -90,6 +91,11 @@ def app():
                     )
                 else:
                     cleanup_connection.execute(delete(User))
+
+                # Pemulihan defensif status kategori jika ada pengujian yang mematikan is_active
+                cleanup_connection.execute(
+                    update(Category).values(is_active=True).where(Category.is_active.is_(False))
+                )
 
             db.engine.dispose()
 
@@ -416,31 +422,38 @@ def test_audit_log_displays_inactive_historical_category_and_unknown_id_fallback
     """
     admin = _login_as(client, "admin_sarpras")
 
-    # Ambil kategori yang ada dan tandai sebagai nonaktif
+    # Ambil kategori yang ada dan simpan kondisi awal untuk pemulihan pasti
     cat_to_inactivate = db.session.scalar(select(Category).where(Category.code == "K7"))
     assert cat_to_inactivate is not None
-    cat_to_inactivate.is_active = False
-    db.session.flush()
+    original_is_active = cat_to_inactivate.is_active
 
-    ticket = _create_dummy_ticket()
-    _create_audit_log(
-        ticket_id=ticket.id,
-        actor_user_id=admin.id,
-        actor_role=admin.role,
-        action="category_changed",
-        field_name="official_category_id",
-        old_value=str(cat_to_inactivate.id),
-        new_value="999888",  # ID kategori tidak ada di DB
-        note="Uji coba fallback historical",
-    )
-    db.session.commit()
+    try:
+        cat_to_inactivate.is_active = False
+        db.session.flush()
 
-    resp = client.get("/admin/audit-log")
-    assert resp.status_code == 200
-    # Kategori nonaktif harus tetap tampil namanya
-    assert f"{cat_to_inactivate.code} - {cat_to_inactivate.name}" in resp.text
-    # ID yang tidak terdaftar harus tampil sebagai fallback ID mentah
-    assert "ID: 999888" in resp.text
+        ticket = _create_dummy_ticket()
+        _create_audit_log(
+            ticket_id=ticket.id,
+            actor_user_id=admin.id,
+            actor_role=admin.role,
+            action="category_changed",
+            field_name="official_category_id",
+            old_value=str(cat_to_inactivate.id),
+            new_value="999888",  # ID kategori tidak ada di DB
+            note="Uji coba fallback historical",
+        )
+        db.session.commit()
+
+        resp = client.get("/admin/audit-log")
+        assert resp.status_code == 200
+        # Kategori nonaktif harus tetap tampil namanya
+        assert f"{cat_to_inactivate.code} - {cat_to_inactivate.name}" in resp.text
+        # ID yang tidak terdaftar harus tampil sebagai fallback ID mentah
+        assert "ID: 999888" in resp.text
+    finally:
+        # Garansi pemulihan nilai semula meskipun pengujian atau assertion gagal
+        cat_to_inactivate.is_active = original_is_active
+        db.session.commit()
 
 
 def test_audit_log_displays_status_change_details(client):
@@ -778,3 +791,24 @@ def test_ticket_verification_detail_audit_card_remains_functional(client):
     assert resp.status_code == 200
     assert "Riwayat Audit Operasional" in resp.text
     assert "Pencatatan status awal pada kartu detail" in resp.text
+
+
+def test_audit_page_boundaries_accepted():
+    for raw_page, expected in (("1", 1), (str(MAX_PAGE), MAX_PAGE)):
+        validated, errors = parse_and_validate_audit_filter_params(
+            {"page": raw_page}
+        )
+        assert errors == {}
+        assert validated["page"] == expected
+
+
+@pytest.mark.parametrize(
+    "raw_page",
+    ["0", str(MAX_PAGE + 1), "abc", "1.5", "9" * 100, "9" * 5000],
+)
+def test_audit_page_invalid_values_rejected(raw_page):
+    validated, errors = parse_and_validate_audit_filter_params(
+        {"page": raw_page}
+    )
+    assert validated is None
+    assert "page" in errors

@@ -30,6 +30,14 @@ CONFIDENCE_CHECK_SQL = (
 BUILDING_CHECK_SQL = "building_name = 'Gedung FTII'"
 FLOOR_CHECK_SQL = "floor_number BETWEEN 1 AND 4"
 DESCRIPTION_LENGTH_CHECK_SQL = "char_length(description) <= 2000"
+PHOTO_SIZE_CHECK_SQL = (
+    "photo_size_bytes IS NULL OR "
+    "(photo_size_bytes >= 1 AND photo_size_bytes <= 3145728)"
+)
+PHOTO_MIME_CHECK_SQL = (
+    "photo_mime_type IS NULL OR "
+    "photo_mime_type IN ('image/jpeg', 'image/png')"
+)
 
 
 class Ticket(Base):
@@ -146,6 +154,8 @@ class Ticket(Base):
         CheckConstraint(
             DESCRIPTION_LENGTH_CHECK_SQL, name="ck_tickets_description_length"
         ),
+        CheckConstraint(PHOTO_SIZE_CHECK_SQL, name="ck_tickets_photo_size_bytes"),
+        CheckConstraint(PHOTO_MIME_CHECK_SQL, name="ck_tickets_photo_mime_type"),
         Index(
             "ix_tickets_building_name_floor_number",
             "building_name",

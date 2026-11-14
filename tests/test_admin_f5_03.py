@@ -25,6 +25,7 @@ from app.models.audit_log import AuditLog
 from app.models.category import Category
 from app.models.ticket import Ticket
 from app.models.user import User
+from app.services.complaint_service import MAX_PAGE, parse_and_validate_filter_params
 from app.services.ticket_report import get_active_categories
 from app.utils.ticket_identity import generate_ticket_code
 
@@ -548,3 +549,34 @@ def test_search_and_filter_unauthenticated_redirects_to_login(client):
     resp = client.get("/admin/tiket?keyword=ac")
     assert resp.status_code == 302
     assert resp.headers["Location"].endswith("/auth/login")
+
+
+def test_admin_page_boundaries_accepted():
+    for raw_page, expected in (("1", 1), (str(MAX_PAGE), MAX_PAGE)):
+        validated, errors = parse_and_validate_filter_params({"page": raw_page})
+        assert errors == {}
+        assert validated["page"] == expected
+
+
+@pytest.mark.parametrize(
+    "raw_page",
+    ["0", str(MAX_PAGE + 1), "abc", "1.5", "9" * 100, "9" * 5000],
+)
+def test_admin_page_invalid_values_rejected(raw_page):
+    validated, errors = parse_and_validate_filter_params({"page": raw_page})
+    assert validated is None
+    assert "page" in errors
+
+
+def test_admin_invalid_page_rejected_before_category_query(monkeypatch):
+    def fail_if_called():
+        pytest.fail("get_active_categories dipanggil sebelum validasi page")
+
+    monkeypatch.setattr(
+        "app.services.complaint_service.get_active_categories", fail_if_called
+    )
+    validated, errors = parse_and_validate_filter_params(
+        {"page": str(MAX_PAGE + 1), "category_id": "1"}
+    )
+    assert validated is None
+    assert "page" in errors

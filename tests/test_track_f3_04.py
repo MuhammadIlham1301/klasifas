@@ -11,7 +11,7 @@ Pengujian komprehensif TSK-F3-04:
 import concurrent.futures
 import re
 import pytest
-from flask import g
+from flask import g, has_app_context
 from sqlalchemy import delete, select, update
 
 from app.extensions import db
@@ -146,6 +146,33 @@ def test_rate_limiter_sliding_window_basics():
     other_allowed, other_retry = limiter.hit("192.168.1.20")
     assert other_allowed is True
     assert other_retry == 0
+
+
+def test_track_limiter_uses_dynamic_flask_config(app):
+    ip = "203.0.113.11"
+    app.config["TRACK_RATE_LIMIT_PER_MINUTE"] = 2
+    app.config["TRACK_RATE_LIMIT_WINDOW_SECONDS"] = 120
+
+    assert track_limiter.hit(ip) == (True, 0)
+    assert track_limiter.hit(ip) == (True, 0)
+    allowed, retry_after = track_limiter.hit(ip)
+    assert allowed is False
+    assert 60 < retry_after <= 120
+
+    app.config["TRACK_RATE_LIMIT_PER_MINUTE"] = 3
+    assert track_limiter.hit(ip) == (True, 0)
+
+
+def test_track_limiter_fallback_outside_app_context():
+    assert not has_app_context()
+    ip = "203.0.113.12"
+
+    for _ in range(15):
+        assert track_limiter.hit(ip) == (True, 0)
+
+    allowed, retry_after = track_limiter.hit(ip)
+    assert allowed is False
+    assert 0 < retry_after <= 60
 
 
 def test_rate_limiter_thread_safety_under_concurrency():

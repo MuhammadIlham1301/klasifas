@@ -24,6 +24,8 @@ from app.services.audit_service import (
 )
 from app.services.ticket_report import FLOOR_NUMBERS, get_active_categories
 
+MAX_PAGE = 10_000
+
 ALLOWED_STATUS_TRANSITIONS: dict[str, dict[str, set[str]]] = {
     "Baru": {
         "Terverifikasi": {"admin_sarpras"},
@@ -74,6 +76,40 @@ def parse_and_validate_filter_params(
     """
     errors: dict[str, str] = {}
     validated: dict[str, Any] = {}
+
+    # 0. Paginasi (page & per_page): validasi sebelum akses database
+    raw_page = raw_params.get("page")
+    if raw_page is None or str(raw_page).strip() == "":
+        validated["page"] = 1
+    else:
+        try:
+            page_val = int(str(raw_page).strip())
+        except (TypeError, ValueError):
+            errors["page"] = "Nomor halaman harus berupa angka bulat positif minimal 1."
+        else:
+            if page_val < 1:
+                errors["page"] = "Nomor halaman harus berupa angka bulat positif minimal 1."
+            elif page_val > MAX_PAGE:
+                errors["page"] = f"Nomor halaman harus berada pada rentang 1 sampai {MAX_PAGE}."
+            else:
+                validated["page"] = page_val
+
+    raw_per_page = raw_params.get("per_page")
+    if raw_per_page is None or str(raw_per_page).strip() == "":
+        validated["per_page"] = 15
+    else:
+        try:
+            per_page_val = int(str(raw_per_page).strip())
+        except (TypeError, ValueError):
+            errors["per_page"] = "Jumlah data per halaman harus berupa angka antara 1 sampai 50."
+        else:
+            if per_page_val < 1 or per_page_val > 50:
+                errors["per_page"] = "Jumlah data per halaman harus berupa angka antara 1 sampai 50."
+            else:
+                validated["per_page"] = per_page_val
+
+    if errors:
+        return None, errors
 
     # 1. Kata Kunci: teks bebas, sanitasi whitespace
     raw_keyword = (raw_params.get("keyword") or "").strip()
@@ -167,25 +203,6 @@ def parse_and_validate_filter_params(
                 f"Status '{clean_status}' tidak valid. "
                 f"Pilihan resmi: {', '.join(TICKET_STATUSES)} atau Semua."
             )
-
-    # 7. Paginasi (page & per_page):
-    raw_page = (raw_params.get("page") or "").strip()
-    if raw_page:
-        if not raw_page.isdigit() or int(raw_page) < 1:
-            errors["page"] = "Nomor halaman harus berupa angka bulat positif minimal 1."
-        else:
-            validated["page"] = int(raw_page)
-    else:
-        validated["page"] = 1
-
-    raw_per_page = (raw_params.get("per_page") or "").strip()
-    if raw_per_page:
-        if not raw_per_page.isdigit() or int(raw_per_page) < 1 or int(raw_per_page) > 50:
-            errors["per_page"] = "Jumlah data per halaman harus berupa angka antara 1 sampai 50."
-        else:
-            validated["per_page"] = int(raw_per_page)
-    else:
-        validated["per_page"] = 15
 
     if errors:
         return None, errors
@@ -588,7 +605,7 @@ def parse_and_validate_technician_filter_params(
       atau None/""/'all'/'semua' (tanpa filter status/menampilkan seluruh status penugasan).
       Nilai lain (misal status ilegal atau 'Baru') DITOLAK secara eksplisit dengan error
       dan TIDAK memperluas hasil kueri secara diam-diam.
-    - page: integer positif >= 1.
+    - page: integer antara 1 sampai MAX_PAGE.
     - per_page: integer antara 1 sampai 50 (default 20).
     """
     errors: dict[str, str] = {}
@@ -610,17 +627,20 @@ def parse_and_validate_technician_filter_params(
 
     # 2. Validasi Paginasi: page
     raw_page = raw_params.get("page")
-    if raw_page is None or raw_page.strip() == "":
+    if raw_page is None or str(raw_page).strip() == "":
         validated["page"] = 1
     else:
         try:
-            page_val = int(raw_page.strip())
+            page_val = int(str(raw_page).strip())
+        except (TypeError, ValueError):
+            errors["page"] = "Nomor halaman harus berupa bilangan bulat positif."
+        else:
             if page_val < 1:
                 errors["page"] = "Nomor halaman harus bernilai minimal 1."
+            elif page_val > MAX_PAGE:
+                errors["page"] = f"Nomor halaman harus bernilai maksimal {MAX_PAGE}."
             else:
                 validated["page"] = page_val
-        except ValueError:
-            errors["page"] = "Nomor halaman harus berupa bilangan bulat positif."
 
     # 3. Validasi Paginasi: per_page
     raw_per_page = raw_params.get("per_page")

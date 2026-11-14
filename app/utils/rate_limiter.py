@@ -6,7 +6,7 @@ import math
 import threading
 import time
 from collections import defaultdict
-from flask import Request
+from flask import Request, current_app, has_app_context
 
 
 class SlidingWindowRateLimiter:
@@ -27,6 +27,9 @@ class SlidingWindowRateLimiter:
         self._lock = threading.Lock()
         self._requests: dict[str, list[float]] = defaultdict(list)
 
+    def _resolve_limits(self) -> tuple[int, int]:
+        return self.limit, self.window_seconds
+
     def hit(self, key: str) -> tuple[bool, int]:
         """
         Catat percobaan akses untuk `key` dan tentukan apakah permintaan diizinkan.
@@ -40,8 +43,9 @@ class SlidingWindowRateLimiter:
                 - int: Sisa detik sebelum pemanggil boleh mencoba lagi (Retry-After).
                        Bernilai 0 jika permintaan diizinkan.
         """
+        limit, window_seconds = self._resolve_limits()
         now = time.time()
-        cutoff = now - self.window_seconds
+        cutoff = now - window_seconds
 
         with self._lock:
             # 1. Bersihkan entri kedaluwarsa untuk kunci aktif ini
@@ -52,10 +56,10 @@ class SlidingWindowRateLimiter:
                 self._prune_expired_locked(cutoff)
 
             # 3. Evaluasi kuota
-            if len(timestamps) >= self.limit:
+            if len(timestamps) >= limit:
                 # Kuota terlampaui: hitung Retry-After dari request tertua dalam window
                 oldest_timestamp = timestamps[0]
-                retry_after = max(1, math.ceil((oldest_timestamp + self.window_seconds) - now))
+                retry_after = max(1, math.ceil((oldest_timestamp + window_seconds) - now))
                 self._requests[key] = timestamps
                 return False, int(retry_after)
 
@@ -92,6 +96,18 @@ def get_client_ip(req: Request) -> str:
     return (req.remote_addr or "127.0.0.1").strip()
 
 
+class ConfigBoundRateLimiter(SlidingWindowRateLimiter):
+    """Rate limiter yang membaca konfigurasi Flask saat app context aktif."""
+
+    def _resolve_limits(self) -> tuple[int, int]:
+        if has_app_context():
+            return (
+                current_app.config.get("TRACK_RATE_LIMIT_PER_MINUTE", 15),
+                current_app.config.get("TRACK_RATE_LIMIT_WINDOW_SECONDS", 60),
+            )
+        return 15, 60
+
+
 # Instance singleton default untuk pelacakan tiket publik (/lacak)
-track_limiter = SlidingWindowRateLimiter(limit=15, window_seconds=60)
+track_limiter = ConfigBoundRateLimiter(limit=15, window_seconds=60)
 

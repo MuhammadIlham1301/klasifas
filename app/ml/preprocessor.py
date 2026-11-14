@@ -20,8 +20,10 @@ from app.ml.dictionary import SLANG_DICTIONARY
 
 # Singleton instances untuk Sastrawi (lazy initialization dengan thread-safety)
 _stemmer = None
-_stopword_remover = None
+_stopwords = None
 _sastrawi_lock = threading.Lock()
+
+NEGATION_WORDS = frozenset({"tidak", "bukan", "belum", "tanpa", "tak", "jangan"})
 
 URL_PATTERN = re.compile(r"https?://\S+|www\.\S+")
 CLEAN_CHARS_PATTERN = re.compile(r"[^a-z\s]")
@@ -52,14 +54,14 @@ def _get_stemmer():
     return _stemmer
 
 
-def _get_stopword_remover():
-    global _stopword_remover
-    if _stopword_remover is None:
+def _get_stopwords():
+    global _stopwords
+    if _stopwords is None:
         with _sastrawi_lock:
-            if _stopword_remover is None:
+            if _stopwords is None:
                 factory = StopWordRemoverFactory()
-                _stopword_remover = factory.create_stop_word_remover()
-    return _stopword_remover
+                _stopwords = frozenset(factory.get_stop_words()) - NEGATION_WORDS
+    return _stopwords
 
 
 def normalize_slang(text: str) -> str:
@@ -102,9 +104,11 @@ def preprocess_text(text: str | None) -> PreprocessResult:
     if not normalized:
         return PreprocessResult(cleaned_text="", tokens=[], token_count=0)
 
-    # 5. Stopword Removal menggunakan PySastrawi
-    remover = _get_stopword_remover()
-    without_stopwords = remover.remove(normalized)
+    # 5. Stopword Removal menggunakan daftar PySastrawi, kecuali kata negasi
+    stopwords = _get_stopwords()
+    without_stopwords = " ".join(
+        word for word in normalized.split() if word not in stopwords
+    )
 
     # 6. Stemming Nazief-Adriani menggunakan PySastrawi
     stemmer = _get_stemmer()

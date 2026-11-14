@@ -11,6 +11,7 @@ from app.models.category import Category
 from app.models.ticket import Ticket
 
 MAX_AUDIT_NOTE_LENGTH = 1000
+MAX_PAGE = 10_000
 VALID_AUDIT_ACTIONS = {"category_changed", "status_changed", "technician_assigned"}
 
 
@@ -178,7 +179,7 @@ def parse_and_validate_audit_filter_params(
       string kosong "", "all", dan "semua" (diperlakukan sebagai tanpa filter aksi/semua aksi).
       Nilai lain di luar pilihan tersebut ditolak secara eksplisit dengan pesan validasi error.
     - ticket_code: teks dibersihkan (strip), maksimal 20 karakter.
-    - page: bilangan bulat positif >= 1.
+    - page: bilangan bulat antara 1 sampai MAX_PAGE.
     - per_page: bilangan bulat antara 1 sampai 50 (default 20).
     - Konsistensi: jika ada error validasi, query pencarian TIDAK dijalankan
       dan seluruh nilai input pengguna dipertahankan.
@@ -213,17 +214,20 @@ def parse_and_validate_audit_filter_params(
 
     # 3. Validasi Paginasi: page
     raw_page = raw_params.get("page")
-    if raw_page is None or raw_page.strip() == "":
+    if raw_page is None or str(raw_page).strip() == "":
         validated["page"] = 1
     else:
         try:
-            page_val = int(raw_page.strip())
+            page_val = int(str(raw_page).strip())
+        except (TypeError, ValueError):
+            errors["page"] = "Nomor halaman harus berupa bilangan bulat positif."
+        else:
             if page_val < 1:
                 errors["page"] = "Nomor halaman harus bernilai minimal 1."
+            elif page_val > MAX_PAGE:
+                errors["page"] = f"Nomor halaman harus bernilai maksimal {MAX_PAGE}."
             else:
                 validated["page"] = page_val
-        except ValueError:
-            errors["page"] = "Nomor halaman harus berupa bilangan bulat positif."
 
     # 4. Validasi Paginasi: per_page
     raw_per_page = raw_params.get("per_page")

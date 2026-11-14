@@ -26,6 +26,7 @@ from app.models.category import Category
 from app.models.ticket import Ticket
 from app.models.user import User
 from app.services.complaint_service import (
+    MAX_PAGE,
     TECHNICIAN_ALLOWED_STATUS_FILTERS,
     get_technician_assigned_tickets,
     get_technician_ticket_by_id,
@@ -557,7 +558,7 @@ def test_technician_ticket_photo_path_traversal_prevention(client, app):
         status="Terverifikasi",
         assigned_technician_id=tech.id,
         photo_filename="../../secret_system_file.txt",
-        photo_mime_type="text/plain",
+        photo_mime_type="image/jpeg",
     )
     db.session.commit()
 
@@ -704,4 +705,25 @@ def test_technician_views_and_filtering_does_not_mutate_data_and_xss_protection(
         assert "<script>alert('XSS_TECHNICIAN_BOARD')</script>" not in r.text
         assert "&lt;script&gt;alert(" in r.text
         assert "<b>Bold Desc</b>" not in r.text
+
+
+def test_technician_page_boundaries_accepted():
+    for raw_page, expected in (("1", 1), (str(MAX_PAGE), MAX_PAGE)):
+        validated, errors = parse_and_validate_technician_filter_params(
+            {"page": raw_page}
+        )
+        assert errors == {}
+        assert validated["page"] == expected
+
+
+@pytest.mark.parametrize(
+    "raw_page",
+    ["0", str(MAX_PAGE + 1), "abc", "1.5", "9" * 100, "9" * 5000],
+)
+def test_technician_page_invalid_values_rejected(raw_page):
+    validated, errors = parse_and_validate_technician_filter_params(
+        {"page": raw_page}
+    )
+    assert validated is None
+    assert "page" in errors
 
