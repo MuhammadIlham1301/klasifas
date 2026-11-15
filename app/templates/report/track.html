@@ -1,265 +1,319 @@
 {% extends "base.html" %}
 {% from "components/_macros.html" import status_badge %}
-{% from "components/_code_box.html" import code_box %}
 
 {% block title %}Lacak Keluhan Fasilitas - KlasiFas{% endblock %}
+{% block body_class %} kf-report-page-body kf-track-page-body{% endblock %}
 
 {% block content %}
-<div class="kf-page-heading mb-4">
-    <p class="kf-page-heading__eyebrow mb-2">Pelacakan Mandiri</p>
-    <h1 class="kf-page-heading__title">Lacak status penanganan keluhan</h1>
-    <p class="kf-page-heading__sub mb-0">
-        Masukkan kode referensi tiket dan token akses rahasia yang Anda peroleh saat membuat laporan.
-    </p>
-</div>
+<div class="kf-track-page">
+    <header class="kf-track-heading">
+        <div class="kf-track-heading__eyebrow">
+            <span class="kf-track-heading__badge">Pelacakan Mandiri</span>
+            <span>Verifikasi Kredensial</span>
+        </div>
+        <h1 class="kf-track-heading__title">Lacak status penanganan keluhan</h1>
+        <p class="kf-track-heading__sub">
+            Masukkan kode referensi tiket dan token akses rahasia yang Anda peroleh saat membuat laporan.
+        </p>
+    </header>
 
-{% if error %}
-    <div class="alert {% if retry_after is defined and retry_after %}alert-warning{% else %}alert-danger{% endif %} mb-4" role="alert">
-        {{ error }}
-        {% if retry_after is defined and retry_after %}
-            <div class="small mt-1">Silakan coba kembali dalam <strong>{{ retry_after }} detik</strong>.</div>
-        {% endif %}
-    </div>
-{% endif %}
+    <section class="kf-track-search" aria-labelledby="track-search-title">
+        <div class="kf-track-search__title">
+            <span class="kf-track-search__icon" aria-hidden="true">
+                <i class="bi bi-shield-check"></i>
+            </span>
+            <h2 id="track-search-title">Autentikasi Kredensial Tiket</h2>
+        </div>
 
-<!-- VQ-16 B2: Formulir Pencarian Tiket -->
-<div class="row justify-content-center">
-    <div class="col-12 col-lg-8">
-        <div class="card border-0 shadow-sm kf-form-card mb-4">
-            <div class="card-body p-4 p-lg-5">
-                <form method="post" action="{{ url_for('report.track') }}">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <form method="post" action="{{ url_for('report.track') }}" class="kf-track-search__form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-                    <div class="mb-3">
-                        <label for="ticket_code" class="form-label fw-semibold">
-                            Kode Referensi Tiket
-                            <span class="kf-required" aria-hidden="true">*</span>
-                            <span class="visually-hidden">(wajib)</span>
-                        </label>
-                        <div class="kf-input-icon">
-                            <i class="bi bi-tag kf-input-icon__glyph" aria-hidden="true"></i>
-                            <input
-                                type="text"
-                                class="form-control font-monospace text-uppercase"
-                                id="ticket_code"
-                                name="ticket_code"
-                                placeholder="Contoh: KF-8X9B2M"
-                                value="{{ ticket_code or '' }}"
-                                maxlength="9"
-                                required
-                                aria-describedby="ticket-code-help"
-                            >
-                        </div>
-                        <div id="ticket-code-help" class="form-text">
-                            Kode acak berformat KF-XXXXXX (8 karakter alfanumerik).
-                        </div>
+            <div class="row g-3 align-items-end">
+                <div class="col-12 col-lg-5">
+                    <label for="ticket_code" class="form-label fw-semibold">
+                        Kode Referensi Tiket
+                        <span class="kf-required" aria-hidden="true">*</span>
+                        <span class="visually-hidden">(wajib)</span>
+                    </label>
+                    <div class="kf-track-input">
+                        <i class="bi bi-tag kf-track-input__glyph" aria-hidden="true"></i>
+                        <input
+                            type="text"
+                            class="form-control font-monospace text-uppercase"
+                            id="ticket_code"
+                            name="ticket_code"
+                            placeholder="Contoh: KF-8X9B2M"
+                            value="{{ ticket_code or '' }}"
+                            maxlength="9"
+                            required
+                            aria-describedby="ticket-code-help"
+                        >
                     </div>
-
-                    <div class="mb-4">
-                        <label for="access_token" class="form-label fw-semibold">
-                            Token Akses Rahasia
-                            <span class="kf-required" aria-hidden="true">*</span>
-                            <span class="visually-hidden">(wajib)</span>
-                        </label>
-                        <div class="input-group kf-input-icon">
-                            <i class="bi bi-key kf-input-icon__glyph" aria-hidden="true"></i>
-                            <input
-                                type="password"
-                                class="form-control font-monospace"
-                                id="access_token"
-                                name="access_token"
-                                placeholder="Masukkan token 128-bit yang didapat saat melapor"
-                                autocomplete="off"
-                                required
-                                aria-describedby="access-token-help"
-                            >
-                            <button
-                                type="button"
-                                class="btn btn-outline-secondary"
-                                id="toggle-token-visibility"
-                                aria-pressed="false"
-                                aria-controls="access_token"
-                                data-token-toggle
-                            >
-                                <i class="bi bi-eye" aria-hidden="true" data-token-toggle-icon></i>
-                                <span data-token-toggle-label>Lihat</span>
-                            </button>
-                        </div>
-                        <div id="access-token-help" class="form-text">
-                            Token rahasia yang ditampilkan satu kali pada halaman konfirmasi pengiriman laporan.
-                        </div>
+                    <div id="ticket-code-help" class="form-text">
+                        Kode acak berformat KF-XXXXXX (8 karakter alfanumerik).
                     </div>
+                </div>
 
-                    <button type="submit" class="btn kf-btn-primary px-4">
+                <div class="col-12 col-lg-4">
+                    <label for="access_token" class="form-label fw-semibold">
+                        Token Akses Rahasia
+                        <span class="kf-required" aria-hidden="true">*</span>
+                        <span class="visually-hidden">(wajib)</span>
+                    </label>
+                    <div class="kf-track-input kf-track-input--token">
+                        <i class="bi bi-key kf-track-input__glyph" aria-hidden="true"></i>
+                        <input
+                            type="password"
+                            class="form-control font-monospace"
+                            id="access_token"
+                            name="access_token"
+                            placeholder="Token 128-bit dari halaman konfirmasi"
+                            autocomplete="off"
+                            required
+                            aria-describedby="access-token-help"
+                        >
+                        <button
+                            type="button"
+                            class="kf-track-token-toggle"
+                            id="toggle-token-visibility"
+                            aria-pressed="false"
+                            aria-controls="access_token"
+                            aria-label="Tampilkan atau sembunyikan token"
+                            data-token-toggle
+                        >
+                            <i class="bi bi-eye" aria-hidden="true" data-token-toggle-icon></i>
+                        </button>
+                    </div>
+                    <div id="access-token-help" class="form-text">
+                        Token rahasia ditampilkan satu kali pada halaman konfirmasi pengiriman laporan.
+                    </div>
+                </div>
+
+                <div class="col-12 col-lg-3">
+                    <button type="submit" class="btn kf-btn-primary kf-track-search__submit">
+                        <i class="bi bi-search me-1" aria-hidden="true"></i>
                         Lacak Keluhan
                     </button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- VQ-16 B2: Tampilan Hasil Pelacakan Tiket -->
-{% if ticket %}
-    <div class="row g-4 align-items-start">
-        <div class="col-12 col-lg-7">
-            <div class="card border-0 shadow-sm kf-form-card">
-                <div class="card-body p-4 p-lg-5">
-                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-                        <span class="small text-secondary">Detail Tiket</span>
-                        {{ status_badge(ticket.status, 'fs-6') }}
-                    </div>
-
-                    <div class="mb-4">{{ code_box('Kode Referensi', ticket.ticket_code, variant='reference', value_class='fs-4 fw-semibold font-monospace') }}</div>
-
-                    <!-- Stepper progres penanganan berdasarkan status tiket aktual -->
-                    {% set status_steps = ['Baru', 'Terverifikasi', 'Diproses', 'Selesai'] %}
-                    {% set step_captions = {
-                        'Baru': 'Laporan diterima sistem.',
-                        'Terverifikasi': 'Kategori resmi ditetapkan.',
-                        'Diproses': 'Perbaikan sedang berjalan.',
-                        'Selesai': 'Perbaikan telah ditutup.'
-                    } %}
-                    {% set step_icons = {
-                        'Baru': 'bi-inbox',
-                        'Terverifikasi': 'bi-clipboard-check',
-                        'Diproses': 'bi-tools',
-                        'Selesai': 'bi-check2-circle'
-                    } %}
-                    {% set current_index = status_steps.index(ticket.status) if ticket.status in status_steps else 0 %}
-                    <div class="kf-stepper mb-4" role="list" aria-label="Progres penanganan tiket">
-                        {% for step in status_steps %}
-                            {% if loop.index0 < current_index %}
-                                {% set step_state = 'is-done' %}
-                                {% set step_label = 'selesai dilewati' %}
-                            {% elif loop.index0 == current_index %}
-                                {% set step_state = 'is-current' %}
-                                {% set step_label = 'status saat ini' %}
-                            {% else %}
-                                {% set step_state = 'is-pending' %}
-                                {% set step_label = 'belum tercapai' %}
-                            {% endif %}
-                            <div class="kf-stepper__step kf-stepper__step--{{ step|lower }} {{ step_state }}" role="listitem"
-                                 {% if loop.index0 == current_index %}aria-current="step"{% endif %}>
-                                <span class="kf-stepper__indicator" aria-hidden="true">
-                                    {% if loop.index0 < current_index %}
-                                        <i class="bi bi-check-lg"></i>
-                                    {% elif loop.index0 == current_index %}
-                                        <i class="bi {{ step_icons[step] }}"></i>
-                                    {% else %}
-                                        {{ loop.index }}
-                                    {% endif %}
-                                </span>
-                                <span class="kf-stepper__label">
-                                    {{ step }}
-                                    <span class="visually-hidden">({{ step_label }})</span>
-                                </span>
-                                <span class="kf-stepper__caption">{{ step_captions[step] }}</span>
-                            </div>
-                        {% endfor %}
-                    </div>
-
-                    <dl class="kf-meta-grid mb-0">
-                        <div class="kf-meta-item">
-                            <dt class="kf-meta-item__label">
-                                <i class="bi bi-clock" aria-hidden="true"></i>
-                                Waktu Laporan
-                            </dt>
-                            <dd class="kf-meta-item__value">
-                                {{ ticket.created_at.strftime('%d/%m/%Y, %H:%M WIB') if ticket.created_at else '-' }}
-                            </dd>
-                        </div>
-
-                        <div class="kf-meta-item">
-                            <dt class="kf-meta-item__label">
-                                <i class="bi bi-tags" aria-hidden="true"></i>
-                                Kategori Fasilitas
-                            </dt>
-                            <dd class="kf-meta-item__value fw-semibold">
-                                {{ ticket.category_name }}
-                            </dd>
-                        </div>
-
-                        <div class="kf-meta-item">
-                            <dt class="kf-meta-item__label">
-                                <i class="bi bi-building" aria-hidden="true"></i>
-                                Lokasi
-                            </dt>
-                            <dd class="kf-meta-item__value">
-                                {{ ticket.building_name }}, Lantai {{ ticket.floor_number }}, {{ ticket.room_name }}
-                                {% if ticket.location_detail %}
-                                    <div class="small text-secondary">Detail: {{ ticket.location_detail }}</div>
-                                {% endif %}
-                            </dd>
-                        </div>
-
-                        <div class="kf-meta-item kf-meta-item--wide">
-                            <dt class="kf-meta-item__label">
-                                <i class="bi bi-chat-left-text" aria-hidden="true"></i>
-                                Deskripsi Keluhan
-                            </dt>
-                            <dd class="kf-meta-item__value">
-                                {{ ticket.description }}
-                            </dd>
-                        </div>
-
-                        <div class="kf-meta-item">
-                            <dt class="kf-meta-item__label">
-                                <i class="bi bi-paperclip" aria-hidden="true"></i>
-                                Lampiran Foto
-                            </dt>
-                            <dd class="kf-meta-item__value">
-                                {% if ticket.has_photo %}
-                                    <span class="badge text-bg-light border">Tersedia (Disimpan Aman)</span>
-                                {% else %}
-                                    <span class="text-secondary small">Tidak ada foto</span>
-                                {% endif %}
-                            </dd>
-                        </div>
-
-                        <div class="kf-meta-item">
-                            <dt class="kf-meta-item__label">
-                                <i class="bi bi-clock-history" aria-hidden="true"></i>
-                                Waktu Pembaruan
-                            </dt>
-                            <dd class="kf-meta-item__value">
-                                {{ ticket.updated_at.strftime('%d/%m/%Y, %H:%M WIB') if ticket.updated_at else '-' }}
-                            </dd>
-                        </div>
-
-                        {% if ticket.status == 'Selesai' %}
-                            <div class="kf-meta-item">
-                                <dt class="kf-meta-item__label kf-meta-item__label--success">
-                                    <i class="bi bi-check-circle" aria-hidden="true"></i>
-                                    Waktu Selesai
-                                </dt>
-                                <dd class="kf-meta-item__value">
-                                    {{ ticket.resolved_at.strftime('%d/%m/%Y, %H:%M WIB') if ticket.resolved_at else '-' }}
-                                </dd>
-                            </div>
-
-                            <div class="kf-meta-item kf-meta-item--wide">
-                                <dt class="kf-meta-item__label kf-meta-item__label--success">
-                                    <i class="bi bi-clipboard-check" aria-hidden="true"></i>
-                                    Catatan Tindakan
-                                </dt>
-                                <dd class="kf-meta-item__value">
-                                    {{ ticket.resolution_note or 'Tindakan perbaikan fasilitas telah diselesaikan.' }}
-                                </dd>
-                            </div>
-                        {% endif %}
-                    </dl>
                 </div>
             </div>
-        </div>
+        </form>
 
-        <!-- VQ-16 B2: Kolom kanan catatan keamanan akses (non-kontak; kontak menunggu keputusan K1) -->
-        <aside class="col-12 col-lg-5 kf-tracker-aside" aria-label="Catatan keamanan akses tiket">
-            <div class="card border-0 shadow-sm kf-sidebar-card">
-                <div class="card-body p-4">
-                    <div class="kf-sidebar-card__header">
+        <div class="kf-track-privacy">
+            <i class="bi bi-shield-lock" aria-hidden="true"></i>
+            <div>
+                <strong>Privasi terjamin &amp; keamanan tanpa kebocoran</strong>
+                <p>
+                    Hanya tiket yang cocok secara presisi dengan kombinasi kode tiket dan token rahasia
+                    sah yang dapat ditampilkan. Sistem tidak mengekspos status parsial atau identitas pelapor.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    {% if error %}
+        <div class="kf-track-error{% if retry_after is defined and retry_after %} kf-track-error--warning{% endif %}" role="alert">
+            <div class="kf-track-error__icon" aria-hidden="true">
+                <i class="bi {% if retry_after is defined and retry_after %}bi-hourglass-split{% else %}bi-lock{% endif %}"></i>
+            </div>
+            <div class="kf-track-error__body">
+                <div class="kf-track-error__head">
+                    <h2>
+                        {% if retry_after is defined and retry_after %}
+                            Batas frekuensi pencarian tercapai
+                        {% else %}
+                            Kredensial tidak ditemukan atau tidak valid
+                        {% endif %}
+                    </h2>
+                    <span>{% if retry_after is defined and retry_after %}Coba Lagi{% else %}Akses Ditolak{% endif %}</span>
+                </div>
+                <p>{{ error }}</p>
+                {% if retry_after is defined and retry_after %}
+                    <p>Silakan coba kembali dalam <strong>{{ retry_after }} detik</strong>.</p>
+                {% endif %}
+                <a class="kf-track-error__link" href="{{ url_for('report.track') }}">
+                    <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i>
+                    Kembali ke formulir pelacakan
+                </a>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if ticket %}
+        {% set status_steps = ['Baru', 'Terverifikasi', 'Diproses', 'Selesai'] %}
+        {% set step_captions = {
+            'Baru': 'Laporan diterima sistem.',
+            'Terverifikasi': 'Kategori resmi ditetapkan.',
+            'Diproses': 'Perbaikan sedang berjalan.',
+            'Selesai': 'Perbaikan telah ditutup.'
+        } %}
+        {% set step_icons = {
+            'Baru': 'bi-inbox',
+            'Terverifikasi': 'bi-clipboard-check',
+            'Diproses': 'bi-tools',
+            'Selesai': 'bi-check2-circle'
+        } %}
+        {% set current_index = status_steps.index(ticket.status) if ticket.status in status_steps else 0 %}
+
+        <section class="kf-track-summary" aria-labelledby="track-summary-title">
+            <div class="kf-track-summary__main">
+                <div class="kf-track-summary__top">
+                    <h2 id="track-summary-title" class="kf-track-summary__code">{{ ticket.ticket_code }}</h2>
+                    <div class="kf-track-summary__badges">
+                        {{ status_badge(ticket.status, 'fs-6') }}
+                        <span class="kf-track-summary__stage">Tahap {{ current_index + 1 }} dari 4</span>
+                    </div>
+                </div>
+                <div class="kf-track-summary__meta">
+                    <span>
+                        <i class="bi bi-building" aria-hidden="true"></i>
+                        {{ ticket.building_name }}, Lt. {{ ticket.floor_number }}, {{ ticket.room_name }}
+                    </span>
+                    <span>
+                        <i class="bi bi-calendar3" aria-hidden="true"></i>
+                        {{ ticket.created_at.strftime('%d/%m/%Y, %H:%M WIB') if ticket.created_at else '-' }}
+                    </span>
+                </div>
+            </div>
+        </section>
+
+        <section class="kf-track-progress" aria-labelledby="track-progress-title">
+            <div class="kf-track-progress__header">
+                <h2 id="track-progress-title">Alur Penanganan Resmi</h2>
+                <span>Tahap {{ current_index + 1 }} dari 4</span>
+            </div>
+            <div class="kf-stepper" role="list" aria-label="Progres penanganan tiket">
+                {% for step in status_steps %}
+                    {% if loop.index0 < current_index %}
+                        {% set step_state = 'is-done' %}
+                        {% set step_label = 'selesai dilewati' %}
+                    {% elif loop.index0 == current_index %}
+                        {% set step_state = 'is-current' %}
+                        {% set step_label = 'status saat ini' %}
+                    {% else %}
+                        {% set step_state = 'is-pending' %}
+                        {% set step_label = 'belum tercapai' %}
+                    {% endif %}
+                    <div class="kf-stepper__step kf-stepper__step--{{ step|lower }} {{ step_state }}" role="listitem"
+                         {% if loop.index0 == current_index %}aria-current="step"{% endif %}>
+                        <span class="kf-stepper__indicator" aria-hidden="true">
+                            {% if loop.index0 < current_index %}
+                                <i class="bi bi-check-lg"></i>
+                            {% elif loop.index0 == current_index %}
+                                <i class="bi {{ step_icons[step] }}"></i>
+                            {% else %}
+                                {{ loop.index }}
+                            {% endif %}
+                        </span>
+                        <span class="kf-stepper__label">
+                            {{ step }}
+                            <span class="visually-hidden">({{ step_label }})</span>
+                        </span>
+                        <span class="kf-stepper__caption">{{ step_captions[step] }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <div class="row g-4 kf-track-bento">
+            <div class="col-12 col-lg-7">
+                <section class="kf-track-card" aria-labelledby="track-category-title">
+                    <div class="kf-track-card__header">
+                        <i class="bi bi-diagram-3" aria-hidden="true"></i>
+                        <h2 id="track-category-title">Kategori &amp; Deskripsi</h2>
+                    </div>
+
+                    <div class="kf-track-category">
+                        <span class="kf-track-label">Kategori Fasilitas</span>
+                        <strong>{{ ticket.category_name }}</strong>
+                        <p>Kategori resmi yang digunakan untuk penanganan teknis Sarpras FTII.</p>
+                    </div>
+
+                    <div class="kf-track-description">
+                        <span class="kf-track-label">Deskripsi Keluhan</span>
+                        <p>{{ ticket.description }}</p>
+                    </div>
+                </section>
+
+                <section class="kf-track-card" aria-labelledby="track-photo-title">
+                    <div class="kf-track-card__header">
+                        <i class="bi bi-paperclip" aria-hidden="true"></i>
+                        <h2 id="track-photo-title">Lampiran Bukti Pelapor</h2>
+                    </div>
+
+                    <div class="kf-track-photo">
+                        <span class="kf-track-photo__icon" aria-hidden="true">
+                            <i class="bi {% if ticket.has_photo %}bi-image{% else %}bi-image-alt{% endif %}"></i>
+                        </span>
+                        <div>
+                            <strong>
+                                {% if ticket.has_photo %}
+                                    Foto bukti tersedia
+                                {% else %}
+                                    Tidak ada foto dilampirkan
+                                {% endif %}
+                            </strong>
+                            <p>
+                                {% if ticket.has_photo %}
+                                    Foto disimpan pada penyimpanan non-publik dan hanya dapat diakses melalui kanal terproteksi.
+                                {% else %}
+                                    Pelapor tidak melampirkan foto bukti pada laporan ini.
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="col-12 col-lg-5">
+                <section class="kf-track-card" aria-labelledby="track-history-title">
+                    <div class="kf-track-card__header">
+                        <i class="bi bi-clock-history" aria-hidden="true"></i>
+                        <h2 id="track-history-title">Riwayat Penanganan</h2>
+                    </div>
+
+                    <ol class="kf-track-timeline">
+                        <li class="kf-track-timeline__item">
+                            <span class="kf-track-timeline__dot" aria-hidden="true"></span>
+                            <div>
+                                <div class="kf-track-timeline__top">
+                                    <strong>Tiket Terdaftar</strong>
+                                    <time>{{ ticket.created_at.strftime('%d/%m/%Y, %H:%M WIB') if ticket.created_at else '-' }}</time>
+                                </div>
+                                <p>Laporan diterima sistem dengan status awal Baru.</p>
+                            </div>
+                        </li>
+                        <li class="kf-track-timeline__item">
+                            <span class="kf-track-timeline__dot" aria-hidden="true"></span>
+                            <div>
+                                <div class="kf-track-timeline__top">
+                                    <strong>Pembaruan Terakhir</strong>
+                                    <time>{{ ticket.updated_at.strftime('%d/%m/%Y, %H:%M WIB') if ticket.updated_at else '-' }}</time>
+                                </div>
+                                <p>Status saat ini: {{ ticket.status }}.</p>
+                            </div>
+                        </li>
+                        {% if ticket.status == 'Selesai' %}
+                            <li class="kf-track-timeline__item is-done">
+                                <span class="kf-track-timeline__dot" aria-hidden="true"></span>
+                                <div>
+                                    <div class="kf-track-timeline__top">
+                                        <strong>Tiket Selesai</strong>
+                                        <time>{{ ticket.resolved_at.strftime('%d/%m/%Y, %H:%M WIB') if ticket.resolved_at else '-' }}</time>
+                                    </div>
+                                    <div class="kf-track-resolution">
+                                        <span class="kf-track-label">Catatan Tindakan</span>
+                                        <p>{{ ticket.resolution_note or 'Tindakan perbaikan fasilitas telah diselesaikan.' }}</p>
+                                    </div>
+                                </div>
+                            </li>
+                        {% endif %}
+                    </ol>
+                </section>
+
+                <section class="kf-track-card kf-track-card--security" aria-labelledby="track-security-title">
+                    <div class="kf-track-card__header">
                         <i class="bi bi-shield-lock" aria-hidden="true"></i>
-                        <h2 class="h5 mb-0">Catatan Keamanan Akses</h2>
+                        <h2 id="track-security-title">Catatan Keamanan Akses</h2>
                     </div>
                     <ul class="kf-track-notes list-unstyled mb-0">
                         <li class="kf-track-notes__item">
@@ -279,11 +333,11 @@
                             <span>Kehilangan kode dan token berarti kehilangan akses pelacakan. Konfirmasi laporan hanya memerlukan kode dan token Anda.</span>
                         </li>
                     </ul>
-                </div>
+                </section>
             </div>
-        </aside>
-    </div>
-{% endif %}
+        </div>
+    {% endif %}
+</div>
 {% endblock %}
 
 {% block scripts %}
