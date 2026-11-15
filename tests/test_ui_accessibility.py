@@ -141,6 +141,77 @@ def test_drawer_css_hides_closed_state_and_has_focus_styles(css):
     assert "visibility" not in toggle_button
 
 
+def _media_block(css, width, selector):
+    for match in re.finditer(
+        r"@media \(max-width: " + re.escape(width) + r"\) \{([\s\S]*?)\n\}",
+        css,
+    ):
+        if selector in match.group(1):
+            return match.group(1)
+    raise AssertionError(f"media query {width} untuk {selector} tidak ditemukan")
+
+
+def test_admin_queue_has_mobile_cards_and_desktop_table():
+    html = (TEMPLATES_DIR / "admin" / "queue.html").read_text(encoding="utf-8")
+
+    assert "d-lg-none vstack gap-3" in html
+    assert "card border-0 shadow-sm d-none d-lg-block" in html
+    assert "queue_action(t, 'w-100')" in html
+    assert "queue_action(t)" in html
+
+
+def test_track_stepper_is_vertical_on_mobile(css):
+    block = _media_block(css, "575.98px", ".kf-stepper")
+
+    assert "grid-template-columns: minmax(0, 1fr);" in block
+    assert "grid-template-areas:" in block
+    assert '"indicator label"' in block
+    assert ".kf-stepper__step:not(:last-child)::after" in block
+    assert ".kf-stepper__caption {\n        font-size: 0.75rem;" in block
+    assert "display: none;" not in block
+
+
+def test_audit_log_uses_human_labels_and_accessible_pagination():
+    html = (TEMPLATES_DIR / "admin" / "audit_log.html").read_text(encoding="utf-8")
+    macros = (TEMPLATES_DIR / "components" / "_macros.html").read_text(encoding="utf-8")
+
+    assert "Perubahan Kategori (category_changed)" not in html
+    assert "Perubahan Status (status_changed)" not in html
+    assert "Penugasan Teknisi (technician_assigned)" not in html
+    assert "role_badge(log.actor_role or 'sistem')" in html
+    assert 'href="#"' not in html
+    assert 'aria-current="page"' in html
+    assert "'sistem': 'Sistem'" in macros
+
+
+def test_report_form_references_only_present_error_ids(client):
+    html = client.get("/lapor").get_data(as_text=True)
+
+    assert 'aria-describedby="floor-error"' not in html
+    assert 'id="floor-error"' not in html
+    assert 'id="building-error"' not in html
+    assert '<label for="building_name"' not in html
+    assert 'role="group" aria-labelledby="building-label"' in html
+    assert 'aria-describedby="category-help"' in html
+
+
+def test_track_form_help_text_is_programmatically_associated():
+    html = (TEMPLATES_DIR / "report" / "track.html").read_text(encoding="utf-8")
+
+    assert 'aria-describedby="ticket-code-help"' in html
+    assert 'id="ticket-code-help"' in html
+    assert 'aria-describedby="access-token-help"' in html
+    assert 'id="access-token-help"' in html
+
+
+def test_verify_page_uses_non_label_text_for_static_fields():
+    html = (TEMPLATES_DIR / "admin" / "verify.html").read_text(encoding="utf-8")
+
+    assert '<label class="form-label text-secondary' not in html
+    assert '<span class="form-label text-secondary small mb-1 d-block">Deskripsi Keluhan</span>' in html
+    assert '<span class="visually-hidden">(wajib)</span>' in html
+
+
 def test_sidebar_js_manages_inert_focus_and_keyboard():
     script = (JS_DIR / "sidebar.js").read_text(encoding="utf-8")
 

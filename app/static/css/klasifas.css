@@ -1488,26 +1488,54 @@ footer {
 
 @media (max-width: 575.98px) {
     .kf-stepper {
-        gap: var(--kf-space-xs);
+        gap: var(--kf-space-sm);
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .kf-stepper__step {
+        align-items: start;
+        column-gap: var(--kf-space-sm);
+        display: grid;
+        grid-template-areas:
+            "indicator label"
+            ". caption";
+        grid-template-columns: 2rem minmax(0, 1fr);
+        row-gap: var(--kf-space-xs);
+        text-align: left;
     }
 
     .kf-stepper__indicator {
+        grid-area: indicator;
         height: 2rem;
         width: 2rem;
     }
 
-    .kf-stepper__step:not(:first-child)::before {
-        left: calc(-50% + 1rem);
-        right: calc(50% + 1rem);
-        top: 1rem;
-    }
-
     .kf-stepper__label {
-        font-size: 0.7rem;
+        font-size: 0.85rem;
+        grid-area: label;
     }
 
     .kf-stepper__caption {
-        display: none;
+        font-size: 0.75rem;
+        grid-area: caption;
+    }
+
+    .kf-stepper__step:not(:first-child)::before {
+        content: none;
+    }
+
+    .kf-stepper__step:not(:last-child)::after {
+        background-color: var(--kf-border-strong);
+        bottom: calc(-1 * var(--kf-space-sm));
+        content: "";
+        left: calc(1rem - 1px);
+        position: absolute;
+        top: 2rem;
+        width: 2px;
+    }
+
+    .kf-stepper__step.is-done:not(:last-child)::after {
+        background-color: var(--kf-primary);
     }
 }
 
@@ -1537,6 +1565,11 @@ footer {
     .kf-photo-dropzone {
         min-height: 8rem;
         padding: var(--kf-space-md);
+    }
+
+    .kf-photo-preview-box {
+        gap: 0.75rem;
+        padding: 0.625rem 0.75rem;
     }
 
     .kf-form-actions {
@@ -1718,16 +1751,38 @@ footer {
     font-size: 0.75rem;
 }
 
-/* Penyesuaian semantik warna stepper sesuai Stitch 02 */
-.kf-stepper__step.is-current.kf-stepper__step--diproses .kf-stepper__indicator {
+/* Penyesuaian semantik warna stepper sesuai DESIGN.md v2.0 Tabel 2.2 */
+.kf-stepper__step.is-current.kf-stepper__step--baru .kf-stepper__indicator {
+    background-color: var(--kf-primary);
+    border-color: var(--kf-primary);
+    box-shadow: 0 0 0 3px var(--kf-focus-ring);
+    color: #ffffff;
+}
+
+.kf-stepper__step.is-current.kf-stepper__step--baru .kf-stepper__label {
+    color: var(--kf-primary);
+}
+
+.kf-stepper__step.is-current.kf-stepper__step--terverifikasi .kf-stepper__indicator {
     background-color: var(--kf-warning);
     border-color: var(--kf-warning);
     box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.2);
     color: #ffffff;
 }
 
-.kf-stepper__step.is-current.kf-stepper__step--diproses .kf-stepper__label {
+.kf-stepper__step.is-current.kf-stepper__step--terverifikasi .kf-stepper__label {
     color: var(--kf-warning);
+}
+
+.kf-stepper__step.is-current.kf-stepper__step--diproses .kf-stepper__indicator {
+    background-color: var(--kf-status-proses-text);
+    border-color: var(--kf-status-proses-text);
+    box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.2);
+    color: #ffffff;
+}
+
+.kf-stepper__step.is-current.kf-stepper__step--diproses .kf-stepper__label {
+    color: var(--kf-status-proses-text);
 }
 
 .kf-stepper__step.is-current.kf-stepper__step--selesai .kf-stepper__indicator {

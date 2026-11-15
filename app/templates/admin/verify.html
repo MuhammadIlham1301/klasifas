@@ -29,9 +29,9 @@
 <div class="row g-4">
     <!-- Kolom Kiri: Detail Laporan -->
     <div class="col-12 col-lg-7">
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-white py-3">
-                <h2 class="h5 fw-semibold mb-0">Rincian Laporan Keluhan</h2>
+        <div class="card border-0 shadow-sm mb-4 kf-card-modern">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h2 class="h5 fw-semibold mb-0 text-dark">Rincian Laporan Keluhan</h2>
             </div>
             <div class="card-body">
                 {% if ticket.needs_manual_verification %}
@@ -50,7 +50,7 @@
                 {% endif %}
 
                 <div class="mb-3">
-                    <label class="form-label text-secondary small mb-1">Deskripsi Keluhan</label>
+                    <span class="form-label text-secondary small mb-1 d-block">Deskripsi Keluhan</span>
                     <div class="p-3 bg-light rounded border text-break">
                         {{ ticket.description }}
                     </div>
@@ -58,7 +58,7 @@
 
                 <div class="row g-3 mb-3">
                     <div class="col-sm-6">
-                        <label class="form-label text-secondary small mb-1">Lokasi Fisik</label>
+                        <span class="form-label text-secondary small mb-1 d-block">Lokasi Fisik</span>
                         <div>
                             <strong>{{ ticket.room_name }}</strong><br>
                             <span class="small text-secondary">{{ ticket.building_name }}, Lantai {{ ticket.floor_number
@@ -66,17 +66,17 @@
                         </div>
                     </div>
                     <div class="col-sm-6">
-                        <label class="form-label text-secondary small mb-1">Detail Lokasi</label>
+                        <span class="form-label text-secondary small mb-1 d-block">Detail Lokasi</span>
                         <div class="small">
                             {{ ticket.location_detail or '-' }}
                         </div>
                     </div>
                 </div>
 
-                <hr class="my-3 text-muted">
+                <div class="kf-separator" role="separator"></div>
 
                 <div class="mb-3">
-                    <label class="form-label text-secondary small mb-2 fw-semibold">Komparasi 3 Kategori Fasilitas</label>
+                    <span class="form-label text-secondary small mb-2 fw-semibold d-block">Komparasi 3 Kategori Fasilitas</span>
                     <div class="kf-comparator-card">
                         <div class="kf-comparator-item">
                             <div class="d-flex justify-content-between align-items-center mb-1">
@@ -124,7 +124,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label text-secondary small mb-1">Teknisi Penanggung Jawab (FR-05)</label>
+                    <span class="form-label text-secondary small mb-1 d-block">Teknisi Penanggung Jawab (FR-05)</span>
                     <div>
                         {% if ticket.assigned_technician %}
                             <span class="badge bg-primary fs-6">{{ ticket.assigned_technician.full_name }}</span>
@@ -138,23 +138,23 @@
                 </div>
 
                 {% if ticket.reporter_name or ticket.reporter_contact %}
-                <hr class="my-3 text-muted">
+                <div class="kf-separator" role="separator"></div>
                 <div class="row g-3">
                     <div class="col-sm-6">
-                        <label class="form-label text-secondary small mb-1">Nama Pelapor</label>
+                        <span class="form-label text-secondary small mb-1 d-block">Nama Pelapor</span>
                         <div class="small">{{ ticket.reporter_name or '-' }}</div>
                     </div>
                     <div class="col-sm-6">
-                        <label class="form-label text-secondary small mb-1">Kontak Pelapor</label>
+                        <span class="form-label text-secondary small mb-1 d-block">Kontak Pelapor</span>
                         <div class="small">{{ ticket.reporter_contact or '-' }}</div>
                     </div>
                 </div>
                 {% endif %}
 
-                <hr class="my-3 text-muted">
+                <div class="kf-separator" role="separator"></div>
 
                 <div>
-                    <label class="form-label text-secondary small mb-1">Foto Bukti Lapangan</label>
+                    <span class="form-label text-secondary small mb-1 d-block">Foto Bukti Lapangan</span>
                     {% if ticket.photo_filename %}
                     <div class="mt-2">
                         <a href="{{ url_for('admin.ticket_photo', ticket_id=ticket.id) }}" target="_blank"
@@ -177,9 +177,9 @@
 
     <!-- Kolom Kanan: Form Penetapan Kategori Resmi & Tindakan -->
     <div class="col-12 col-lg-5">
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-white py-3">
-                <h2 class="h5 fw-semibold mb-0">Verifikasi & Koreksi Kategori</h2>
+        <div class="card border-0 shadow-sm mb-4 kf-card-modern">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h2 class="h5 fw-semibold mb-0 text-dark">Verifikasi & Koreksi Kategori</h2>
             </div>
             <div class="card-body">
                 <form method="POST" action="{{ url_for('admin.verify_ticket', ticket_id=ticket.id) }}">
@@ -187,7 +187,9 @@
 
                     <div class="mb-3">
                         <label for="official_category_id" class="form-label fw-semibold">
-                            Kategori Resmi (K1–K7) <span class="text-danger">*</span>
+                            Kategori Resmi (K1–K7)
+                            <span class="text-danger" aria-hidden="true">*</span>
+                            <span class="visually-hidden">(wajib)</span>
                         </label>
                         <div class="kf-input-icon">
                             <i class="bi bi-tags kf-input-icon__glyph" aria-hidden="true"></i>
@@ -234,9 +236,9 @@
         </div>
 
         <!-- Card Penugasan Teknisi Lapangan (FR-05) -->
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-white py-3">
-                <h2 class="h5 fw-semibold mb-0">Penugasan Teknisi Lapangan</h2>
+        <div class="card border-0 shadow-sm mb-4 kf-card-modern">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h2 class="h5 fw-semibold mb-0 text-dark">Penugasan Teknisi Lapangan</h2>
             </div>
             <div class="card-body">
                 {% if ticket.status == 'Baru' %}
@@ -253,7 +255,9 @@
 
                         <div class="mb-3">
                             <label for="technician_id" class="form-label fw-semibold">
-                                Pilih Teknisi <span class="text-danger">*</span>
+                                Pilih Teknisi
+                                <span class="text-danger" aria-hidden="true">*</span>
+                                <span class="visually-hidden">(wajib)</span>
                             </label>
                             <div class="kf-input-icon">
                                 <i class="bi bi-person-gear kf-input-icon__glyph" aria-hidden="true"></i>
@@ -293,9 +297,9 @@
         </div>
 
         <!-- Card Riwayat Audit (FR-09) -->
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white py-3">
-                <h3 class="h6 fw-semibold mb-0">Riwayat Audit Operasional</h3>
+        <div class="card border-0 shadow-sm kf-card-modern">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h3 class="h6 fw-semibold mb-0 text-dark">Riwayat Audit Operasional</h3>
             </div>
             <div class="card-body p-0">
                 {% if audit_logs %}

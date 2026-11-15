@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "components/_macros.html" import status_badge %}
+{% from "components/_macros.html" import status_badge, role_badge %}
 
 {% block title %}Riwayat Log Audit Operasional — KlasiFas{% endblock %}
 
@@ -33,9 +33,9 @@
                 <label for="filter_action" class="form-label small text-secondary mb-1">Jenis Aksi</label>
                 <select class="form-select form-select-sm" id="filter_action" name="action">
                     <option value="all" {{ 'selected' if not active_filters or active_filters.action in ['all', 'semua', ''] else '' }}>Semua Aksi</option>
-                    <option value="category_changed" {{ 'selected' if active_filters and active_filters.action == 'category_changed' else '' }}>Perubahan Kategori (category_changed)</option>
-                    <option value="status_changed" {{ 'selected' if active_filters and active_filters.action == 'status_changed' else '' }}>Perubahan Status (status_changed)</option>
-                    <option value="technician_assigned" {{ 'selected' if active_filters and active_filters.action == 'technician_assigned' else '' }}>Penugasan Teknisi (technician_assigned)</option>
+                    <option value="category_changed" {{ 'selected' if active_filters and active_filters.action == 'category_changed' else '' }}>Perubahan Kategori</option>
+                    <option value="status_changed" {{ 'selected' if active_filters and active_filters.action == 'status_changed' else '' }}>Perubahan Status</option>
+                    <option value="technician_assigned" {{ 'selected' if active_filters and active_filters.action == 'technician_assigned' else '' }}>Penugasan Teknisi</option>
                 </select>
             </div>
 
@@ -71,10 +71,139 @@
     </div>
 </div>
 
-<!-- Tabel Log Audit Read-Only -->
-<div class="card border-0 shadow-sm mb-4">
+{% if not logs %}
+<div class="card border-0 shadow-sm mb-4 kf-empty-state">
+    <div class="card-body text-center py-5 px-3 px-sm-4">
+        <div class="kf-empty-state__icon-wrap d-inline-flex align-items-center justify-content-center rounded-circle bg-light text-primary p-3 mb-3" aria-hidden="true">
+            <i class="bi bi-journal-x fs-3"></i>
+        </div>
+        <h2 class="h5 fw-semibold mb-2 text-dark">Tidak ada riwayat log audit yang ditemukan</h2>
+        <p class="text-secondary small mb-4">
+            Belum ada catatan perubahan yang sesuai dengan filter yang diterapkan.
+        </p>
+        <a href="{{ url_for('admin.audit_log_list') }}" class="btn btn-sm btn-primary">
+            <i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i>Kembalikan Filter Default
+        </a>
+    </div>
+</div>
+{% else %}
+<!-- Tampilan Kartu Mobile (< 992px) -->
+<div class="d-lg-none vstack gap-3 mb-4">
+    {% for log in logs %}
+    <article class="card border-0 shadow-sm">
+        <div class="card-body">
+            <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
+                <div>
+                    {% if log.ticket %}
+                        <a href="{{ url_for('admin.verify_ticket_form', ticket_id=log.ticket.id) }}"
+                           class="fw-semibold text-decoration-none">
+                            <code>{{ log.ticket.ticket_code }}</code>
+                        </a>
+                    {% else %}
+                        <span class="text-muted small">ID: {{ log.ticket_id }}</span>
+                    {% endif %}
+                    <div class="small text-secondary">
+                        {{ log.created_at.strftime('%d/%m/%Y %H:%M') if log.created_at else '-' }} WIB
+                    </div>
+                </div>
+                <div>
+                    {% if log.action == 'category_changed' %}
+                        <span class="badge bg-info text-dark">Perubahan Kategori</span>
+                    {% elif log.action == 'status_changed' %}
+                        <span class="badge bg-primary">Perubahan Status</span>
+                    {% elif log.action == 'technician_assigned' %}
+                        <span class="badge bg-secondary">Penugasan Teknisi</span>
+                    {% else %}
+                        <span class="badge bg-dark">{{ log.action }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="small mb-2">
+                <span class="text-secondary fw-semibold">Aktor:</span>
+                {% if log.actor %}
+                    <span class="fw-medium text-dark">{{ log.actor.full_name }}</span>
+                    <span class="text-muted">({{ log.actor.username }})</span>
+                {% else %}
+                    <span class="fst-italic text-muted">Sistem</span>
+                {% endif %}
+                <span class="ms-1">{{ role_badge(log.actor_role or 'sistem') }}</span>
+            </div>
+
+            <div class="p-2 bg-light rounded small mb-2">
+                <div class="text-secondary fw-semibold mb-1">Rincian Perubahan ({{ log.field_name }}):</div>
+                {% if log.action == 'category_changed' %}
+                    {% set old_cat_id = log.old_value|int if (log.old_value and log.old_value.isdigit()) else None %}
+                    {% set new_cat_id = log.new_value|int if (log.new_value and log.new_value.isdigit()) else None %}
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <span class="visually-hidden">Nilai lama:</span>
+                        <del class="text-danger">
+                            {% if old_cat_id and old_cat_id in categories %}
+                                {{ categories[old_cat_id].code }} - {{ categories[old_cat_id].name }}
+                            {% elif log.old_value %}
+                                ID: {{ log.old_value }}
+                            {% else %}
+                                Belum ditetapkan
+                            {% endif %}
+                        </del>
+                        <span class="text-secondary" aria-hidden="true">&rarr;</span>
+                        <span class="visually-hidden">Nilai baru:</span>
+                        <ins class="fw-semibold text-success text-decoration-none">
+                            {% if new_cat_id and new_cat_id in categories %}
+                                {{ categories[new_cat_id].code }} - {{ categories[new_cat_id].name }}
+                            {% elif log.new_value %}
+                                ID: {{ log.new_value }}
+                            {% else %}
+                                Belum ditetapkan
+                            {% endif %}
+                        </ins>
+                    </div>
+                {% elif log.action == 'status_changed' %}
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <span class="visually-hidden">Nilai lama:</span>
+                        <del class="badge bg-light text-secondary border">
+                            {{ log.old_value or '-' }}
+                        </del>
+                        <span class="text-secondary" aria-hidden="true">&rarr;</span>
+                        <span class="visually-hidden">Nilai baru:</span>
+                        <ins class="text-decoration-none">{{ status_badge(log.new_value) }}</ins>
+                    </div>
+                {% elif log.action == 'technician_assigned' %}
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <span class="visually-hidden">Nilai lama:</span>
+                        <del class="text-muted">
+                            {{ log.old_value or 'Belum ditugaskan' }}
+                        </del>
+                        <span class="text-secondary" aria-hidden="true">&rarr;</span>
+                        <span class="visually-hidden">Nilai baru:</span>
+                        <ins class="fw-semibold text-dark text-decoration-none">
+                            {{ log.new_value or '-' }}
+                        </ins>
+                    </div>
+                {% else %}
+                    <div>
+                        <span class="visually-hidden">Nilai lama:</span>
+                        <del class="text-danger">{{ log.old_value or '-' }}</del>
+                        <span aria-hidden="true">&rarr;</span>
+                        <span class="visually-hidden">Nilai baru:</span>
+                        <ins class="fw-semibold text-success text-decoration-none">{{ log.new_value or '-' }}</ins>
+                    </div>
+                {% endif %}
+            </div>
+
+            {% if log.note %}
+            <div class="small text-secondary fst-italic">
+                <span class="fw-semibold not-italic text-dark">Catatan:</span> {{ log.note }}
+            </div>
+            {% endif %}
+        </div>
+    </article>
+    {% endfor %}
+</div>
+
+<!-- Tabel Log Audit Desktop (>= 992px) -->
+<div class="card border-0 shadow-sm mb-4 d-none d-lg-block">
     <div class="card-body p-0">
-        {% if logs %}
         <div class="table-responsive">
             <table class="table table-hover table-striped align-middle mb-0 small kf-table-dense">
                 <thead class="table-light">
@@ -117,9 +246,7 @@
                                     <span class="fst-italic text-muted">Sistem</span>
                                 {% endif %}
                             </div>
-                            <span class="badge bg-light text-dark border mt-1">
-                                {{ log.actor_role or 'sistem' }}
-                            </span>
+                            <div class="mt-1">{{ role_badge(log.actor_role or 'sistem') }}</div>
                         </td>
 
                         <!-- Aksi -->
@@ -211,41 +338,36 @@
                 </tbody>
             </table>
         </div>
-        {% else %}
-        <div class="text-center py-5 px-3 px-sm-4">
-            <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-light text-primary p-3 mb-3" aria-hidden="true">
-                <i class="bi bi-journal-x fs-3"></i>
-            </div>
-            <h2 class="h5 fw-semibold mb-2 text-dark">Tidak ada riwayat log audit yang ditemukan</h2>
-            <p class="text-secondary small mb-4">
-                Belum ada catatan perubahan yang sesuai dengan filter yang diterapkan.
-            </p>
-            <a href="{{ url_for('admin.audit_log_list') }}" class="btn btn-sm btn-primary">
-                <i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i>Kembalikan Filter Default
-            </a>
-        </div>
-        {% endif %}
     </div>
 </div>
+{% endif %}
 
 <!-- Kontrol Paginasi -->
 {% if pagination and pagination.pages > 1 %}
 <nav aria-label="Paginasi Log Audit" class="mt-4">
     <ul class="pagination pagination-sm justify-content-center mb-0">
         <li class="page-item {{ 'disabled' if not pagination.has_prev else '' }}">
-            <a class="page-link" href="{{ url_for('admin.audit_log_list', page=pagination.prev_num, action=active_filters.action if active_filters and active_filters.action not in ['all', 'semua'] else '', ticket_code=active_filters.ticket_code if active_filters else '', per_page=active_filters.per_page if active_filters else 20) if pagination.has_prev else '#' }}">Sebelumnya</a>
+            {% if pagination.has_prev %}
+            <a class="page-link" href="{{ url_for('admin.audit_log_list', page=pagination.prev_num, action=active_filters.action if active_filters and active_filters.action not in ['all', 'semua'] else '', ticket_code=active_filters.ticket_code if active_filters else '', per_page=active_filters.per_page if active_filters else 20) }}">Sebelumnya</a>
+            {% else %}
+            <span class="page-link">Sebelumnya</span>
+            {% endif %}
         </li>
         {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
             {% if p %}
                 <li class="page-item {{ 'active' if p == pagination.page else '' }}">
-                    <a class="page-link" href="{{ url_for('admin.audit_log_list', page=p, action=active_filters.action if active_filters and active_filters.action not in ['all', 'semua'] else '', ticket_code=active_filters.ticket_code if active_filters else '', per_page=active_filters.per_page if active_filters else 20) }}">{{ p }}</a>
+                    <a class="page-link" href="{{ url_for('admin.audit_log_list', page=p, action=active_filters.action if active_filters and active_filters.action not in ['all', 'semua'] else '', ticket_code=active_filters.ticket_code if active_filters else '', per_page=active_filters.per_page if active_filters else 20) }}"{% if p == pagination.page %} aria-current="page"{% endif %}>{{ p }}</a>
                 </li>
             {% else %}
                 <li class="page-item disabled"><span class="page-link">&hellip;</span></li>
             {% endif %}
         {% endfor %}
         <li class="page-item {{ 'disabled' if not pagination.has_next else '' }}">
-            <a class="page-link" href="{{ url_for('admin.audit_log_list', page=pagination.next_num, action=active_filters.action if active_filters and active_filters.action not in ['all', 'semua'] else '', ticket_code=active_filters.ticket_code if active_filters else '', per_page=active_filters.per_page if active_filters else 20) if pagination.has_next else '#' }}">Selanjutnya</a>
+            {% if pagination.has_next %}
+            <a class="page-link" href="{{ url_for('admin.audit_log_list', page=pagination.next_num, action=active_filters.action if active_filters and active_filters.action not in ['all', 'semua'] else '', ticket_code=active_filters.ticket_code if active_filters else '', per_page=active_filters.per_page if active_filters else 20) }}">Selanjutnya</a>
+            {% else %}
+            <span class="page-link">Selanjutnya</span>
+            {% endif %}
         </li>
     </ul>
 </nav>

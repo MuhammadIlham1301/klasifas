@@ -1,6 +1,19 @@
 {% extends "base.html" %}
 {% from "components/_macros.html" import status_badge, manual_verification_badge %}
 
+{% macro queue_action(ticket, extra_classes='') %}
+{% if ticket.status == 'Baru' %}
+<a href="{{ url_for('admin.verify_ticket_form', ticket_id=ticket.id) }}"
+   class="btn btn-sm btn-primary {{ extra_classes }}">Verifikasi</a>
+{% elif ticket.status == 'Terverifikasi' %}
+<a href="{{ url_for('admin.verify_ticket_form', ticket_id=ticket.id) }}"
+   class="btn btn-sm btn-primary {{ extra_classes }}">Disposisi</a>
+{% else %}
+<a href="{{ url_for('admin.verify_ticket_form', ticket_id=ticket.id) }}"
+   class="btn btn-sm btn-outline-primary {{ extra_classes }}">Detail</a>
+{% endif %}
+{% endmacro %}
+
 {% block title %}Antrean Tiket Sarpras — KlasiFas{% endblock %}
 
 {% block content %}
@@ -23,7 +36,7 @@
 </div>
 
 <!-- KPI Agregat Status (data nyata dari basis data) -->
-<div class="row row-cols-2 row-cols-md-3 row-cols-xl-5 g-2 g-md-3 mb-4">
+<div class="row g-2 g-md-3 mb-4">
     {% set kpi_items = [
         ('Total Tiket', status_counts.total, 'Seluruh laporan tercatat', 'kpi-total', 'bi-inbox'),
         ('Baru', status_counts['Baru'], 'Perlu verifikasi awal', 'kpi-new', 'bi-plus-circle'),
@@ -32,7 +45,7 @@
         ('Selesai', status_counts['Selesai'], 'Pekerjaan tuntas', 'kpi-done', 'bi-check2-circle')
     ] %}
     {% for label, value, caption, tone, kpi_icon in kpi_items %}
-    <div class="col">
+    <div class="{% if loop.first %}col-12 col-md-4 col-xl{% else %}col-6 col-md-4 col-xl{% endif %}">
         <div class="card border-0 shadow-sm h-100 kf-kpi kf-kpi-modern kf-kpi--{{ tone }}">
             <div class="card-body p-3 pb-2">
                 <div class="kf-kpi-modern__header kf-kpi__header">
@@ -114,14 +127,14 @@
             </div>
 
             <!-- Tanggal Awal -->
-            <div class="col-6 col-md-3">
+            <div class="col-12 col-sm-6 col-md-3">
                 <label for="filter_date_from" class="form-label small text-secondary mb-1">Dari Tanggal</label>
                 <input type="date" class="form-control form-control-sm" id="filter_date_from" name="date_from"
                        value="{{ active_filters.date_from if active_filters else '' }}">
             </div>
 
             <!-- Tanggal Akhir -->
-            <div class="col-6 col-md-3">
+            <div class="col-12 col-sm-6 col-md-3">
                 <label for="filter_date_to" class="form-label small text-secondary mb-1">Sampai Tanggal</label>
                 <input type="date" class="form-control form-control-sm" id="filter_date_to" name="date_to"
                        value="{{ active_filters.date_to if active_filters else '' }}">
@@ -172,9 +185,9 @@
 </div>
 
 {% if not tickets %}
-<div class="card border-0 shadow-sm">
+<div class="card border-0 shadow-sm kf-empty-state">
     <div class="card-body text-center py-5 px-3 px-sm-4">
-        <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-light text-primary p-3 mb-3" aria-hidden="true">
+        <div class="kf-empty-state__icon-wrap d-inline-flex align-items-center justify-content-center rounded-circle bg-light text-primary p-3 mb-3" aria-hidden="true">
             <i class="bi bi-inbox fs-3"></i>
         </div>
         <h2 class="h5 fw-semibold mb-2">Tidak ada tiket ditemukan</h2>
@@ -187,7 +200,99 @@
     </div>
 </div>
 {% else %}
-<div class="card border-0 shadow-sm">
+<div class="d-lg-none vstack gap-3">
+    {% for t in tickets %}
+    <article class="card border-0 shadow-sm">
+        <div class="card-body">
+            <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
+                <div>
+                    <code class="fs-6">{{ t.ticket_code }}</code>
+                    <div class="small text-secondary">
+                        {{ t.created_at.strftime('%d/%m/%Y %H:%M') if t.created_at else '-' }}
+                    </div>
+                </div>
+                {{ status_badge(t.status) }}
+            </div>
+
+            <p class="mb-3 kf-text-clamp-2" title="{{ t.description }}">{{ t.description }}</p>
+
+            <dl class="row g-2 small mb-3">
+                <div class="col-6">
+                    <dt class="text-secondary fw-semibold">Lokasi</dt>
+                    <dd class="mb-0">
+                        <strong>{{ t.room_name }}</strong><br>
+                        {{ t.building_name }}, Lt. {{ t.floor_number }}
+                    </dd>
+                </div>
+                <div class="col-6">
+                    <dt class="text-secondary fw-semibold">Kategori Pelapor</dt>
+                    <dd class="mb-0">
+                        {% if t.reporter_category %}
+                            <span class="badge bg-light text-dark border">{{ t.reporter_category.code }} - {{ t.reporter_category.name }}</span>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </dd>
+                </div>
+                <div class="col-6">
+                    <dt class="text-secondary fw-semibold">Rekomendasi ML</dt>
+                    <dd class="mb-0">
+                        {% if t.needs_manual_verification %}
+                            {% if t.predicted_category %}
+                                <div class="d-flex flex-column align-items-start gap-1">
+                                    <span class="badge bg-info text-dark" title="Perlu verifikasi manusia">
+                                        {{ t.predicted_category.code }}
+                                    </span>
+                                    {{ manual_verification_badge() }}
+                                </div>
+                            {% else %}
+                                <span class="badge bg-secondary" title="Model ML belum aktif / gagal inferensi">
+                                    Verifikasi Manual (Fallback)
+                                </span>
+                            {% endif %}
+                        {% elif t.predicted_category %}
+                            <span class="badge bg-info text-dark">
+                                {{ t.predicted_category.code }} - {{ t.predicted_category.name }}
+                            </span>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </dd>
+                </div>
+                <div class="col-6">
+                    <dt class="text-secondary fw-semibold">Kategori Resmi</dt>
+                    <dd class="mb-0">
+                        {% if t.official_category %}
+                            <span class="fw-semibold text-success">{{ t.official_category.code }} - {{ t.official_category.name }}</span>
+                        {% else %}
+                            <em class="text-muted">Belum ditetapkan</em>
+                        {% endif %}
+                    </dd>
+                </div>
+                <div class="col-12">
+                    <dt class="text-secondary fw-semibold">Teknisi</dt>
+                    <dd class="mb-0">
+                        {% if t.assigned_technician %}
+                            <span class="badge bg-light text-dark border">
+                                {{ t.assigned_technician.full_name }}
+                                {% if not t.assigned_technician.is_active %}
+                                    <span class="text-danger small">(Nonaktif)</span>
+                                {% endif %}
+                            </span>
+                        {% else %}
+                            <span class="text-muted fst-italic">Belum ditugaskan</span>
+                        {% endif %}
+                    </dd>
+                </div>
+            </dl>
+
+            <div class="d-grid">{{ queue_action(t, 'w-100') }}</div>
+        </div>
+    </article>
+    {% endfor %}
+</div>
+
+<div class="card border-0 shadow-sm d-none d-lg-block">
     <div class="table-responsive">
         <table class="table table-hover align-middle mb-0 kf-table-dense">
             <thead class="table-light">
@@ -271,18 +376,7 @@
                     <td>
                         {{ status_badge(t.status) }}
                     </td>
-                    <td class="text-end">
-                        {% if t.status == 'Baru' %}
-                            <a href="{{ url_for('admin.verify_ticket_form', ticket_id=t.id) }}"
-                               class="btn btn-sm btn-primary">Verifikasi</a>
-                        {% elif t.status == 'Terverifikasi' %}
-                            <a href="{{ url_for('admin.verify_ticket_form', ticket_id=t.id) }}"
-                               class="btn btn-sm btn-primary">Disposisi</a>
-                        {% else %}
-                            <a href="{{ url_for('admin.verify_ticket_form', ticket_id=t.id) }}"
-                               class="btn btn-sm btn-outline-primary">Detail</a>
-                        {% endif %}
-                    </td>
+                    <td class="text-end">{{ queue_action(t) }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

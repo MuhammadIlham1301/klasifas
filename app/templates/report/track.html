@@ -47,9 +47,10 @@
                                 value="{{ ticket_code or '' }}"
                                 maxlength="9"
                                 required
+                                aria-describedby="ticket-code-help"
                             >
                         </div>
-                        <div class="form-text">
+                        <div id="ticket-code-help" class="form-text">
                             Kode acak berformat KF-XXXXXX (8 karakter alfanumerik).
                         </div>
                     </div>
@@ -70,6 +71,7 @@
                                 placeholder="Masukkan token 128-bit yang didapat saat melapor"
                                 autocomplete="off"
                                 required
+                                aria-describedby="access-token-help"
                             >
                             <button
                                 type="button"
@@ -83,7 +85,7 @@
                                 <span data-token-toggle-label>Lihat</span>
                             </button>
                         </div>
-                        <div class="form-text">
+                        <div id="access-token-help" class="form-text">
                             Token rahasia yang ditampilkan satu kali pada halaman konfirmasi pengiriman laporan.
                         </div>
                     </div>

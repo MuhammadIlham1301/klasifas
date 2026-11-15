@@ -40,12 +40,13 @@
 
                         <div class="row g-3">
                             <div class="col-12">
-                                <label for="building_name" class="form-label fw-semibold">
+                                <span id="building-label" class="form-label fw-semibold d-block">
                                     Gedung
                                     <span class="kf-required" aria-hidden="true">*</span>
                                     <span class="visually-hidden">(wajib)</span>
-                                </label>
-                                <div class="kf-static-field">
+                                </span>
+                                <div class="kf-static-field" role="group" aria-labelledby="building-label"
+                                     {% if errors.get('building_name') %}aria-describedby="building-error"{% endif %}>
                                     <i class="bi bi-building kf-static-field__icon" aria-hidden="true"></i>
                                     <div class="kf-static-field__body">
                                         <span class="fw-semibold d-block">{{ building_name }}</span>
@@ -55,7 +56,7 @@
                                 </div>
                                 <input type="hidden" id="building_name" name="building_name" value="{{ building_name }}">
                                 {% if errors.get('building_name') %}
-                                    <div id="building-error" class="invalid-feedback d-block">{{ errors.get('building_name') }}</div>
+                                    <div id="building-error" class="invalid-feedback d-block" role="alert">{{ errors.get('building_name') }}</div>
                                 {% endif %}
                             </div>
 
@@ -70,8 +71,7 @@
                                     id="floor_number"
                                     name="floor_number"
                                     required
-                                    aria-describedby="floor-error"
-                                    {% if errors.get('floor_number') %}aria-invalid="true"{% endif %}
+                                    {% if errors.get('floor_number') %}aria-describedby="floor-error" aria-invalid="true"{% endif %}
                                 >
                                     <option value="" {% if not selected_floor %}selected{% endif %} disabled>Pilih lantai</option>
                                     {% for floor in floor_numbers %}
@@ -145,7 +145,10 @@
                         </div>
 
                         <div class="mb-3">
-                            <fieldset>
+                            <fieldset
+                                aria-describedby="category-help{% if errors.get('reporter_category_id') %} category-error{% endif %}"
+                                {% if errors.get('reporter_category_id') %}aria-invalid="true"{% endif %}
+                            >
                                 <legend class="form-label fw-semibold mb-2 pt-0">
                                     Kategori keluhan
                                     <span class="text-secondary fw-normal">(opsional)</span>
@@ -159,8 +162,6 @@
                                             id="reporter_category_id_none"
                                             value=""
                                             {% if not selected_category %}checked{% endif %}
-                                            aria-describedby="category-help{% if errors.get('reporter_category_id') %} category-error{% endif %}"
-                                            {% if errors.get('reporter_category_id') %}aria-invalid="true"{% endif %}
                                         >
                                         <label class="form-check-label" for="reporter_category_id_none">Tidak memilih kategori</label>
                                     </div>
@@ -347,7 +348,7 @@
                         <p class="small text-secondary mb-0">
                             Dengan mengirim laporan, Anda membantu proses perbaikan fasilitas Gedung FTII.
                         </p>
-                        <button type="submit" class="btn kf-btn-primary px-4" data-submit-button>
+                        <button type="submit" class="btn kf-btn-primary px-4 w-100 w-sm-auto" data-submit-button>
                             <i class="bi bi-send me-1" aria-hidden="true"></i>
                             Kirim laporan
                         </button>
