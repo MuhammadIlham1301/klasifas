@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const filterCategory = document.getElementById("filter_category");
     const filterFloor = document.getElementById("filter_floor");
     const btnReset = document.getElementById("btn-reset-filter");
+    const btnPrint = document.getElementById("btn-print-summary");
     const filterSummaryText = document.getElementById("filter-summary-text");
 
     const loadingSpinner = document.getElementById("dashboard-loading-spinner");
@@ -688,6 +689,13 @@ document.addEventListener("DOMContentLoaded", function () {
             if (filterFloor) filterFloor.value = "";
             syncSegmentedButtons("30");
             loadDashboardData();
+        });
+    }
+
+    // Event Listener: Cetak Ringkasan Dasbor
+    if (btnPrint) {
+        btnPrint.addEventListener("click", function () {
+            window.print();
         });
     }
 

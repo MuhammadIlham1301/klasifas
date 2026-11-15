@@ -39,8 +39,8 @@
                     <div class="mb-1">{{ manual_verification_badge() }}</div>
                     <div>
                         {% if ticket.predicted_category %}
-                        Skor keyakinan rekomendasi ML berada di bawah ambang batas evaluasi. Mohon periksa kesesuaian
-                        kategori fisik secara teliti.
+                        Rekomendasi kategori otomatis perlu diverifikasi. Mohon periksa kesesuaian kategori fisik
+                        secara teliti.
                         {% else %}
                         Layanan klasifikasi Machine Learning belum aktif atau dalam mode pemulihan (fallback manual
                         FR-10). Kategori wajib ditentukan oleh Admin Sarpras.
@@ -93,22 +93,14 @@
                         </div>
 
                         <div class="kf-comparator-item {% if ticket.needs_manual_verification %}border-start border-3 border-warning{% endif %}">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
+                            <div class="mb-1">
                                 <span class="small text-secondary fw-semibold text-uppercase">Rekomendasi AI / ML</span>
-                                {% if ticket.confidence_score is not none %}
-                                <span class="badge bg-info-subtle text-info-emphasis border small">
-                                    Keyakinan: {{ "%.1f"|format(ticket.confidence_score * 100) }}%
-                                </span>
-                                {% endif %}
                             </div>
                             <div>
                                 {% if ticket.predicted_category %}
                                 <span class="badge bg-info text-dark">
                                     {{ ticket.predicted_category.code }} - {{ ticket.predicted_category.name }}
                                 </span>
-                                {% if ticket.confidence_score is not none %}
-                                <div class="small text-secondary mt-1">Keyakinan: {{ "%.1f"|format(ticket.confidence_score * 100) }}%</div>
-                                {% endif %}
                                 {% else %}
                                 <span class="small text-muted">Model belum tersedia (Fallback)</span>
                                 {% endif %}

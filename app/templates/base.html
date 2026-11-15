@@ -71,10 +71,10 @@
         <aside class="kf-sidebar" id="kf-sidebar" aria-label="Navigasi Internal Staf">
             <div class="kf-sidebar-header">
                 <a class="d-flex align-items-center text-decoration-none min-w-0" href="{{ url_for('dashboard.dashboard_view') if g.current_user.role in ['admin_sarpras', 'pimpinan'] else url_for('technician.ticket_queue') }}">
-                    <img src="{{ url_for('static', filename='img/logo-uhamka.png') }}" alt="Logo UHAMKA" class="kf-brand-emblem-img me-2 flex-shrink-0" style="height: 32px; width: 32px;">
+                    <img src="{{ url_for('static', filename='img/logo-uhamka.png') }}" alt="Logo UHAMKA" class="kf-brand-emblem-img me-2 flex-shrink-0">
                     <div class="kf-brand-text">
-                        <span class="d-block fw-bold" style="line-height: 1.15;">KlasiFas</span>
-                        <span class="d-block text-secondary small fw-normal" style="font-size: 0.6875rem;">FTII UHAMKA</span>
+                        <span class="kf-sidebar-brand-name d-block fw-bold">KlasiFas</span>
+                        <span class="kf-sidebar-brand-subtitle d-block small fw-normal">FTII UHAMKA</span>
                     </div>
                 </a>
                 <button type="button" class="kf-sidebar-toggle-btn d-none d-md-inline-flex" id="kf-sidebar-toggle" title="Ciutkan Sidebar ([)" aria-controls="kf-sidebar" aria-expanded="true">
@@ -120,8 +120,8 @@
                         {{ g.current_user.username[:1].upper() if g.current_user.username else 'U' }}
                     </div>
                     <div class="kf-sidebar-footer-info min-w-0 flex-grow-1">
-                        <div class="small fw-semibold text-truncate text-dark">{{ g.current_user.full_name or g.current_user.username }}</div>
-                        <div class="text-secondary small" style="font-size: 0.6875rem;">
+                        <div class="kf-sidebar-user-name small fw-semibold text-truncate">{{ g.current_user.full_name or g.current_user.username }}</div>
+                        <div class="kf-sidebar-user-role small">
                             {% if g.current_user.role == 'admin_sarpras' %}Admin Sarpras
                             {% elif g.current_user.role == 'pimpinan' %}Pimpinan FTII
                             {% elif g.current_user.role == 'teknisi' %}Teknisi
@@ -177,10 +177,10 @@
     <footer class="container {{ kf_container }} py-4 small text-secondary">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-2 border-top pt-3">
             <div class="d-flex align-items-center gap-2">
-                <img src="{{ url_for('static', filename='img/logo-uhamka.png') }}" alt="Logo UHAMKA" class="kf-brand-emblem-img" style="height: 24px; width: 24px;">
+                <img src="{{ url_for('static', filename='img/logo-uhamka.png') }}" alt="Logo UHAMKA" class="kf-brand-emblem-img kf-brand-emblem-img--sm">
                 <span>KlasiFas &middot; Fakultas Teknologi Industri dan Informatika, Universitas Muhammadiyah Prof. Dr. HAMKA</span>
             </div>
-            <div class="text-secondary" style="font-size: 0.8125rem;">
+            <div class="kf-footer-meta text-secondary">
                 <i class="bi bi-shield-check text-success me-1"></i>Academic Civic Trust &middot; Kelompok 7
             </div>
         </div>
@@ -189,7 +189,7 @@
             <footer class="p-3 border-top small text-secondary bg-white">
                 <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between gap-2">
                     <span>KlasiFas &middot; FTII UHAMKA</span>
-                    <span style="font-size: 0.75rem;"><i class="bi bi-shield-check text-success me-1"></i>Academic Civic Trust &middot; Kelompok 7</span>
+                    <span class="kf-footer-trust"><i class="bi bi-shield-check text-success me-1"></i>Academic Civic Trust &middot; Kelompok 7</span>
                 </div>
             </footer>
         </div>
@@ -197,7 +197,7 @@
     {% endif %}
 
     <!-- Wadah Toast Universal KlasiFas (Academic Civic Trust) -->
-    <div id="kf-toast-container" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1090;" aria-live="polite" aria-atomic="true"></div>
+    <div id="kf-toast-container" class="kf-toast-container toast-container position-fixed bottom-0 end-0 p-3" aria-live="polite" aria-atomic="true"></div>
 
     <script src="{{ url_for('static', filename='vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/motion.js') }}"></script>

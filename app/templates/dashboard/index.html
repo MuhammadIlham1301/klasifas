@@ -49,7 +49,7 @@
                 <button type="button" class="kf-segmented-btn" data-days="180">180 Hari</button>
                 <button type="button" class="kf-segmented-btn" data-days="365">1 Tahun</button>
             </div>
-            <button type="button" class="btn btn-sm btn-outline-secondary d-none d-md-inline-flex align-items-center gap-1 kf-btn-print" onclick="window.print()" title="Cetak ringkasan dasbor">
+            <button type="button" class="btn btn-sm btn-outline-secondary d-none d-md-inline-flex align-items-center gap-1 kf-btn-print" id="btn-print-summary" title="Cetak ringkasan dasbor">
                 <i class="bi bi-printer" aria-hidden="true"></i>
                 <span>Cetak</span>
             </button>
@@ -246,8 +246,8 @@
                     <div class="kf-chart-frame">
                         <div class="kf-chart-skeleton-overlay" aria-hidden="true">
                             <div class="w-100 h-100 d-flex flex-column justify-content-center gap-3">
-                                <div class="kf-skeleton w-100" style="height: 60%;"></div>
-                                <div class="kf-skeleton w-50 mx-auto" style="height: 15%;"></div>
+                                <div class="kf-skeleton kf-skeleton--h60 w-100"></div>
+                                <div class="kf-skeleton kf-skeleton--h15 w-50 mx-auto"></div>
                             </div>
                         </div>
                         <canvas id="trendChart" role="img" aria-label="Grafik garis tren keluhan fasilitas masuk per hari" aria-describedby="dashboard-chart-summary"></canvas>
@@ -269,8 +269,8 @@
                     <div class="kf-chart-frame">
                         <div class="kf-chart-skeleton-overlay" aria-hidden="true">
                             <div class="w-100 h-100 d-flex flex-column justify-content-center gap-3">
-                                <div class="kf-skeleton w-100" style="height: 60%;"></div>
-                                <div class="kf-skeleton w-50 mx-auto" style="height: 15%;"></div>
+                                <div class="kf-skeleton kf-skeleton--h60 w-100"></div>
+                                <div class="kf-skeleton kf-skeleton--h15 w-50 mx-auto"></div>
                             </div>
                         </div>
                         <canvas id="locationChart" role="img" aria-label="Grafik batang sebaran keluhan per lantai gedung FTII" aria-describedby="dashboard-chart-summary"></canvas>
@@ -308,8 +308,8 @@
                     <div class="kf-chart-frame kf-chart-frame--lg">
                         <div class="kf-chart-skeleton-overlay" aria-hidden="true">
                             <div class="w-100 h-100 d-flex flex-column justify-content-center gap-3">
-                                <div class="kf-skeleton w-100" style="height: 65%;"></div>
-                                <div class="kf-skeleton w-50 mx-auto" style="height: 15%;"></div>
+                                <div class="kf-skeleton kf-skeleton--h65 w-100"></div>
+                                <div class="kf-skeleton kf-skeleton--h15 w-50 mx-auto"></div>
                             </div>
                         </div>
                         <canvas id="categoryChart" role="img" aria-label="Grafik batang distribusi keluhan per kategori fasilitas K1 sampai K7" aria-describedby="dashboard-chart-summary"></canvas>

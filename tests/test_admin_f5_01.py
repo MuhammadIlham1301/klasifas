@@ -284,7 +284,8 @@ def test_ticket_queue_displays_fallback_and_ml_badges(client):
     html = resp.get_data(as_text=True)
     assert "Verifikasi Manual (Fallback)" in html
     assert t_ml.ticket_code in html
-    assert "88.4%" in html
+    assert k5.code in html
+    assert "88.4%" not in html
 
 
 # ==============================================================================

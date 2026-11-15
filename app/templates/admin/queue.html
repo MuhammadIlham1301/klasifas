@@ -231,8 +231,8 @@
                         {% if t.needs_manual_verification %}
                             {% if t.predicted_category %}
                                 <div class="d-flex flex-column align-items-start gap-1">
-                                    <span class="badge bg-info text-dark" title="Keyakinan rendah, perlu verifikasi manusia">
-                                        {{ t.predicted_category.code }} ({{ "%.1f"|format(t.confidence_score * 100) }}%)
+                                    <span class="badge bg-info text-dark" title="Perlu verifikasi manusia">
+                                        {{ t.predicted_category.code }}
                                     </span>
                                     {{ manual_verification_badge() }}
                                 </div>
@@ -244,9 +244,6 @@
                         {% elif t.predicted_category %}
                             <span class="badge bg-info text-dark">
                                 {{ t.predicted_category.code }} - {{ t.predicted_category.name }}
-                                {% if t.confidence_score is not none %}
-                                    ({{ "%.1f"|format(t.confidence_score * 100) }}%)
-                                {% endif %}
                             </span>
                         {% else %}
                             <span class="text-muted">-</span>
