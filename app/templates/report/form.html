@@ -1,404 +1,479 @@
 {% extends "base.html" %}
 
 {% block title %}Lapor Keluhan Fasilitas - KlasiFas{% endblock %}
+{% block body_class %} kf-report-page-body{% endblock %}
 
 {% block content %}
 {% set selected_floor = form.get('floor_number', '') %}
 {% set selected_category = form.get('reporter_category_id', '') %}
 {% set description_length = form.get('description', '')|length %}
-<div class="kf-page-heading mb-4">
-    <p class="kf-page-heading__eyebrow mb-2">Pelaporan Fasilitas</p>
-    <h1 class="kf-page-heading__title">Laporkan keluhan fasilitas Gedung FTII</h1>
-    <p class="kf-page-heading__sub mb-0">
-        Sampaikan kerusakan atau kendala fasilitas secara jelas agar dapat ditindaklanjuti oleh Admin Sarpras.
-    </p>
-</div>
-
-{% if errors %}
-    <div class="alert alert-danger kf-alert d-flex gap-2" role="alert">
-        <i class="bi bi-exclamation-triangle-fill flex-shrink-0" aria-hidden="true"></i>
-        <span>Periksa kembali kolom yang ditandai sebelum mengirim laporan.</span>
+<div class="kf-report-page">
+    <div class="kf-report-context">
+        <div class="kf-report-context__left">
+            <span class="kf-report-context__badge">
+                <span class="kf-report-context__dot" aria-hidden="true"></span>
+                Portal Pelaporan Publik
+            </span>
+            <span class="kf-report-context__meta">Gedung FTII UHAMKA</span>
+        </div>
+        <span class="kf-report-context__pill">
+            <i class="bi bi-shield-check" aria-hidden="true"></i>
+            Tanpa login
+        </span>
     </div>
-{% endif %}
 
-<div class="row g-4 align-items-start">
-    <div class="col-12 col-lg-8">
-        <div class="card border-0 shadow-sm kf-form-card">
-            <div class="card-body p-4 p-lg-5">
-                <form method="post" action="{{ url_for('report.report_form') }}"
-                      enctype="multipart/form-data" class="kf-report-form" data-report-form>
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <section class="kf-report-hero" aria-labelledby="report-hero-title">
+        <div class="kf-report-hero__glow" aria-hidden="true"></div>
+        <svg class="kf-report-hero__motif" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+            <circle cx="100" cy="100" r="80" fill="none" stroke="currentColor" stroke-width="4" stroke-dasharray="8 8"></circle>
+            <path d="M100 20V180M20 100H180" fill="none" stroke="currentColor" stroke-width="3"></path>
+            <circle cx="100" cy="100" r="40" fill="currentColor" fill-opacity="0.3"></circle>
+        </svg>
+        <div class="kf-report-hero__content">
+            <p class="kf-report-hero__eyebrow">
+                <i class="bi bi-megaphone" aria-hidden="true"></i>
+                Formulir Laporan Keluhan Terpadu
+            </p>
+            <h1 id="report-hero-title" class="kf-report-hero__title">Laporkan keluhan fasilitas Gedung FTII</h1>
+            <p class="kf-report-hero__sub">
+                Layanan resmi pelaporan gangguan dan kerusakan sarana prasarana Gedung FTII UHAMKA.
+                Tanpa login, pantau tindak lanjut perbaikan dengan kode tiket dan token akses.
+            </p>
+        </div>
+    </section>
 
-                    <section class="kf-form-section" aria-labelledby="section-location">
-                        <div class="kf-form-section__heading">
-                            <span class="kf-form-section__number" aria-hidden="true">1</span>
+    {% if errors %}
+        <div class="alert alert-danger kf-alert d-flex gap-2" role="alert">
+            <i class="bi bi-exclamation-triangle-fill flex-shrink-0" aria-hidden="true"></i>
+            <span>Periksa kembali kolom yang ditandai sebelum mengirim laporan.</span>
+        </div>
+    {% endif %}
+
+    <div class="row kf-report-grid align-items-start">
+        <div class="col-12 col-lg-8">
+            <form method="post" action="{{ url_for('report.report_form') }}"
+                  enctype="multipart/form-data" class="kf-report-form" data-report-form>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <section class="kf-report-section" aria-labelledby="section-description">
+                    <div class="kf-report-section__header">
+                        <div class="kf-report-section__heading">
+                            <span class="kf-report-section__number" aria-hidden="true">01</span>
                             <div>
-                                <h2 id="section-location" class="kf-form-section__title">Lokasi Fasilitas</h2>
-                                <p class="kf-form-section__hint">Tentukan lokasi kerusakan agar teknisi mudah menemukannya.</p>
+                                <h2 id="section-description" class="kf-report-section__title">Deskripsi Keluhan Fasilitas</h2>
+                                <p class="kf-report-section__hint">Uraikan masalah secara detail agar teknisi mudah memahami kondisi di lokasi.</p>
                             </div>
                         </div>
+                        <span class="kf-report-section__badge kf-report-section__badge--required">Wajib Diisi</span>
+                    </div>
 
-                        <div class="row g-3">
-                            <div class="col-12">
-                                <span id="building-label" class="form-label fw-semibold d-block">
-                                    Gedung
-                                    <span class="kf-required" aria-hidden="true">*</span>
-                                    <span class="visually-hidden">(wajib)</span>
-                                </span>
-                                <div class="kf-static-field" role="group" aria-labelledby="building-label"
-                                     {% if errors.get('building_name') %}aria-describedby="building-error"{% endif %}>
-                                    <i class="bi bi-building kf-static-field__icon" aria-hidden="true"></i>
-                                    <div class="kf-static-field__body">
-                                        <span class="fw-semibold d-block">{{ building_name }}</span>
-                                        <span class="small text-secondary d-block">Lokasi pelaporan saat ini</span>
-                                    </div>
-                                    <span class="kf-static-field__badge">Terpilih Otomatis</span>
-                                </div>
-                                <input type="hidden" id="building_name" name="building_name" value="{{ building_name }}">
-                                {% if errors.get('building_name') %}
-                                    <div id="building-error" class="invalid-feedback d-block" role="alert">{{ errors.get('building_name') }}</div>
-                                {% endif %}
-                            </div>
+                    <label for="description" class="form-label fw-semibold">
+                        Rincian kerusakan / malfungsi
+                        <span class="kf-required" aria-hidden="true">*</span>
+                        <span class="visually-hidden">(wajib)</span>
+                    </label>
+                    <textarea
+                        class="form-control{% if errors.get('description') %} is-invalid{% endif %}"
+                        id="description"
+                        name="description"
+                        rows="5"
+                        maxlength="2000"
+                        required
+                        aria-describedby="description-counter description-help{% if errors.get('description') %} description-error{% endif %}"
+                        {% if errors.get('description') %}aria-invalid="true"{% endif %}
+                        placeholder="Contoh: AC di Lab 301 tidak dingin dan meneteskan air sejak pagi."
+                    >{{ form.get('description', '') }}</textarea>
+                    <div class="kf-counter-progress" aria-hidden="true">
+                        <span class="kf-counter-progress__fill" id="description-progress"></span>
+                    </div>
+                    <div class="kf-report-field-meta">
+                        <div id="description-help" class="form-text">
+                            Sebutkan tanda fisik: bau, tetesan air, mati total, atau komponen lepas.
+                        </div>
+                        <span id="description-counter" class="kf-counter" data-max-length="2000" aria-live="polite">
+                            {{ "{:,}".format(description_length).replace(",", ".") }} / 2.000 karakter
+                        </span>
+                    </div>
+                    {% if errors.get('description') %}
+                        <div id="description-error" class="invalid-feedback d-block">{{ errors.get('description') }}</div>
+                    {% endif %}
+                </section>
 
-                            <div class="col-12 col-md-6">
-                                <label for="floor_number" class="form-label fw-semibold">
-                                    Lantai
-                                    <span class="kf-required" aria-hidden="true">*</span>
-                                    <span class="visually-hidden">(wajib)</span>
-                                </label>
-                                <select
-                                    class="form-select{% if errors.get('floor_number') %} is-invalid{% endif %}"
-                                    id="floor_number"
-                                    name="floor_number"
-                                    required
-                                    {% if errors.get('floor_number') %}aria-describedby="floor-error" aria-invalid="true"{% endif %}
-                                >
-                                    <option value="" {% if not selected_floor %}selected{% endif %} disabled>Pilih lantai</option>
-                                    {% for floor in floor_numbers %}
-                                        <option value="{{ floor }}" {% if selected_floor == floor|string %}selected{% endif %}>Lantai {{ floor }}</option>
-                                    {% endfor %}
-                                </select>
-                                {% if errors.get('floor_number') %}
-                                    <div id="floor-error" class="invalid-feedback">{{ errors.get('floor_number') }}</div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-12 col-md-6">
-                                <label for="room_name" class="form-label fw-semibold">
-                                    Nama/nomor ruang
-                                    <span class="kf-required" aria-hidden="true">*</span>
-                                    <span class="visually-hidden">(wajib)</span>
-                                </label>
-                                <div class="kf-input-icon">
-                                    <i class="bi bi-door-open kf-input-icon__glyph" aria-hidden="true"></i>
-                                    <input
-                                        class="form-control{% if errors.get('room_name') %} is-invalid{% endif %}"
-                                        id="room_name"
-                                        name="room_name"
-                                        type="text"
-                                        maxlength="100"
-                                        value="{{ form.get('room_name', '') }}"
-                                        required
-                                        aria-describedby="room-help{% if errors.get('room_name') %} room-error{% endif %}"
-                                        {% if errors.get('room_name') %}aria-invalid="true"{% endif %}
-                                    >
-                                </div>
-                                <div id="room-help" class="form-text">Contoh: Ruang 2.3 atau Lab Jaringan.</div>
-                                {% if errors.get('room_name') %}
-                                    <div id="room-error" class="invalid-feedback">{{ errors.get('room_name') }}</div>
-                                {% endif %}
+                <section class="kf-report-section" aria-labelledby="section-category">
+                    <div class="kf-report-section__header">
+                        <div class="kf-report-section__heading">
+                            <span class="kf-report-section__number" aria-hidden="true">02</span>
+                            <div>
+                                <h2 id="section-category" class="kf-report-section__title">Kategori Awal Masalah</h2>
+                                <p class="kf-report-section__hint">Bantu memandu penugasan unit teknis yang relevan.</p>
                             </div>
                         </div>
+                        <span class="kf-report-section__badge kf-report-section__badge--optional">Opsional</span>
+                    </div>
 
-                        <div class="mt-3">
+                    <label for="reporter_category_id" class="form-label fw-semibold">
+                        Pilih estimasi kategori fasilitas
+                        <span class="text-secondary fw-normal">(opsional)</span>
+                    </label>
+                    <select
+                        class="form-select{% if errors.get('reporter_category_id') %} is-invalid{% endif %}"
+                        id="reporter_category_id"
+                        name="reporter_category_id"
+                        aria-describedby="category-help{% if errors.get('reporter_category_id') %} category-error{% endif %}"
+                        {% if errors.get('reporter_category_id') %}aria-invalid="true"{% endif %}
+                    >
+                        <option value="" {% if not selected_category %}selected{% endif %}>Tidak memilih kategori</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}" {% if selected_category == category.id|string %}selected{% endif %}>
+                                {{ category.code }} - {{ category.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <div id="category-help" class="form-text mt-2">
+                        Kategori awal bersifat opsional. Admin Sarpras menetapkan kategori resmi setelah verifikasi.
+                    </div>
+                    {% if errors.get('reporter_category_id') %}
+                        <div id="category-error" class="invalid-feedback d-block">{{ errors.get('reporter_category_id') }}</div>
+                    {% endif %}
+
+                    <div class="kf-report-note">
+                        <i class="bi bi-diagram-3" aria-hidden="true"></i>
+                        <div>
+                            <p class="kf-report-note__title">Rekomendasi kategori otomatis</p>
+                            <p class="kf-report-note__text">
+                                Pilihan kategori awal ini bersifat saran informatif. Kategori definitif tiket
+                                ditetapkan melalui klasifikasi dan verifikasi Admin Sarpras.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="kf-report-section" aria-labelledby="section-location">
+                    <div class="kf-report-section__header">
+                        <div class="kf-report-section__heading">
+                            <span class="kf-report-section__number" aria-hidden="true">03</span>
+                            <div>
+                                <h2 id="section-location" class="kf-report-section__title">Lokasi Fisik Terstandarisasi</h2>
+                                <p class="kf-report-section__hint">Tentukan titik lokasi kejadian di dalam kompleks FTII.</p>
+                            </div>
+                        </div>
+                        <span class="kf-report-section__badge kf-report-section__badge--required">Wajib Diisi</span>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <span id="building-label" class="form-label fw-semibold d-block">
+                                Gedung kampus
+                                <span class="kf-required" aria-hidden="true">*</span>
+                                <span class="visually-hidden">(wajib)</span>
+                            </span>
+                            <div class="kf-report-static" role="group" aria-labelledby="building-label"
+                                 {% if errors.get('building_name') %}aria-describedby="building-error"{% endif %}>
+                                <div class="kf-report-static__value">
+                                    <i class="bi bi-lock" aria-hidden="true"></i>
+                                    <span>{{ building_name }}</span>
+                                </div>
+                                <span class="kf-report-static__badge">Utama</span>
+                            </div>
+                            <input type="hidden" id="building_name" name="building_name" value="{{ building_name }}">
+                            <div class="form-text">Cakupan pelaporan fasilitas Gedung FTII UHAMKA.</div>
+                            {% if errors.get('building_name') %}
+                                <div id="building-error" class="invalid-feedback d-block" role="alert">{{ errors.get('building_name') }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label for="floor_number" class="form-label fw-semibold">
+                                Lantai bangunan
+                                <span class="kf-required" aria-hidden="true">*</span>
+                                <span class="visually-hidden">(wajib)</span>
+                            </label>
+                            <select
+                                class="form-select{% if errors.get('floor_number') %} is-invalid{% endif %}"
+                                id="floor_number"
+                                name="floor_number"
+                                required
+                                {% if errors.get('floor_number') %}aria-describedby="floor-error" aria-invalid="true"{% endif %}
+                            >
+                                <option value="" {% if not selected_floor %}selected{% endif %} disabled>Pilih lantai</option>
+                                {% for floor in floor_numbers %}
+                                    <option value="{{ floor }}" {% if selected_floor == floor|string %}selected{% endif %}>Lantai {{ floor }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text">Pilih nomor lantai tempat unit fasilitas terpasang.</div>
+                            {% if errors.get('floor_number') %}
+                                <div id="floor-error" class="invalid-feedback">{{ errors.get('floor_number') }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label for="room_name" class="form-label fw-semibold">
+                                Nama/nomor ruang
+                                <span class="kf-required" aria-hidden="true">*</span>
+                                <span class="visually-hidden">(wajib)</span>
+                            </label>
+                            <input
+                                class="form-control{% if errors.get('room_name') %} is-invalid{% endif %}"
+                                id="room_name"
+                                name="room_name"
+                                type="text"
+                                maxlength="100"
+                                value="{{ form.get('room_name', '') }}"
+                                required
+                                aria-describedby="room-help{% if errors.get('room_name') %} room-error{% endif %}"
+                                {% if errors.get('room_name') %}aria-invalid="true"{% endif %}
+                                placeholder="Contoh: Lab 301, Ruang 204"
+                            >
+                            <div id="room-help" class="form-text">Isi nama atau identitas ruangan tempat fasilitas berada.</div>
+                            {% if errors.get('room_name') %}
+                                <div id="room-error" class="invalid-feedback">{{ errors.get('room_name') }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12">
                             <label for="location_detail" class="form-label fw-semibold">
-                                Detail lokasi
+                                Detail patokan posisi
                                 <span class="text-secondary fw-normal">(opsional)</span>
                             </label>
-                            <div class="kf-input-icon">
-                                <i class="bi bi-geo-alt kf-input-icon__glyph" aria-hidden="true"></i>
-                                <input
-                                    class="form-control{% if errors.get('location_detail') %} is-invalid{% endif %}"
-                                    id="location_detail"
-                                    name="location_detail"
-                                    type="text"
-                                    maxlength="255"
-                                    value="{{ form.get('location_detail', '') }}"
-                                    aria-describedby="location-help{% if errors.get('location_detail') %} location-error{% endif %}"
-                                    {% if errors.get('location_detail') %}aria-invalid="true"{% endif %}
-                                >
-                            </div>
-                            <div id="location-help" class="form-text">Patokan tambahan, misalnya dekat papan tulis atau sisi jendela.</div>
+                            <input
+                                class="form-control{% if errors.get('location_detail') %} is-invalid{% endif %}"
+                                id="location_detail"
+                                name="location_detail"
+                                type="text"
+                                maxlength="255"
+                                value="{{ form.get('location_detail', '') }}"
+                                aria-describedby="location-help{% if errors.get('location_detail') %} location-error{% endif %}"
+                                {% if errors.get('location_detail') %}aria-invalid="true"{% endif %}
+                                placeholder="Contoh: sisi timur dekat jendela, di atas meja PC-04"
+                            >
+                            <div id="location-help" class="form-text">Panduan spesifik untuk teknisi di lokasi.</div>
                             {% if errors.get('location_detail') %}
                                 <div id="location-error" class="invalid-feedback">{{ errors.get('location_detail') }}</div>
                             {% endif %}
                         </div>
-                    </section>
+                    </div>
+                </section>
 
-                    <section class="kf-form-section" aria-labelledby="section-information">
-                        <div class="kf-form-section__heading">
-                            <span class="kf-form-section__number" aria-hidden="true">2</span>
+                <section class="kf-report-section" aria-labelledby="section-photo">
+                    <div class="kf-report-section__header">
+                        <div class="kf-report-section__heading">
+                            <span class="kf-report-section__number" aria-hidden="true">04</span>
                             <div>
-                                <h2 id="section-information" class="kf-form-section__title">Informasi &amp; Rincian</h2>
-                                <p class="kf-form-section__hint">Jelaskan jenis kendala dan kondisi fasilitas yang rusak.</p>
+                                <h2 id="section-photo" class="kf-report-section__title">Unggah Foto Bukti Kerusakan</h2>
+                                <p class="kf-report-section__hint">Foto membantu verifikasi kondisi dan persiapan penanganan.</p>
                             </div>
                         </div>
+                        <span class="kf-report-section__badge kf-report-section__badge--optional">Opsional</span>
+                    </div>
 
-                        <div class="mb-3">
-                            <fieldset
-                                aria-describedby="category-help{% if errors.get('reporter_category_id') %} category-error{% endif %}"
-                                {% if errors.get('reporter_category_id') %}aria-invalid="true"{% endif %}
+                    <label
+                        for="photo"
+                        class="kf-photo-dropzone{% if errors.get('photo') %} border-danger{% endif %}"
+                        data-photo-dropzone
+                        tabindex="0"
+                        role="button"
+                        aria-label="Unggah foto bukti keluhan fasilitas"
+                    >
+                        <i class="bi bi-cloud-arrow-up kf-photo-dropzone__icon" aria-hidden="true"></i>
+                        <span class="kf-photo-dropzone__title">Tarik foto ke sini atau klik untuk memilih</span>
+                        <span class="kf-photo-dropzone__meta">
+                            JPG/JPEG/PNG, maksimal {{ max_photo_size_mb }} MB,
+                            dimensi maksimal {{ max_photo_dimension }} x {{ max_photo_dimension }} piksel.
+                        </span>
+                        <span id="photo-file-name" class="kf-photo-dropzone__file" data-photo-file-name aria-live="polite">
+                            Belum ada file dipilih.
+                        </span>
+                        <input
+                            class="visually-hidden{% if errors.get('photo') %} is-invalid{% endif %}"
+                            id="photo"
+                            name="photo"
+                            type="file"
+                            accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                            aria-describedby="photo-help{% if errors.get('photo') %} photo-error{% endif %}"
+                            {% if errors.get('photo') %}aria-invalid="true"{% endif %}
+                        >
+                    </label>
+                    <div id="photo-preview-box" class="kf-photo-preview-box">
+                        <img id="photo-preview-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" alt="Pratinjau Foto" class="kf-photo-thumbnail">
+                        <div class="flex-grow-1 min-w-0">
+                            <div class="fw-semibold text-truncate small" id="photo-preview-size">Nama file</div>
+                            <span class="kf-upload-ready-badge badge bg-success-subtle text-success border border-success-subtle mt-1">Siap diunggah</span>
+                        </div>
+                        <button type="button" id="photo-remove-btn" class="btn btn-outline-danger btn-sm" aria-label="Hapus foto terpilih">
+                            <i class="bi bi-trash3" aria-hidden="true"></i> Hapus
+                        </button>
+                    </div>
+                    <div id="photo-help" class="form-text mt-2">
+                        Foto bersifat opsional dan tidak digunakan untuk klasifikasi. Metadata EXIF dibersihkan
+                        sebelum file disimpan.
+                    </div>
+                    {% if errors.get('photo') %}
+                        <div id="photo-error" class="invalid-feedback d-block">{{ errors.get('photo') }}</div>
+                    {% endif %}
+                </section>
+
+                <section class="kf-report-section" aria-labelledby="section-reporter">
+                    <div class="kf-report-section__header">
+                        <div class="kf-report-section__heading">
+                            <span class="kf-report-section__number" aria-hidden="true">05</span>
+                            <div>
+                                <h2 id="section-reporter" class="kf-report-section__title">Data Pelapor</h2>
+                                <p class="kf-report-section__hint">Identitas bersifat opsional dan hanya untuk tindak lanjut.</p>
+                            </div>
+                        </div>
+                        <span class="kf-report-section__badge kf-report-section__badge--optional">Opsional</span>
+                    </div>
+
+                    <div class="kf-report-note">
+                        <i class="bi bi-shield-check" aria-hidden="true"></i>
+                        <div>
+                            <p class="kf-report-note__title">Privasi pelapor</p>
+                            <p class="kf-report-note__text">
+                                Kosongkan nama dan kontak untuk mengirim laporan tanpa data pribadi. Jika diisi,
+                                data hanya digunakan untuk kebutuhan tindak lanjut.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mt-1">
+                        <div class="col-12 col-md-6">
+                            <label for="reporter_name" class="form-label fw-semibold">
+                                Nama pelapor
+                                <span class="text-secondary fw-normal">(opsional)</span>
+                            </label>
+                            <input
+                                class="form-control{% if errors.get('reporter_name') %} is-invalid{% endif %}"
+                                id="reporter_name"
+                                name="reporter_name"
+                                type="text"
+                                maxlength="120"
+                                autocomplete="name"
+                                value="{{ form.get('reporter_name', '') }}"
+                                aria-describedby="reporter-name-help{% if errors.get('reporter_name') %} reporter-name-error{% endif %}"
+                                {% if errors.get('reporter_name') %}aria-invalid="true"{% endif %}
                             >
-                                <legend class="form-label fw-semibold mb-2 pt-0">
-                                    Kategori keluhan
-                                    <span class="text-secondary fw-normal">(opsional)</span>
-                                </legend>
-                                <div class="kf-cat-pills{% if errors.get('reporter_category_id') %} is-invalid{% endif %}">
-                                    <div class="form-check kf-cat-pill">
-                                        <input
-                                            class="form-check-input visually-hidden"
-                                            type="radio"
-                                            name="reporter_category_id"
-                                            id="reporter_category_id_none"
-                                            value=""
-                                            {% if not selected_category %}checked{% endif %}
-                                        >
-                                        <label class="form-check-label" for="reporter_category_id_none">Tidak memilih kategori</label>
-                                    </div>
-                                    {% for category in categories %}
-                                    <div class="form-check kf-cat-pill">
-                                        <input
-                                            class="form-check-input visually-hidden"
-                                            type="radio"
-                                            name="reporter_category_id"
-                                            id="reporter_category_id_{{ category.id }}"
-                                            value="{{ category.id }}"
-                                            {% if selected_category == category.id|string %}checked{% endif %}
-                                        >
-                                        <label class="form-check-label" for="reporter_category_id_{{ category.id }}">
-                                            {{ category.code }} - {{ category.name }}
-                                        </label>
-                                    </div>
-                                    {% endfor %}
-                                </div>
-                            </fieldset>
-                            <div id="category-help" class="form-text mt-2">Kategori awal bersifat opsional. Admin Sarpras menetapkan kategori resmi setelah verifikasi.</div>
-                            {% if errors.get('reporter_category_id') %}
-                                <div id="category-error" class="invalid-feedback d-block">{{ errors.get('reporter_category_id') }}</div>
+                            <div id="reporter-name-help" class="form-text">Maksimal 120 karakter.</div>
+                            {% if errors.get('reporter_name') %}
+                                <div id="reporter-name-error" class="invalid-feedback">{{ errors.get('reporter_name') }}</div>
                             {% endif %}
                         </div>
 
-                        <label for="description" class="form-label fw-semibold">
-                            Deskripsi keluhan
-                            <span class="kf-required" aria-hidden="true">*</span>
-                            <span class="visually-hidden">(wajib)</span>
-                        </label>
-                        <textarea
-                            class="form-control{% if errors.get('description') %} is-invalid{% endif %}"
-                            id="description"
-                            name="description"
-                            rows="5"
-                            maxlength="2000"
-                            required
-                            aria-describedby="description-counter description-help{% if errors.get('description') %} description-error{% endif %}"
-                            {% if errors.get('description') %}aria-invalid="true"{% endif %}
-                        >{{ form.get('description', '') }}</textarea>
-                        <div class="kf-counter-progress" aria-hidden="true">
-                            <span class="kf-counter-progress__fill" id="description-progress"></span>
-                        </div>
-                        <div class="d-flex flex-column flex-sm-row align-items-sm-start justify-content-between gap-1 mt-2">
-                            <div id="description-help" class="form-text">
-                                Jelaskan masalah, bagian yang rusak, dan dampaknya.
-                            </div>
-                            <span id="description-counter" class="kf-counter" data-max-length="2000" aria-live="polite">
-                                {{ "{:,}".format(description_length).replace(",", ".") }} / 2.000 karakter
-                            </span>
-                        </div>
-                        {% if errors.get('description') %}
-                            <div id="description-error" class="invalid-feedback d-block">{{ errors.get('description') }}</div>
-                        {% endif %}
-                    </section>
-
-                    <section class="kf-form-section" aria-labelledby="section-photo">
-                        <div class="kf-form-section__heading">
-                            <span class="kf-form-section__number" aria-hidden="true">3</span>
-                            <div>
-                                <h2 id="section-photo" class="kf-form-section__title">Foto Bukti</h2>
-                                <p class="kf-form-section__hint">Lampirkan dokumentasi kerusakan jika tersedia.</p>
-                            </div>
-                        </div>
-
-                        <label
-                            for="photo"
-                            class="kf-photo-dropzone{% if errors.get('photo') %} border-danger{% endif %}"
-                            data-photo-dropzone
-                            tabindex="0"
-                            role="button"
-                            aria-label="Unggah foto bukti keluhan fasilitas"
-                        >
-                            <i class="bi bi-cloud-arrow-up kf-photo-dropzone__icon" aria-hidden="true"></i>
-                            <span class="kf-photo-dropzone__title">Tarik foto ke sini atau klik untuk memilih</span>
-                            <span class="kf-photo-dropzone__meta">
-                                JPG/JPEG/PNG, maksimal {{ max_photo_size_mb }} MB,
-                                dimensi maksimal {{ max_photo_dimension }} x {{ max_photo_dimension }} piksel.
-                            </span>
-                            <span id="photo-file-name" class="kf-photo-dropzone__file" data-photo-file-name aria-live="polite">
-                                Belum ada file dipilih.
-                            </span>
+                        <div class="col-12 col-md-6">
+                            <label for="reporter_contact" class="form-label fw-semibold">
+                                Kontak pelapor
+                                <span class="text-secondary fw-normal">(opsional)</span>
+                            </label>
                             <input
-                                class="visually-hidden{% if errors.get('photo') %} is-invalid{% endif %}"
-                                id="photo"
-                                name="photo"
-                                type="file"
-                                accept=".jpg,.jpeg,.png,image/jpeg,image/png"
-                                aria-describedby="photo-help{% if errors.get('photo') %} photo-error{% endif %}"
-                                {% if errors.get('photo') %}aria-invalid="true"{% endif %}
+                                class="form-control{% if errors.get('reporter_contact') %} is-invalid{% endif %}"
+                                id="reporter_contact"
+                                name="reporter_contact"
+                                type="text"
+                                maxlength="120"
+                                autocomplete="off"
+                                value="{{ form.get('reporter_contact', '') }}"
+                                aria-describedby="reporter-contact-help{% if errors.get('reporter_contact') %} reporter-contact-error{% endif %}"
+                                {% if errors.get('reporter_contact') %}aria-invalid="true"{% endif %}
                             >
-                        </label>
-                        <div id="photo-preview-box" class="kf-photo-preview-box">
-                            <img id="photo-preview-img" src="" alt="Pratinjau Foto" class="kf-photo-thumbnail">
-                            <div class="flex-grow-1 min-w-0">
-                                <div class="fw-semibold text-truncate small" id="photo-preview-size">Nama file</div>
-                                <span class="kf-upload-ready-badge badge bg-success-subtle text-success border border-success-subtle mt-1">Siap diunggah</span>
-                            </div>
-                            <button type="button" id="photo-remove-btn" class="btn btn-outline-danger btn-sm" aria-label="Hapus foto terpilih">
-                                <i class="bi bi-trash3" aria-hidden="true"></i> Hapus
-                            </button>
+                            <div id="reporter-contact-help" class="form-text">Email atau nomor yang dapat dihubungi.</div>
+                            {% if errors.get('reporter_contact') %}
+                                <div id="reporter-contact-error" class="invalid-feedback">{{ errors.get('reporter_contact') }}</div>
+                            {% endif %}
                         </div>
-                        <div id="photo-help" class="form-text mt-2">
-                            Foto bersifat opsional dan tidak digunakan untuk klasifikasi. Metadata EXIF akan dibersihkan
-                            sebelum file disimpan.
-                        </div>
-                        {% if errors.get('photo') %}
-                            <div id="photo-error" class="invalid-feedback d-block">{{ errors.get('photo') }}</div>
-                        {% endif %}
-                    </section>
-
-                    <section class="kf-form-section" aria-labelledby="section-reporter">
-                        <div class="kf-form-section__heading">
-                            <span class="kf-form-section__number" aria-hidden="true">4</span>
-                            <div>
-                                <h2 id="section-reporter" class="kf-form-section__title">Data Pelapor</h2>
-                                <p class="kf-form-section__hint">Data identitas bersifat opsional dan hanya untuk tindak lanjut.</p>
-                            </div>
-                        </div>
-
-                        <div class="alert alert-info kf-alert d-flex gap-2 mb-3" role="note">
-                            <i class="bi bi-shield-check flex-shrink-0" aria-hidden="true"></i>
-                            <span class="small">
-                                Identitas pelapor tidak wajib diisi. Kosongkan nama dan kontak untuk mengirim laporan
-                                tanpa data pribadi. Jika diisi, data hanya digunakan untuk kebutuhan tindak lanjut.
-                            </span>
-                        </div>
-
-                        <div class="row g-3">
-                            <div class="col-12 col-md-6">
-                                <label for="reporter_name" class="form-label fw-semibold">
-                                    Nama pelapor
-                                    <span class="text-secondary fw-normal">(opsional)</span>
-                                </label>
-                                <div class="kf-input-icon">
-                                    <i class="bi bi-person kf-input-icon__glyph" aria-hidden="true"></i>
-                                    <input
-                                        class="form-control{% if errors.get('reporter_name') %} is-invalid{% endif %}"
-                                        id="reporter_name"
-                                        name="reporter_name"
-                                        type="text"
-                                        maxlength="120"
-                                        autocomplete="name"
-                                        value="{{ form.get('reporter_name', '') }}"
-                                        aria-describedby="reporter-name-help{% if errors.get('reporter_name') %} reporter-name-error{% endif %}"
-                                        {% if errors.get('reporter_name') %}aria-invalid="true"{% endif %}
-                                    >
-                                </div>
-                                <div id="reporter-name-help" class="form-text">Maksimal 120 karakter.</div>
-                                {% if errors.get('reporter_name') %}
-                                    <div id="reporter-name-error" class="invalid-feedback">{{ errors.get('reporter_name') }}</div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-12 col-md-6">
-                                <label for="reporter_contact" class="form-label fw-semibold">
-                                    Kontak pelapor
-                                    <span class="text-secondary fw-normal">(opsional)</span>
-                                </label>
-                                <div class="kf-input-icon">
-                                    <i class="bi bi-chat-dots kf-input-icon__glyph" aria-hidden="true"></i>
-                                    <input
-                                        class="form-control{% if errors.get('reporter_contact') %} is-invalid{% endif %}"
-                                        id="reporter_contact"
-                                        name="reporter_contact"
-                                        type="text"
-                                        maxlength="120"
-                                        autocomplete="off"
-                                        value="{{ form.get('reporter_contact', '') }}"
-                                        aria-describedby="reporter-contact-help{% if errors.get('reporter_contact') %} reporter-contact-error{% endif %}"
-                                        {% if errors.get('reporter_contact') %}aria-invalid="true"{% endif %}
-                                    >
-                                </div>
-                                <div id="reporter-contact-help" class="form-text">Email atau nomor yang dapat dihubungi.</div>
-                                {% if errors.get('reporter_contact') %}
-                                    <div id="reporter-contact-error" class="invalid-feedback">{{ errors.get('reporter_contact') }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </section>
-
-                    <div class="kf-form-actions d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3">
-                        <p class="small text-secondary mb-0">
-                            Dengan mengirim laporan, Anda membantu proses perbaikan fasilitas Gedung FTII.
-                        </p>
-                        <button type="submit" class="btn kf-btn-primary px-4 w-100 w-sm-auto" data-submit-button>
-                            <i class="bi bi-send me-1" aria-hidden="true"></i>
-                            Kirim laporan
-                        </button>
                     </div>
-                </form>
-            </div>
-        </div>
-    </div>
+                </section>
 
-    <aside class="col-12 col-lg-4 kf-report-sidebar" aria-label="Alur pelaporan">
-        <div class="card border-0 shadow-sm kf-sidebar-card">
-            <div class="card-body p-4">
-                <div class="kf-sidebar-card__header">
-                    <i class="bi bi-diagram-3" aria-hidden="true"></i>
-                    <h2 class="h5 mb-0">Alur Penanganan Sarpras</h2>
+                <div class="kf-report-actions">
+                    <p class="kf-report-actions__note">
+                        Dengan mengirim laporan, Anda membantu proses perbaikan fasilitas Gedung FTII.
+                    </p>
+                    <button type="submit" class="btn kf-btn-primary kf-report-submit" data-submit-button>
+                        <i class="bi bi-send me-1" aria-hidden="true"></i>
+                        Kirim Laporan
+                    </button>
                 </div>
-                <ol class="kf-workflow list-unstyled mb-0">
-                    <li class="kf-workflow__step">
-                        <span class="kf-workflow__number" aria-hidden="true">1</span>
+            </form>
+        </div>
+
+        <aside class="col-12 col-lg-4 kf-report-sidebar" aria-label="Informasi layanan pelaporan">
+            <section class="kf-report-side-card" aria-labelledby="side-unit-title">
+                <div class="kf-report-side-card__header">
+                    <div class="kf-report-side-card__icon" aria-hidden="true">
+                        <i class="bi bi-building"></i>
+                    </div>
+                    <div>
+                        <p class="kf-report-side-card__eyebrow">Unit Layanan Sarpras</p>
+                        <h2 id="side-unit-title" class="kf-report-side-card__title">Gedung FTII</h2>
+                    </div>
+                </div>
+
+                <ul class="kf-report-side-list list-unstyled mb-0">
+                    <li class="kf-report-side-list__item">
+                        <i class="bi bi-geo-alt" aria-hidden="true"></i>
                         <div>
-                            <h3 class="kf-workflow__title">Verifikasi Admin Sarpras</h3>
-                            <p class="kf-workflow__text">Laporan diperiksa dan diverifikasi sebelum ditindaklanjuti.</p>
+                            <strong>Lokasi terpusat</strong>
+                            <span>Fakultas Teknologi Industri &amp; Informatika UHAMKA.</span>
                         </div>
                     </li>
-                    <li class="kf-workflow__step">
-                        <span class="kf-workflow__number" aria-hidden="true">2</span>
+                    <li class="kf-report-side-list__item">
+                        <i class="bi bi-shield-check" aria-hidden="true"></i>
                         <div>
-                            <h3 class="kf-workflow__title">Disposisi &amp; Jadwal Teknisi</h3>
-                            <p class="kf-workflow__text">Admin menugaskan teknisi sesuai kategori kendala.</p>
+                            <strong>Privasi &amp; akses mandiri</strong>
+                            <span>Pelaporan terbuka bagi civitas tanpa login akun staf.</span>
                         </div>
                     </li>
-                    <li class="kf-workflow__step">
-                        <span class="kf-workflow__number" aria-hidden="true">3</span>
+                    <li class="kf-report-side-list__item">
+                        <i class="bi bi-key" aria-hidden="true"></i>
                         <div>
-                            <h3 class="kf-workflow__title">Tindakan Perbaikan Fisik</h3>
-                            <p class="kf-workflow__text">Teknisi melakukan perbaikan atau penggantian di lokasi.</p>
+                            <strong>Kode &amp; token pelacakan</strong>
+                            <span>Status perbaikan dipantau dengan kode tiket dan token akses.</span>
                         </div>
                     </li>
-                    <li class="kf-workflow__step">
-                        <span class="kf-workflow__number" aria-hidden="true">4</span>
-                        <div>
-                            <h3 class="kf-workflow__title">Laporan Selesai &amp; Ditutup</h3>
-                            <p class="kf-workflow__text">Status tiket diperbarui setelah pekerjaan selesai.</p>
-                        </div>
+                </ul>
+
+                <a class="kf-report-side-link" href="{{ url_for('report.track') }}">
+                    <span>
+                        <i class="bi bi-search" aria-hidden="true"></i>
+                        Sudah punya tiket? Cek status
+                    </span>
+                    <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                </a>
+            </section>
+
+            <section class="kf-report-side-card" aria-labelledby="side-flow-title">
+                <h2 id="side-flow-title" class="kf-report-side-card__title kf-report-side-card__title--inline">
+                    <i class="bi bi-diagram-3" aria-hidden="true"></i>
+                    Alur Penanganan Laporan
+                </h2>
+
+                <ol class="kf-report-flow list-unstyled mb-0">
+                    <li class="kf-report-flow__step kf-report-flow__step--baru">
+                        <span class="kf-report-flow__dot" aria-hidden="true"></span>
+                        <span class="kf-report-flow__stage">Tahap 1 &middot; Baru</span>
+                        <h3 class="kf-report-flow__title">Laporan diterima sistem</h3>
+                        <p class="kf-report-flow__text">Tiket diterbitkan dan masuk antrean triage Admin Sarpras.</p>
+                    </li>
+                    <li class="kf-report-flow__step kf-report-flow__step--verif">
+                        <span class="kf-report-flow__dot" aria-hidden="true"></span>
+                        <span class="kf-report-flow__stage">Tahap 2 &middot; Terverifikasi</span>
+                        <h3 class="kf-report-flow__title">Validasi &amp; penugasan</h3>
+                        <p class="kf-report-flow__text">Kategori disahkan dan teknisi ditugaskan ke lapangan.</p>
+                    </li>
+                    <li class="kf-report-flow__step kf-report-flow__step--proses">
+                        <span class="kf-report-flow__dot" aria-hidden="true"></span>
+                        <span class="kf-report-flow__stage">Tahap 3 &middot; Diproses</span>
+                        <h3 class="kf-report-flow__title">Tindakan perbaikan</h3>
+                        <p class="kf-report-flow__text">Pengerjaan fisik dan penggantian komponen di lokasi.</p>
+                    </li>
+                    <li class="kf-report-flow__step kf-report-flow__step--selesai">
+                        <span class="kf-report-flow__dot" aria-hidden="true"></span>
+                        <span class="kf-report-flow__stage">Tahap 4 &middot; Selesai</span>
+                        <h3 class="kf-report-flow__title">Inspeksi &amp; penutupan tiket</h3>
+                        <p class="kf-report-flow__text">Hasil perbaikan didokumentasikan dan tiket ditutup.</p>
                     </li>
                 </ol>
-            </div>
-        </div>
-
-    </aside>
+            </section>
+        </aside>
+    </div>
 </div>
 {% endblock %}
 

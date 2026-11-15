@@ -399,6 +399,13 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
+
+    const printReceipt = document.querySelector("[data-print-receipt]");
+    if (printReceipt) {
+        printReceipt.addEventListener("click", function () {
+            window.print();
+        });
+    }
 });
 
 // Universal Toast Notification Manager (Academic Civic Trust)

@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/klasifas.css') }}">
 </head>
 
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100{% block body_class %}{% endblock %}">
     {%- set kf_container -%}{% block container_class %}kf-container{% endblock %}{%- endset -%}
     <a class="visually-hidden-focusable kf-skip-link" href="#main-content">Lewati ke konten utama</a>
 

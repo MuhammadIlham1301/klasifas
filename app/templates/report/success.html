@@ -1,71 +1,191 @@
 {% extends "base.html" %}
-{% from "components/_code_box.html" import ticket_code_box, access_token_box %}
 
-{% block title %}Laporan Diterima - KlasiFas{% endblock %}
+{% block title %}Bukti Laporan Berhasil - KlasiFas{% endblock %}
+{% block body_class %} kf-report-page-body kf-receipt-page-body{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-12 col-lg-9 col-xl-8">
-        <div class="card border-0 shadow-sm kf-form-card kf-receipt-card">
-            <div class="card-body p-4 p-lg-5">
-                <div class="kf-receipt-header">
-                    <div class="kf-receipt-icon" aria-hidden="true">
-                        <i class="bi bi-check2-circle"></i>
-                    </div>
-                    <div>
-                        <span class="badge text-bg-success mb-2">Laporan Berhasil Diterima</span>
-                        <h1 class="kf-page-heading__title">Laporan berhasil dikirim</h1>
-                        <p class="kf-page-heading__sub mb-0">
-                            Laporan Anda sudah tersimpan. Simpan kode referensi dan token akses berikut untuk memantau status keluhan.
-                        </p>
-                    </div>
+<div class="kf-receipt-page">
+    <div class="kf-receipt-strip">
+        <div class="kf-receipt-strip__identity">
+            <img src="{{ url_for('static', filename='img/logo-uhamka.png') }}" alt="Logo UHAMKA" class="kf-receipt-strip__logo">
+            <span class="kf-receipt-strip__dot" aria-hidden="true"></span>
+            <span>KlasiFas // Tanda Terima Pengaduan Digital</span>
+        </div>
+        <span class="kf-receipt-strip__pill">
+            <i class="bi bi-info-circle" aria-hidden="true"></i>
+            Simpan bukti ini
+        </span>
+    </div>
+
+    <div class="kf-receipt-canvas">
+        <div class="kf-receipt-hero">
+            <div class="kf-receipt-hero__main">
+                <div class="kf-receipt-hero__icon" aria-hidden="true">
+                    <i class="bi bi-check-circle-fill"></i>
                 </div>
-
-                <div class="kf-receipt-divider"></div>
-
-                <div class="mb-3">
-                    {{ ticket_code_box(
-                        ticket_code,
-                        copy_target='ticket-code-value',
-                        copy_label='Salin Kode',
-                        copy_aria_label='Salin kode referensi tiket'
-                    ) }}
-                </div>
-
-                <div class="mb-3">
-                    {{ access_token_box(
-                        access_token,
-                        copy_target='access-token-value',
-                        copy_label='Salin Token',
-                        copy_aria_label='Salin token akses rahasia'
-                    ) }}
-                </div>
-
-                <div class="alert alert-warning kf-alert d-flex gap-2" role="alert">
-                    <i class="bi bi-exclamation-triangle-fill fs-5 alert-icon" aria-hidden="true"></i>
-                    <div>
-                        <strong>Simpan token sekarang.</strong> Token hanya ditampilkan satu kali dan tidak dapat ditampilkan kembali. Jangan bagikan token kepada orang lain.
-                    </div>
-                </div>
-
-                <div class="kf-receipt-note">
-                    <i class="bi bi-shield-lock" aria-hidden="true"></i>
-                    <p class="mb-0">
-                        Kode referensi bukan kredensial pembuka detail tiket. Detail tiket memerlukan token akses yang valid.
+                <div>
+                    <span class="kf-receipt-hero__badge">Tiket Terdaftar</span>
+                    <h1 class="kf-receipt-hero__title">Laporan Berhasil Terkirim!</h1>
+                    <p class="kf-receipt-hero__sub">
+                        Keluhan fasilitas Anda sudah masuk ke antrean Sarana &amp; Prasarana (Sarpras)
+                        FTII UHAMKA untuk ditinjau dan ditindaklanjuti.
                     </p>
                 </div>
+            </div>
+            <button type="button" class="kf-receipt-print" data-print-receipt>
+                <i class="bi bi-printer" aria-hidden="true"></i>
+                Cetak / Unduh Bukti
+            </button>
+        </div>
 
-                <div class="d-flex flex-column flex-sm-row gap-2 mt-4">
-                    <a class="btn kf-btn-primary px-4" href="{{ url_for('report.track', ticket_code=ticket_code) }}">
-                        Lacak Tiket Sekarang
-                        <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
-                    </a>
-                    <a class="btn btn-outline-secondary px-4" href="{{ url_for('report.report_form') }}">
-                        Buat Laporan Baru
-                    </a>
+        <section class="kf-receipt-credentials" aria-labelledby="receipt-credentials-title">
+            <div class="kf-receipt-credentials__header">
+                <div>
+                    <i class="bi bi-key" aria-hidden="true"></i>
+                    <h2 id="receipt-credentials-title">Kredensial Akses &amp; Pelacakan Publik</h2>
+                </div>
+                <span>Hanya ditampilkan pada halaman ini</span>
+            </div>
+
+            <div class="kf-receipt-credentials__grid">
+                <div class="kf-receipt-credential">
+                    <div>
+                        <div class="kf-receipt-credential__top">
+                            <span class="kf-receipt-credential__label">Kode Referensi Tiket</span>
+                            <span class="kf-receipt-credential__badge kf-receipt-credential__badge--public">Publik</span>
+                        </div>
+                        <div id="ticket-code-value" class="kf-receipt-copy-source">
+                            <div class="fs-3 fw-semibold font-monospace">{{ ticket_code }}</div>
+                        </div>
+                        <p>Gunakan kode ini saat berkomunikasi dengan petugas Sarpras FTII.</p>
+                    </div>
+                    <button
+                        type="button"
+                        class="kf-receipt-copy"
+                        data-copy-target="ticket-code-value"
+                        aria-label="Salin kode referensi tiket"
+                    >
+                        <i class="bi bi-clipboard" aria-hidden="true"></i>
+                        <span data-copy-label aria-live="polite">Salin Kode Tiket</span>
+                    </button>
+                </div>
+
+                <div class="kf-receipt-credential kf-receipt-credential--private">
+                    <div>
+                        <div class="kf-receipt-credential__top">
+                            <span class="kf-receipt-credential__label">Token Akses Rahasia</span>
+                            <span class="kf-receipt-credential__badge kf-receipt-credential__badge--private">Privat</span>
+                        </div>
+                        <div id="access-token-value" class="kf-receipt-copy-source">
+                            <div class="fs-5 fw-semibold font-monospace text-break">{{ access_token }}</div>
+                        </div>
+                        <p>Kunci autentikasi privat untuk membuka detail dan riwayat tiket tanpa login.</p>
+                    </div>
+                    <button
+                        type="button"
+                        class="kf-receipt-copy"
+                        data-copy-target="access-token-value"
+                        aria-label="Salin token akses rahasia"
+                    >
+                        <i class="bi bi-key" aria-hidden="true"></i>
+                        <span data-copy-label aria-live="polite">Salin Token Rahasia</span>
+                    </button>
                 </div>
             </div>
+
+            <div class="kf-receipt-security" role="note">
+                <i class="bi bi-shield-lock" aria-hidden="true"></i>
+                <div>
+                    <strong>Pemberitahuan privasi &amp; keamanan kredensial</strong>
+                    <p>
+                        Simpan kode tiket dan token akses ini. Token hanya ditampilkan satu kali dan tidak
+                        dapat ditampilkan kembali. Kode referensi saja tidak cukup untuk membuka detail tiket.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="kf-receipt-summary" aria-labelledby="receipt-summary-title">
+            <div class="kf-receipt-summary__header">
+                <h2 id="receipt-summary-title">Ringkasan Lembar Laporan</h2>
+                <span>Status awal tiket</span>
+            </div>
+            <div class="kf-receipt-summary__grid">
+                <div class="kf-receipt-summary__item">
+                    <span class="kf-receipt-summary__label">Status Awal</span>
+                    <strong>Baru</strong>
+                    <p>Menunggu verifikasi Admin Sarpras.</p>
+                </div>
+                <div class="kf-receipt-summary__item">
+                    <span class="kf-receipt-summary__label">Kanal</span>
+                    <strong>Pelaporan Publik</strong>
+                    <p>Tanpa login akun staf.</p>
+                </div>
+                <div class="kf-receipt-summary__item">
+                    <span class="kf-receipt-summary__label">Kode Tiket</span>
+                    <strong class="font-monospace">{{ ticket_code }}</strong>
+                    <p>Dapat dibagikan kepada petugas.</p>
+                </div>
+                <div class="kf-receipt-summary__item">
+                    <span class="kf-receipt-summary__label">Token Akses</span>
+                    <strong>Sekali Tampil</strong>
+                    <p>Jangan bagikan kepada siapa pun.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="kf-receipt-flow" aria-labelledby="receipt-flow-title">
+            <h2 id="receipt-flow-title" class="kf-receipt-flow__title">Alur Penanganan Sarpras UHAMKA</h2>
+            <div class="kf-receipt-flow__steps">
+                <div class="kf-receipt-flow__step is-active">
+                    <span class="kf-receipt-flow__number" aria-hidden="true">01</span>
+                    <div>
+                        <strong>Terkirim &amp; Baru</strong>
+                        <p>Tiket berhasil dikirim.</p>
+                    </div>
+                </div>
+                <div class="kf-receipt-flow__step">
+                    <span class="kf-receipt-flow__number" aria-hidden="true">02</span>
+                    <div>
+                        <strong>Terverifikasi</strong>
+                        <p>Validasi Admin Sarpras.</p>
+                    </div>
+                </div>
+                <div class="kf-receipt-flow__step">
+                    <span class="kf-receipt-flow__number" aria-hidden="true">03</span>
+                    <div>
+                        <strong>Diproses</strong>
+                        <p>Penugasan teknisi lapangan.</p>
+                    </div>
+                </div>
+                <div class="kf-receipt-flow__step">
+                    <span class="kf-receipt-flow__number" aria-hidden="true">04</span>
+                    <div>
+                        <strong>Selesai</strong>
+                        <p>Fasilitas berfungsi kembali.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="kf-receipt-actions">
+            <a class="btn kf-btn-primary kf-receipt-actions__primary" href="{{ url_for('report.track', ticket_code=ticket_code) }}">
+                Lacak Status Tiket Ini
+                <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
+            </a>
+            <a class="btn kf-receipt-actions__secondary" href="{{ url_for('report.report_form') }}">
+                <i class="bi bi-plus-circle me-1" aria-hidden="true"></i>
+                Buat Laporan Lain
+            </a>
         </div>
+    </div>
+
+    <div class="kf-receipt-footnote">
+        <i class="bi bi-info-circle" aria-hidden="true"></i>
+        <p>
+            Simpan halaman ini atau kredensial di atas. Detail tiket memerlukan kode tiket dan token akses
+            yang valid.
+        </p>
     </div>
 </div>
 {% endblock %}
