@@ -3,3 +3,4 @@
 # shortcut: pytest masih ikut melalui requirements.txt; pisahkan saat P1.
 -r requirements.txt
 gunicorn>=23.0.0,<24.0.0
+psycopg[binary]>=3.2,<4
