@@ -67,7 +67,7 @@ Role yang valid hanya `admin_sarpras`, `teknisi`, dan `pimpinan`. Tidak ada regi
 
 | Route | Metode | Akses | Fungsi |
 |---|---|---|---|
-| `/` | GET | Publik | Redirect ke `/lapor` |
+| `/` | GET | Publik | Redirect ke `/auth/pelapor/login` |
 | `/lapor` | GET, POST | Publik | Formulir dan penyimpanan laporan |
 | `/lapor/sukses` | GET | Publik | Redirect kembali ke `/lapor`; bukan halaman untuk mengambil token |
 | `/lacak` | GET, POST | Publik dengan kode + token valid | Pelacakan status tiket |

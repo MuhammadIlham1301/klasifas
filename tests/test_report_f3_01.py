@@ -1,6 +1,7 @@
 """Pengujian TSK-F3-01: formulir pelaporan dan penyimpanan tiket."""
 import hashlib
 import re
+import secrets
 
 import pytest
 from flask import g
@@ -10,6 +11,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.extensions import db
 from app.models.category import Category
 from app.models.ticket import Ticket
+from app.models.user import User
 from app.services.ticket_report import BUILDING_NAME
 from app.utils import ticket_identity
 
@@ -119,20 +121,21 @@ def _post_report(client, data, token=None):
     return client.post("/lapor", data=payload, follow_redirects=False)
 
 
-def test_root_redirects_to_report_form(client):
+def test_root_redirects_to_reporter_login(client):
     response = client.get("/")
 
     assert response.status_code == 302
-    assert response.headers["Location"] == "/lapor"
+    assert response.headers["Location"] == "/auth/pelapor/login"
 
 
-def test_root_follow_redirects_to_report_form(client):
+def test_root_follow_redirects_to_reporter_login(client):
     response = client.get("/", follow_redirects=True)
     html = response.get_data(as_text=True)
 
     assert response.status_code == 200
-    assert "Laporkan keluhan fasilitas Gedung FTII" in html
-    assert 'class="kf-report-form"' in html
+    assert "Login Pelapor KlasiFas" in html
+    assert 'action="/auth/pelapor/login"' in html
+    assert 'class="kf-report-form"' not in html
 
 
 def test_root_post_returns_405(client):
@@ -386,8 +389,8 @@ def test_storage_failure_rolls_back_ticket(client, monkeypatch):
 
     original_create_ticket = report_routes.create_ticket_with_token
 
-    def failing_create_ticket(data, photo=None):
-        original_create_ticket(data, photo)
+    def failing_create_ticket(data, photo=None, **kwargs):
+        original_create_ticket(data, photo, **kwargs)
         raise SQLAlchemyError("simulated storage failure")
 
     monkeypatch.setattr(
@@ -410,3 +413,32 @@ def test_success_without_session_redirects_to_form(client):
 
     assert response.status_code == 302
     assert response.headers["Location"].endswith("/lapor")
+
+
+def test_logged_in_reporter_ticket_is_linked(client):
+    reporter = User(
+        username=f"linked_reporter_{secrets.token_hex(4)}",
+        full_name="Pelapor Terhubung",
+        password_hash=None,
+        role="reporter",
+        is_active=True,
+    )
+    db.session.add(reporter)
+    db.session.flush()
+
+    with client.session_transaction() as session_data:
+        session_data["reporter_id"] = reporter.id
+
+    description = "Laporan pelapor terhubung ke akun."
+    response = _post_report(
+        client,
+        _valid_data(description=description),
+        _get_csrf_token(client),
+    )
+
+    assert response.status_code == 200
+    ticket = db.session.scalar(
+        select(Ticket).where(Ticket.description == description)
+    )
+    assert ticket is not None
+    assert ticket.reporter_id == reporter.id

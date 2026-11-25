@@ -245,8 +245,8 @@ def test_failed_persistence_does_not_display_token(client, monkeypatch):
 
     original_create = report_routes.create_ticket_with_token
 
-    def failing_create(data, photo=None):
-        original_create(data, photo)
+    def failing_create(data, photo=None, **kwargs):
+        original_create(data, photo, **kwargs)
         raise SQLAlchemyError("simulated persistence failure")
 
     monkeypatch.setattr(

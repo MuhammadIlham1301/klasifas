@@ -84,6 +84,15 @@ def test_get_login_page_renders_form(client):
     assert "register" not in body.lower()
 
 
+def test_login_page_links_to_reporter_login(client):
+    response = client.get("/auth/login")
+    body = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert '<a id="reporter-login-link" href="/auth/pelapor/login">' in body
+    assert "Login sebagai Pelapor" in body
+
+
 # --- Login berhasil untuk tiga role staf ---
 @pytest.mark.parametrize("role", ["admin_sarpras", "teknisi", "pimpinan"])
 def test_login_success_for_staff_roles(client, role):
@@ -126,6 +135,20 @@ def test_login_failure_is_generic(client, username, password):
     with client.session_transaction() as session_data:
         assert "user_id" not in session_data
         assert "role" not in session_data
+
+
+def test_staff_login_is_rate_limited(client):
+    _create_user("rate_limited_staff", "teknisi")
+
+    for _ in range(5):
+        response = _login(client, "rate_limited_staff", "password-yang-salah")
+        assert response.status_code == 200
+
+    response = _login(client, "rate_limited_staff", "password-yang-salah")
+
+    assert response.status_code == 429
+    assert response.headers["Retry-After"]
+    assert "Terlalu banyak percobaan login" in response.get_data(as_text=True)
 
 
 # --- Login gagal membersihkan sesi lama ---

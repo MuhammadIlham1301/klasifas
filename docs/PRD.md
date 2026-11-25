@@ -235,12 +235,12 @@ Fitur dan batasan berikut **secara tegas tidak termasuk** dalam ruang lingkup pr
 
 ### 8.2 Autentikasi, Pembatasan Hak Akses (RBAC), dan Pengamanan Pelacakan Tiket
 * Pembatasan hak akses berbasis peran secara tegas di sisi server:
-  * *Pelapor:* Mengisi formulir pelaporan dan memantau status laporannya sendiri via nomor/kode laporan.
+  * *Pelapor:* Mengisi formulir pelaporan; dapat login dengan akun pelapor yang dibuat operator untuk menautkan laporan ke akunnya; memantau status laporannya sendiri via nomor/kode laporan dan token akses.
   * *Admin Sarpras:* Akses penuh verifikasi kategori, penugasan teknisi, manajemen data master, pencarian/filter, membaca log audit (FR-09), dan ekspor ringkasan laporan.
   * *Teknisi:* Akses terbatas hanya pada daftar tugas penanganan yang diberikan kepadanya dan pembaruan status pengerjaan sesuai aturan transisi yang divalidasi. Teknisi **tidak memiliki hak akses** ke dasbor analitik eksekutif dan **tidak memiliki hak akses** membaca log audit sistem.
   * *Pimpinan Fakultas / Kaprodi:* Akses baca (*read-only*) terhadap statistik agregat dasbor pemantauan internal (FR-07). Tidak memiliki akses pencarian/filter tiket individual (FR-08) atau data tiket operasional.
-* **Pengamanan Akses Tiket Tanpa Login:** Sistem pelacakan mandiri tanpa login wajib diamankan dengan kode laporan acak unik (*cryptographically secure/unguessable token*) dan perlindungan pembatasan frekuensi percobaan (*rate limiting*) untuk mencegah serangan penelusuran tiket (*brute-force enumeration*) oleh pihak luar.
-* **Penyimpanan Kredensial:** Kata sandi pengguna terdaftar (Admin, Teknisi, Pimpinan) wajib disimpan dalam bentuk nilai *hash* yang aman (misalnya bcrypt) dan dilarang disimpan dalam bentuk teks biasa (*plain text*).
+* **Pelacakan Tanpa Login:** Pelacakan mandiri tanpa login tetap tersedia dan wajib diamankan dengan kode laporan acak unik (*cryptographically secure/unguessable token*) dan perlindungan pembatasan frekuensi percobaan (*rate limiting*) untuk mencegah serangan penelusuran tiket (*brute-force enumeration*) oleh pihak luar.
+* **Penyimpanan Kredensial:** Kata sandi pengguna terdaftar (Pelapor, Admin, Teknisi, Pimpinan) wajib disimpan dalam bentuk nilai *hash* yang aman dan dilarang disimpan dalam bentuk teks biasa (*plain text*).
 
 ### 8.3 Integritas Data & Validasi Input
 * Seluruh input teks keluhan divalidasi dan disanitasi di sisi server untuk mencegah serangan *Cross-Site Scripting* (XSS).

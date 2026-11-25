@@ -151,7 +151,9 @@ def _generate_unique_identity() -> tuple[str, str, str]:
 
 
 def create_ticket_with_token(
-    data: Mapping[str, object], photo: StoredPhoto | None = None
+    data: Mapping[str, object],
+    photo: StoredPhoto | None = None,
+    reporter_id: int | None = None,
 ) -> tuple[Ticket, str]:
     """Buat tiket dan kembalikan token asli hanya untuk distribusi."""
     ticket_code, raw_token, access_token_hash = _generate_unique_identity()
@@ -161,6 +163,7 @@ def create_ticket_with_token(
         ticket_code=ticket_code,
         access_token_hash=access_token_hash,
         description=str(data["description"]),
+        reporter_id=reporter_id,
         reporter_category_id=data["reporter_category_id"],
         predicted_category_id=classification.predicted_category_id,
         confidence_score=classification.confidence_score,
@@ -186,10 +189,12 @@ def create_ticket_with_token(
 
 
 def create_ticket(
-    data: Mapping[str, object], photo: StoredPhoto | None = None
+    data: Mapping[str, object],
+    photo: StoredPhoto | None = None,
+    reporter_id: int | None = None,
 ) -> Ticket:
     """Buat tiket baru tanpa melakukan commit (raw token dibuang)."""
-    ticket, _ = create_ticket_with_token(data, photo)
+    ticket, _ = create_ticket_with_token(data, photo, reporter_id=reporter_id)
     return ticket
 
 

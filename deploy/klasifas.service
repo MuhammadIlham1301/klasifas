@@ -1,0 +1,46 @@
+[Unit]
+Description=KlasiFas Gunicorn application server
+Documentation=file:/opt/klasifas/docs/DEPLOYMENT.md
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=klasifas
+Group=klasifas
+WorkingDirectory=/opt/klasifas
+EnvironmentFile=/etc/klasifas/klasifas.env
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/opt/klasifas/venv/bin/gunicorn --config /opt/klasifas/deploy/gunicorn.conf.py wsgi:app
+ExecReload=/bin/kill -s HUP $MAINPID
+KillSignal=SIGTERM
+TimeoutStopSec=40s
+Restart=on-failure
+RestartSec=5s
+UMask=0027
+
+# Hardening systemd
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+RestrictNamespaces=true
+LockPersonality=true
+CapabilityBoundingSet=
+AmbientCapabilities=
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+SystemCallArchitectures=native
+ReadWritePaths=/opt/klasifas/uploads
+
+[Install]
+WantedBy=multi-user.target

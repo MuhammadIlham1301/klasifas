@@ -156,12 +156,17 @@ Motion & Interaction adalah spesifikasi lintas halaman, bukan halaman/fitur prod
 - Hindari angka contoh yang tampak seperti data produksi; labeli data sampel dengan jelas.
 - Tidak mengakses detail identitas atau Audit Log operasional.
 
-### 4.5 Login Staf
+### 4.5 Login Staf dan Pelapor
 
 - Satu halaman autentikasi untuk Admin Sarpras, Teknisi, dan Pimpinan/Kaprodi.
-- Pelapor publik tidak diarahkan ke login staf.
+- Halaman login pelapor terpisah dari login staf. Pelapor tidak diarahkan ke login staf.
+- Login pelapor memakai pola form, CSRF, dan pesan gagal generik yang sama dengan login staf.
+- Sesi pelapor terpisah dan tidak menampilkan navigasi internal staf.
+- Saat sesi pelapor aktif, halaman pelaporan menampilkan identitas pelapor dan tombol Logout POST ber-CSRF; badge "Tanpa login" hanya untuk pengunjung anonim.
+- Halaman login pelapor menyediakan tautan "Login sebagai Staf" ke `/auth/login` di bawah form dan akses "Laporkan tanpa login" ke `/lapor`.
+- Halaman login staf menyediakan tautan "Login sebagai Pelapor" ke `/auth/pelapor/login` di bawah form.
 - Field dan aturan validasi harus mengikuti mekanisme autentikasi Flask yang sudah ada.
-- Jangan menambahkan SSO, integrasi direktori, registrasi, reset password, MFA, atau aturan password baru jika belum ada di proyek.
+- Jangan menambahkan SSO, integrasi direktori, registrasi publik, reset password, MFA, atau aturan password baru jika belum ada di proyek.
 - Pesan gagal login tidak boleh membocorkan apakah username terdaftar.
 
 ## 5. Workflow tiket

@@ -154,7 +154,7 @@ Pemisahan layout hibrida pada [`app/templates/base.html`](file:///d:/Project%20C
    - **Admin Sarpras**: Berwenang mengakses `/admin/tiket`, `/admin/tiket/<id>/verifikasi`, `/admin/tiket/<id>/assign`, `/admin/audit-log`, dan `/dashboard`.
    - **Teknisi**: Berwenang mengakses `/teknisi/tugas`, `/teknisi/tugas/<id>`, dan `/teknisi/tugas/<id>/status`. Upaya membuka rute admin atau dasbor ditolak dengan status **`403 Forbidden`**.
    - **Pimpinan**: Berwenang membuka `/dashboard` secara read-only. Upaya membuka rute admin atau teknisi ditolak dengan status **`403 Forbidden`**.
-   - **Pelapor (Publik)**: Mengakses `/`, `/lapor`, dan `/lacak` tanpa memerlukan sesi login staf.
+   - **Pelapor (Publik)**: Mengakses `/lapor` dan `/lacak` tanpa memerlukan sesi login staf; `/` diarahkan ke login pelapor.
 2. **Integritas Alur 4 Status Resmi**:
    - `Baru` $\rightarrow$ `Terverifikasi`: Transisi dipicu oleh Admin Sarpras saat menetapkan kategori verifikasi resmi.
    - `Terverifikasi` $\rightarrow$ `Diproses`: Transisi dipicu oleh Teknisi saat memulai pekerjaan lapangan.

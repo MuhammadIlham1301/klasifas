@@ -1,0 +1,412 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"><meta content="mobile_stack" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{width:100%;margin:0;padding:0;min-height:100%;}body{overscroll-behavior-y:none;font-family:'Plus Jakarta Sans',sans-serif;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "outline": "#cbd5e1",
+          "surface-container": "#e6eeff",
+          "on-tertiary": "#ffffff",
+          "error-container": "#fee2e2",
+          "on-secondary-fixed": "#131b2e",
+          "secondary-container": "#1e293b",
+          "tertiary-container": "#e0f2fe",
+          "on-surface-variant": "#475569",
+          "on-error": "#ffffff",
+          "surface-dim": "#ccdbf3",
+          "inverse-primary": "#b8c4ff",
+          "on-primary-fixed-variant": "#173bab",
+          "surface-tint": "#3755c3",
+          "outline-variant": "#c4c5d5",
+          "surface-container-low": "#eff4ff",
+          "surface-container-lowest": "#ffffff",
+          "on-primary-fixed": "#001453",
+          "on-error-container": "#93000a",
+          "on-tertiary-fixed": "#001d31",
+          "error": "#b91c1c",
+          "surface-variant": "#d5e3fc",
+          "on-tertiary-container": "#77c2ff",
+          "surface-container-highest": "#d0e0ff",
+          "tertiary-fixed": "#cce5ff",
+          "on-primary": "#ffffff",
+          "on-secondary-container": "#cbd5e1",
+          "on-secondary": "#ffffff",
+          "primary-fixed": "#dde1ff",
+          "surface-container-high": "#dce9ff",
+          "on-tertiary-fixed-variant": "#004b73",
+          "on-surface": "#0d1c2e",
+          "background": "#f8f9ff",
+          "secondary-fixed-dim": "#bec6e0",
+          "primary-fixed-dim": "#b8c4ff",
+          "on-primary-container": "#1e3a8a",
+          "on-secondary-fixed-variant": "#3f465c",
+          "secondary": "#565e74",
+          "primary-container": "#1e40af",
+          "inverse-on-surface": "#eaf1ff",
+          "surface-bright": "#f8f9ff",
+          "secondary-fixed": "#dae2fd",
+          "tertiary-fixed-dim": "#93ccff",
+          "on-background": "#0d1c2e",
+          "tertiary": "#003757",
+          "primary": "#00288e",
+          "inverse-surface": "#233144",
+          "surface": "#f8f9ff"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.25rem",
+          "lg": "0.5rem",
+          "xl": "0.75rem",
+          "full": "9999px"
+        },
+        "spacing": {
+          "margin": "1.5rem",
+          "space-lg": "1.5rem",
+          "gutter-mobile": "0.75rem",
+          "space-sm": "0.5rem",
+          "space-xs": "0.25rem",
+          "gutter": "1rem",
+          "space-xl": "2rem",
+          "space-md": "1rem",
+          "margin-mobile": "1rem"
+        },
+        "fontFamily": {
+          "headline-md": ["Plus Jakarta Sans"],
+          "body-lg": ["Plus Jakarta Sans"],
+          "display-md": ["Plus Jakarta Sans"],
+          "label-md": ["Plus Jakarta Sans"],
+          "body-sm": ["Plus Jakarta Sans"],
+          "headline-sm": ["Plus Jakarta Sans"],
+          "display-lg": ["Plus Jakarta Sans"],
+          "title-md": ["Plus Jakarta Sans"],
+          "headline-lg": ["Plus Jakarta Sans"],
+          "label-sm": ["Plus Jakarta Sans"],
+          "body-md": ["Plus Jakarta Sans"]
+        },
+        "fontSize": {
+          "headline-md": ["20px", {"lineHeight": "26px", "fontWeight": "600"}],
+          "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+          "display-md": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+          "label-md": ["12px", {"lineHeight": "17px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+          "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+          "headline-sm": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+          "display-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+          "title-md": ["16px", {"lineHeight": "22px", "fontWeight": "600"}],
+          "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+          "label-sm": ["11px", {"lineHeight": "15px", "letterSpacing": "0.03em", "fontWeight": "600"}],
+          "body-md": ["14px", {"lineHeight": "21px", "fontWeight": "400"}]
+        }
+      }
+    }
+  };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface antialiased min-h-screen flex flex-col justify-between selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="h-16 px-margin-mobile flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><button aria-label="Kembali" class="w-11 h-11 -ml-2 flex items-center justify-center text-on-surface rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors" onclick="history.back()"><span class="material-symbols-outlined text-[20px]">arrow_back_ios_new</span></button><img alt="Logo Resmi UHAMKA" class="h-8 w-auto object-contain flex-shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBx9gAUP-TeWEnPIDEbATlPhE0q6SLjTnTlD0GpKrmXbyYe45h4QAB1ElHN_5gczFhEWy6y0Pcd0h1OQxAUkf_WCPJUho0x9PqPufgjbVdvP3Ftg7j7ADvB5QGSB5EH5ylixNJbAu7nQ60yVd96gzmZJ18UDzBcPsTYRrjQGataEHmV5DjhjgqmTeDapa5MLgO3ozly8xbwD_LdlhLpfEzmK50LFYC6-8H0IsnPwkIpLCl8W0YC3o-p5w"><div class="flex flex-col min-w-0"><h1 class="font-title-md text-title-md text-on-surface truncate leading-tight">KlasiFas</h1><span class="font-label-sm text-label-sm text-on-surface-variant truncate">Teknisi • FTII UHAMKA</span></div></div><div class="flex items-center gap-space-xs"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 flex flex-col relative w-full px-margin-mobile pt-16 pb-safe bg-surface"><div class="flex flex-col w-full pb-10">
+<!-- Top Ticket Header Bar -->
+<div class="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm mb-space-md">
+<div class="flex items-center justify-between gap-space-xs mb-space-xs">
+<div class="flex items-center gap-space-xs">
+<button type="button" onclick="history.back()" class="flex items-center gap-1 text-primary hover:text-primary-container font-label-md text-label-md py-1 px-2 rounded-lg bg-surface-container active:scale-95 transition-all"><span class="material-symbols-outlined text-[16px]">arrow_back</span><span>Tugas Saya</span></button>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight">#TK-2025-089</span>
+</div>
+<span class="bg-amber-100 text-amber-900 font-label-sm text-label-sm px-2.5 py-1 rounded-full flex items-center gap-1 font-semibold">
+<span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+        DIPROSES
+      </span>
+</div>
+<div class="flex items-center gap-1.5 pt-1 text-on-surface-variant font-label-sm text-label-sm"><span class="material-symbols-outlined text-[16px] text-primary">info</span><span>Status Operasional: <span class="font-semibold text-primary">Diproses oleh Teknisi</span></span></div>
+</div>
+<!-- 4-Stage Workflow Progression Stepper -->
+<div class="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm mb-space-md">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Alur Tiket Resmi</span>
+<span class="font-label-sm text-label-sm text-primary font-bold">Tahap 3 dari 4</span>
+</div>
+<div class="relative flex items-center justify-between w-full mt-2">
+<!-- Step 1: Baru -->
+<div class="flex flex-col items-center z-10 flex-1">
+<div class="w-7 h-7 rounded-full bg-primary text-on-primary flex items-center justify-center font-label-sm text-label-sm shadow-sm">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-1.5">Baru</span>
+</div>
+<!-- Connector 1-2 -->
+<div class="h-1 bg-primary flex-1 -mx-2.5 self-center mb-4"></div>
+<!-- Step 2: Terverifikasi -->
+<div class="flex flex-col items-center z-10 flex-1">
+<div class="w-7 h-7 rounded-full bg-primary text-on-primary flex items-center justify-center font-label-sm text-label-sm shadow-sm">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-1.5 truncate max-w-[64px] text-center">Terverifikasi</span>
+</div>
+<!-- Connector 2-3 -->
+<div class="h-1 bg-primary flex-1 -mx-2.5 self-center mb-4"></div>
+<!-- Step 3: Diproses [Aktif] -->
+<div class="flex flex-col items-center z-10 flex-1">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-label-md text-label-md shadow-md ring-4 ring-primary-fixed">
+<span class="material-symbols-outlined text-[18px]">build</span>
+</div>
+<span class="font-label-md text-label-md text-primary font-bold mt-1.5">Diproses</span>
+</div>
+<!-- Connector 3-4 -->
+<div class="h-1 bg-surface-container flex-1 -mx-2.5 self-center mb-4"></div>
+<!-- Step 4: Selesai -->
+<div class="flex flex-col items-center z-10 flex-1">
+<div class="w-7 h-7 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-1.5">Selesai</span>
+</div>
+</div>
+</div>
+<!-- Incident Details & Reporter Context -->
+<div class="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm mb-space-md flex flex-col gap-space-sm">
+<div class="flex items-start justify-between">
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Lokasi Masalah</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold flex items-center gap-1 mt-0.5"><span class="material-symbols-outlined text-primary text-[20px] shrink-0">apartment</span><span class="truncate">Gedung FTII Lt. 3 - Ruang Lab Software 1</span></h2>
+</div>
+<span class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm px-2.5 py-1 rounded-full shrink-0"><span class="material-symbols-outlined text-[14px] mr-1">lock</span> Fasilitas Ruang (Terkunci)</span>
+</div>
+<!-- Keluhan Pelapor -->
+<div class="bg-surface-container-low p-space-sm rounded-lg flex flex-col gap-1">
+<div class="flex items-center gap-1 text-on-surface-variant font-label-sm text-label-sm"><span class="material-symbols-outlined text-[16px] text-secondary">record_voice_over</span><span>Pelapor: M. Rian (Civitas Terverifikasi / Dosen)</span><span class="bg-surface-container text-on-surface-variant font-label-sm text-[10px] px-1.5 py-0.5 rounded font-medium ml-auto">Data Sampel Ilustratif MVP KlasiFas</span></div>
+<p class="font-body-md text-body-md text-on-surface italic">
+        "AC unit 02 meneteskan air ke karpet dan bunyi berdengung keras sejak sesi kuliah pagi."
+      </p>
+</div>
+<!-- Foto Bukti Pelapor Card -->
+<div class="flex flex-col gap-1.5 pt-1">
+<span class="font-label-md text-label-md text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">photo_camera</span>
+        Bukti Foto Pelapor (Ketuk untuk zoom):
+      </span>
+<div class="flex items-center gap-space-sm">
+<button class="relative w-20 h-20 rounded-xl overflow-hidden bg-surface-container shadow-sm active:scale-95 transition-all text-left shrink-0" onclick="previewImage('Foto AC Netes 02')" type="button">
+<img class="w-full h-full object-cover" data-alt="Close-up photograph of an overhead commercial air conditioner split indoor unit mounted on an academic lab wall, with subtle water leakage droplets visible on the casing rim under fluorescent lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZs7CpB2usOEAcdy2r6vBgwLnXxPq3GG14HswpEi4XF3HQ9kv8LrCNSz3Tc8TV68yLrBIWwvR7MplH6r9PJujzE7aZUZglcvam49IT95V7umPLdQHQp2mCu__rCzGneaJeRsUzKldqpzuwsGygdMxEujpy9IGJ9_zBELuEKpWWAh3bohkQvIQ8es8Skwp9-XoTkhCMCgxYTvQHms7H7VOSxQe4QbJV7GI44TfYLSlO">
+<div class="absolute inset-0 bg-secondary-container/20 flex items-center justify-center opacity-80 hover:opacity-100">
+<span class="material-symbols-outlined text-on-primary text-[22px]">zoom_in</span>
+</div>
+</button>
+<div class="flex flex-col justify-center min-w-0"><p class="font-label-md text-label-md text-on-surface font-medium truncate">ac_unit02_leakage_lab1.jpg</p><span class="font-body-sm text-body-sm text-on-surface-variant">Diunggah: Pukul 08:14 WIB (Ilustratif)</span><span class="font-label-sm text-label-sm text-primary font-semibold mt-0.5">Dokumentasi Awal Fasilitas</span></div>
+</div>
+</div>
+</div>
+<!-- Form Tindakan Cepat Teknisi -->
+<form class="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-md" id="progressForm" onsubmit="event.preventDefault(); openConfirmModal();">
+<div class="flex items-center justify-between pb-space-xs">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">engineering</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Pembaruan Progres</h3>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Status Lapangan</span>
+</div>
+<!-- Pilihan Status Tindakan (Large Radio Cards >=48px) -->
+<div class="flex flex-col gap-space-sm">
+<span class="font-label-md text-label-md text-on-surface-variant font-semibold">Tentukan Status Akhir Tiket:</span>
+<!-- Option 1: Tetap Diproses -->
+<label class="group relative flex items-center p-3.5 rounded-xl cursor-pointer bg-surface-container-low transition-all duration-150 hover:bg-surface-container">
+<input checked="" class="peer sr-only" name="status_action" type="radio" value="diproses">
+<div class="w-6 h-6 rounded-full bg-surface-container-lowest flex items-center justify-center peer-checked:bg-primary mr-3.5 transition-colors shrink-0">
+<div class="w-2.5 h-2.5 rounded-full bg-on-primary scale-0 peer-checked:scale-100 transition-transform"></div>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-title-md text-on-surface font-bold flex items-center gap-1.5">
+            Update Progres Lapangan
+            <span class="bg-amber-100 text-amber-900 font-label-sm text-label-sm px-2 py-0.5 rounded-full">Tetap Diproses</span>
+</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Sedang penanganan teknis dan pembersihan saluran di lokasi</span>
+</div>
+</label>
+<!-- Option 2: Selesaikan Pekerjaan -->
+<label class="group relative flex items-center p-3.5 rounded-xl cursor-pointer bg-surface-container-low transition-all duration-150 hover:bg-surface-container">
+<input class="peer sr-only" name="status_action" type="radio" value="selesai">
+<div class="w-6 h-6 rounded-full bg-surface-container-lowest flex items-center justify-center peer-checked:bg-primary mr-3.5 transition-colors shrink-0">
+<div class="w-2.5 h-2.5 rounded-full bg-on-primary scale-0 peer-checked:scale-100 transition-transform"></div>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-title-md text-on-surface font-bold flex items-center gap-1.5">
+            Selesaikan Pekerjaan
+            <span class="bg-emerald-100 text-emerald-900 font-label-sm text-label-sm px-2 py-0.5 rounded-full">Ubah ke Selesai</span>
+</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Perbaikan tuntas, unit telah diuji dan berfungsi normal</span>
+</div>
+</label>
+</div>
+<!-- Catatan Penanganan -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface-variant font-semibold flex items-center justify-between" for="technicianNote"><span>Catatan Tindakan Lapangan:</span><span class="font-label-sm text-label-sm text-on-surface-variant/70">Wajib diisi sesuai temuan teknis lapangan</span></label>
+<textarea class="w-full bg-surface-container-lowest p-3 rounded-lg font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:bg-surface-container-low transition-colors duration-150 resize-none shadow-sm outline-none ring-0" id="technicianNote" placeholder="Contoh: Saluran pembuangan tersumbat lumut telah disemprot bertekanan. Blower telah dibersihkan dan suhu stabil di 22°C." required="" rows="3"></textarea>
+</div>
+<!-- Unggah Foto Hasil Kerja (Camera / Gallery) -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface-variant font-semibold">Foto Dokumentasi Hasil Kerja (Opsional):</span>
+<span class="font-label-sm text-label-sm text-primary font-bold" id="photoCount">1 Foto Siap</span>
+</div>
+<!-- Photo Previews Grid & Camera Trigger -->
+<div class="grid grid-cols-3 gap-2">
+<!-- Sample Existing Working Photo -->
+<div class="relative h-24 rounded-lg overflow-hidden bg-surface-container-high shadow-sm group">
+<img class="w-full h-full object-cover" data-alt="Technical maintenance photo showing clean indoor air conditioner casing with clear drain tray, filter newly washed and technician hand with a digital thermometer measuring cold airflow." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCv72MBpfd_lW1iHDju2DLQUA2aQQoWIw4WKjmiXfWhLQjd3YAJevEVrogjyVEpFKL49QMIg3GIqX3u4PsykWO_YERB0sFLIYE1-q7FBtYX3Vy3E2ExwsMeR96ZqB3q3Kmn_p8o8W4N7msVe8SFhACbXsoIS1hxnyyLpi5FpUqrZ1uETxTF3dEv0EIKmsp-exsbRozAunnNP9mm1HP9ONifj0ULeH73Fplp3s2cpWcA">
+<span class="absolute bottom-1 left-1 bg-secondary-container/80 text-on-primary font-label-sm text-[10px] px-1.5 py-0.5 rounded">Hasil 1</span>
+<button class="absolute top-1 right-1 w-6 h-6 rounded-full bg-error text-on-error flex items-center justify-center shadow-md active:scale-90 transition-transform" onclick="removePhoto(this)" type="button">
+<span class="material-symbols-outlined text-[14px]">close</span>
+</button>
+</div>
+<!-- Add Photo Button 1 -->
+<button class="h-24 rounded-lg bg-surface-container-low flex flex-col items-center justify-center text-primary hover:bg-surface-container active:scale-95 transition-all text-center p-2" onclick="triggerCameraInput()" type="button">
+<span class="material-symbols-outlined text-[26px]">photo_camera</span>
+<span class="font-label-sm text-label-sm font-semibold mt-1">Kamera</span>
+</button>
+<!-- Add Photo Button 2 (Gallery) -->
+<button class="h-24 rounded-lg bg-surface-container-low flex flex-col items-center justify-center text-secondary hover:bg-surface-container active:scale-95 transition-all text-center p-2" onclick="triggerGalleryInput()" type="button">
+<span class="material-symbols-outlined text-[26px]">add_photo_alternate</span>
+<span class="font-label-sm text-label-sm font-semibold mt-1">Galeri</span>
+</button>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant/80 italic">Opsional: Unggah foto penampakan fisik unit AC setelah diservis atau dirapikan.</p>
+</div>
+<!-- Simpan Button Utama (High Contrast Blue min 48px) -->
+<div class="pt-2">
+<button class="w-full h-12 bg-primary hover:bg-primary-container text-on-primary rounded-xl font-title-md text-title-md font-bold shadow-md flex items-center justify-center gap-2 active:scale-[0.98] transition-all" type="submit">
+<span class="material-symbols-outlined text-[22px]">save</span>
+<span>Simpan Pembaruan Progres</span>
+</button>
+</div>
+</form>
+<!-- Mobile Bottom Sheet Confirmation Modal -->
+<div class="fixed inset-0 z-50 bg-secondary-container/60 backdrop-blur-xs flex items-end justify-center hidden opacity-0 transition-opacity duration-200" id="confirmModal" onclick="if(event.target === this) closeConfirmModal();">
+<div class="w-full max-w-lg bg-surface-container-lowest rounded-t-2xl p-space-lg shadow-2xl transform translate-y-full transition-transform duration-200 ease-out flex flex-col gap-space-md" id="modalSheet">
+<!-- Drag handle decorative -->
+<div class="w-12 h-1.5 bg-surface-container rounded-full mx-auto -mt-2 mb-1"></div>
+<div class="flex items-center gap-space-sm">
+<div class="w-12 h-12 rounded-full bg-primary-fixed text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[28px]">verified_user</span>
+</div>
+<div class="flex flex-col min-w-0">
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold">Konfirmasi Pembaruan</h4>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Tiket #TK-2025-089</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface bg-surface-container-low p-space-sm rounded-lg">
+        Simpan laporan tindakan untuk tiket <span class="font-bold text-primary">#TK-2025-089</span>? Riwayat progres dan foto dokumentasi akan langsung tersimpan di sistem operasional FTII.
+      </p>
+<div class="flex items-center gap-space-sm pt-1">
+<button class="flex-1 h-12 rounded-xl bg-surface-container text-on-surface font-title-md text-title-md font-semibold hover:bg-surface-container-high active:scale-95 transition-all" onclick="closeConfirmModal()" type="button">
+          Batal
+        </button>
+<button class="flex-1 h-12 rounded-xl bg-primary text-on-primary font-title-md text-title-md font-bold shadow-md hover:bg-primary-container active:scale-95 transition-all flex items-center justify-center gap-1.5" onclick="submitProgressSuccess()" type="button">
+<span class="material-symbols-outlined text-[20px]">check</span>
+<span>Ya, Simpan</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Toast Feedback State Notification -->
+<div class="fixed top-20 left-4 right-4 z-50 transform -translate-y-10 opacity-0 pointer-events-none transition-all duration-300 ease-out flex justify-center" id="toastSuccess">
+<div class="bg-emerald-700 text-on-primary px-4 py-3 rounded-xl shadow-lg flex items-center gap-2.5 max-w-sm w-full">
+<span class="material-symbols-outlined text-[24px] text-emerald-200">check_circle</span>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-title-md font-bold leading-tight">Progres Berhasil Disimpan</span>
+<span class="font-label-sm text-label-sm text-emerald-100">Laporan tindakan telah diperbarui.</span>
+</div>
+</div>
+</div>
+<!-- Quick Lightbox Modal for Photo Evidence Preview -->
+<div class="fixed inset-0 z-50 bg-secondary-container/90 backdrop-blur-sm flex flex-col justify-between p-4 hidden opacity-0 transition-opacity duration-150" id="imageViewerModal" onclick="closeImageViewer()">
+<div class="flex justify-end pt-safe">
+<button class="w-10 h-10 rounded-full bg-surface-container-lowest/20 text-on-primary flex items-center justify-center" type="button">
+<span class="material-symbols-outlined text-[22px]">close</span>
+</button>
+</div>
+<div class="flex-1 flex flex-col items-center justify-center p-2" onclick="event.stopPropagation()">
+<div class="relative w-full max-h-[618px] rounded-2xl overflow-hidden shadow-2xl bg-black">
+<img class="w-full h-full object-contain max-h-[530px]" data-alt="High-resolution zoomed maintenance inspection image of air conditioner drain pan and filter on campus ceiling, demonstrating detailed water clogging." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBof8xV2_AIDCJhYIa5znbInjUQ8nBDgxUC5hho4ZvFbGtZh4XbGsCSj2PDGzrW3wtcszJjleImbQF5pQHohGA29mIh2VP32uuwSvRBCiRtvPFvpYIw0Ix5XsYAOagx8Yyb1Et2yIjRXN6gsjpwbo2rfZrW0k184ib1BzH9pG0v7IGQB1VqwjY-R_jNwk_NHX_6cxpIm3zfKFAFCZI2ukM9mUgnLJF-6IFudim9loUn">
+</div>
+<p class="font-body-md text-body-md text-on-primary mt-3 text-center" id="viewerCaption">Bukti Foto Pelapor</p>
+</div>
+<div class="pb-safe text-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant text-slate-300">Ketuk di luar gambar untuk menutup</span>
+</div>
+</div>
+</div>
+<script>
+  function openConfirmModal() {
+    const modal = document.getElementById('confirmModal');
+    const sheet = document.getElementById('modalSheet');
+    modal.classList.remove('hidden');
+    requestAnimationFrame(() => {
+      modal.classList.remove('opacity-0');
+      sheet.classList.remove('translate-y-full');
+    });
+  }
+
+  function closeConfirmModal() {
+    const modal = document.getElementById('confirmModal');
+    const sheet = document.getElementById('modalSheet');
+    modal.classList.add('opacity-0');
+    sheet.classList.add('translate-y-full');
+    setTimeout(() => {
+      modal.classList.add('hidden');
+    }, 200);
+  }
+
+  function submitProgressSuccess() {
+    closeConfirmModal();
+    const toast = document.getElementById('toastSuccess');
+    setTimeout(() => {
+      toast.classList.remove('-translate-y-10', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      
+      // Auto dismiss after 3 seconds
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('-translate-y-10', 'opacity-0');
+      }, 3200);
+    }, 250);
+  }
+
+  function previewImage(caption) {
+    const modal = document.getElementById('imageViewerModal');
+    const capEl = document.getElementById('viewerCaption');
+    if (capEl && caption) capEl.textContent = caption;
+    modal.classList.remove('hidden');
+    requestAnimationFrame(() => {
+      modal.classList.remove('opacity-0');
+    });
+  }
+
+  function closeImageViewer() {
+    const modal = document.getElementById('imageViewerModal');
+    modal.classList.add('opacity-0');
+    setTimeout(() => {
+      modal.classList.add('hidden');
+    }, 150);
+  }
+
+  function triggerCameraInput() {
+    // Simulated camera capture action
+    const toast = document.getElementById('toastSuccess');
+    alert('Kamera dibuka. Foto akan otomatis dioptimasi untuk jaringan kampus.');
+  }
+
+  function triggerGalleryInput() {
+    // Simulated gallery picker action
+    alert('Buka galeri foto perangkat...');
+  }
+
+  function removePhoto(buttonEl) {
+    const container = buttonEl.closest('.relative');
+    if (container) {
+      container.remove();
+      const countEl = document.getElementById('photoCount');
+      if (countEl) countEl.textContent = '0 Foto Siap';
+    }
+  }
+</script><nav class="w-full bg-surface-container-lowest border-t border-outline-variant/60 rounded-t-xl px-2 py-2 flex items-center justify-around shadow-lg mt-4"><button type="button" class="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary py-1 px-3"><span class="material-symbols-outlined text-[20px]">assignment</span><span class="font-label-sm text-label-sm font-medium">Tugas Saya</span></button><button type="button" class="flex flex-col items-center gap-1 text-primary py-1 px-3"><span class="material-symbols-outlined text-[20px]">pending_actions</span><span class="font-label-sm text-label-sm font-bold">Diproses</span></button><button type="button" class="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary py-1 px-3"><span class="material-symbols-outlined text-[20px]">task_alt</span><span class="font-label-sm text-label-sm font-medium">Riwayat Selesai</span></button><button type="button" class="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary py-1 px-3"><span class="material-symbols-outlined text-[20px]">account_circle</span><span class="font-label-sm text-label-sm font-medium">Profil</span></button></nav><footer class="mt-auto pt-space-lg pb-space-sm text-center"><p class="font-label-sm text-label-sm text-on-surface-variant/80">© FTII UHAMKA • KlasiFas (Data Sampel Ilustratif)</p></footer></main>
+
+</body></html>

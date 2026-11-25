@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+
+<html lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "primary-fixed": "#dde1ff",
+          "on-tertiary-fixed": "#0e1c2f",
+          "primary-fixed-dim": "#b8c4ff",
+          "on-tertiary-fixed-variant": "#3a475c",
+          "surface-container-highest": "#d5e3fc",
+          "secondary-container": "#fe932c",
+          "on-background": "#0d1c2e",
+          "surface": "#f8f9ff",
+          "on-surface-variant": "#444653",
+          "surface-container-low": "#eff4ff",
+          "surface-tint": "#3755c3",
+          "surface-variant": "#d5e3fc",
+          "primary-container": "#1e40af",
+          "on-secondary-fixed-variant": "#6e3900",
+          "on-secondary-fixed": "#2f1500",
+          "secondary-fixed-dim": "#ffb77d",
+          "tertiary-container": "#3f4c61",
+          "inverse-surface": "#233144",
+          "primary": "#00288e",
+          "on-primary-fixed-variant": "#173bab",
+          "surface-container": "#e6eeff",
+          "surface-container-high": "#dce9ff",
+          "tertiary-fixed-dim": "#bac7e1",
+          "on-error-container": "#93000a",
+          "on-tertiary": "#ffffff",
+          "inverse-on-surface": "#eaf1ff",
+          "secondary": "#904d00",
+          "on-primary-container": "#a8b8ff",
+          "on-tertiary-container": "#afbcd6",
+          "outline-variant": "#c4c5d5",
+          "error-container": "#ffdad6",
+          "surface-dim": "#ccdbf3",
+          "error": "#ba1a1a",
+          "on-secondary": "#ffffff",
+          "tertiary": "#28354a",
+          "tertiary-fixed": "#d6e3fe",
+          "on-secondary-container": "#663500",
+          "secondary-fixed": "#ffdcc3",
+          "on-primary-fixed": "#001453",
+          "background": "#f8f9ff",
+          "surface-container-lowest": "#ffffff",
+          "on-error": "#ffffff",
+          "on-primary": "#ffffff",
+          "surface-bright": "#f8f9ff",
+          "inverse-primary": "#b8c4ff",
+          "on-surface": "#0d1c2e",
+          "outline": "#757684"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.25rem",
+          "lg": "0.5rem",
+          "xl": "0.75rem",
+          "full": "9999px"
+        },
+        "spacing": {
+          "space-lg": "1.5rem",
+          "gutter-lg": "1.5rem",
+          "space-xs": "0.25rem",
+          "space-md": "1rem",
+          "gutter": "1.25rem",
+          "margin": "1.5rem",
+          "space-xl": "2rem",
+          "space-sm": "0.5rem",
+          "margin-lg": "2rem"
+        },
+        "fontFamily": {
+          "headline-sm": [
+            "Plus Jakarta Sans"
+          ],
+          "body-sm": [
+            "Inter"
+          ],
+          "headline-lg": [
+            "Plus Jakarta Sans"
+          ],
+          "headline-md": [
+            "Plus Jakarta Sans"
+          ],
+          "metric-num": [
+            "Plus Jakarta Sans"
+          ],
+          "display-md": [
+            "Plus Jakarta Sans"
+          ],
+          "body-md": [
+            "Inter"
+          ],
+          "display-lg": [
+            "Plus Jakarta Sans"
+          ],
+          "label-sm": [
+            "Inter"
+          ],
+          "headline-lg-mobile": [
+            "Plus Jakarta Sans"
+          ],
+          "label-md": [
+            "Inter"
+          ],
+          "body-lg": [
+            "Inter"
+          ]
+        },
+        "fontSize": {
+          "headline-sm": [
+            "16px",
+            {
+              "lineHeight": "24px",
+              "letterSpacing": "-0.005em",
+              "fontWeight": "600"
+            }
+          ],
+          "body-sm": [
+            "13px",
+            {
+              "lineHeight": "18px",
+              "letterSpacing": "0.005em",
+              "fontWeight": "400"
+            }
+          ],
+          "headline-lg": [
+            "24px",
+            {
+              "lineHeight": "32px",
+              "letterSpacing": "-0.015em",
+              "fontWeight": "600"
+            }
+          ],
+          "headline-md": [
+            "20px",
+            {
+              "lineHeight": "28px",
+              "letterSpacing": "-0.01em",
+              "fontWeight": "600"
+            }
+          ],
+          "metric-num": [
+            "28px",
+            {
+              "lineHeight": "32px",
+              "letterSpacing": "-0.03em",
+              "fontWeight": "700"
+            }
+          ],
+          "display-md": [
+            "32px",
+            {
+              "lineHeight": "40px",
+              "letterSpacing": "-0.02em",
+              "fontWeight": "700"
+            }
+          ],
+          "body-md": [
+            "14px",
+            {
+              "lineHeight": "22px",
+              "letterSpacing": "0em",
+              "fontWeight": "400"
+            }
+          ],
+          "display-lg": [
+            "40px",
+            {
+              "lineHeight": "48px",
+              "letterSpacing": "-0.02em",
+              "fontWeight": "700"
+            }
+          ],
+          "label-sm": [
+            "11px",
+            {
+              "lineHeight": "14px",
+              "letterSpacing": "0.05em",
+              "fontWeight": "600"
+            }
+          ],
+          "headline-lg-mobile": [
+            "20px",
+            {
+              "lineHeight": "28px",
+              "letterSpacing": "-0.01em",
+              "fontWeight": "600"
+            }
+          ],
+          "label-md": [
+            "12px",
+            {
+              "lineHeight": "16px",
+              "letterSpacing": "0.02em",
+              "fontWeight": "600"
+            }
+          ],
+          "body-lg": [
+            "16px",
+            {
+              "lineHeight": "26px",
+              "letterSpacing": "0em",
+              "fontWeight": "400"
+            }
+          ]
+        }
+      },
+    },
+  }</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-72 bg-tertiary text-on-tertiary z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex flex-col"><div class="px-space-lg pt-space-lg pb-space-md bg-inverse-surface/40 flex items-center gap-3"><img alt="logo-uhamka.png" class="h-10 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/ALJJyrAXPIkQbyWjror6OUQDD6l6xpXAn9rMjNt8pfqs_prjUFHctjo__csImsMDA9wSbzOLObrpzh5XH2uHChiynrVGaHt3cNFOGVtE_3YTgH16tcxmx6UbdUPA6VoVf5KMEGt_G1SE3jP5ZwGJx-i-RGtgHNN6jC4lHZKut6eEKI_Oe7EaUnts94UWokp4R_LRXspl__9R4kuQOdLnZi-syouQP_88bw5bhZvxbskGGp3PsSnl_Vu0Ro1VfV8A"/><div class="flex flex-col min-w-0"><span class="font-headline-sm text-headline-sm text-on-tertiary tracking-tight font-bold truncate">KlasiFas</span><span class="font-label-sm text-label-sm text-tertiary-fixed-dim leading-none truncate">FTII UHAMKA</span></div></div><div class="px-space-lg py-space-sm"><div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-secondary-container/20 text-secondary-fixed border border-secondary-container/30"><span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed animate-pulse"></span><span class="font-label-sm text-label-sm tracking-wide font-semibold uppercase">Admin Sarpras (Full Access)</span></div></div><div class="px-space-md mt-space-sm"><div class="px-space-sm pb-space-xs"><span class="font-label-sm text-label-sm text-tertiary-fixed-dim/70 uppercase tracking-wider font-semibold">Modul Operasional</span></div><nav class="space-y-1" data-active-classes="bg-primary-container text-on-primary font-semibold"><a class="flex items-center gap-3 px-space-md py-space-sm rounded-lg text-tertiary-fixed-dim hover:bg-tertiary-container hover:text-on-tertiary transition-colors" data-path="antrean-tiket-dashboard" href="#"><span class="material-symbols-outlined text-[20px]">inbox</span><span class="font-body-md text-body-md">Antrean Tiket / Dashboard</span></a><a class="flex items-center gap-3 px-space-md py-space-sm rounded-lg text-tertiary-fixed-dim hover:bg-tertiary-container hover:text-on-tertiary transition-colors" data-path="verifikasi-penugasan" href="#"><span class="material-symbols-outlined text-[20px]">assignment_turned_in</span><span class="font-body-md text-body-md">Verifikasi &amp; Penugasan</span></a><a class="flex items-center gap-3 px-space-md py-space-sm rounded-lg text-tertiary-fixed-dim hover:bg-tertiary-container hover:text-on-tertiary transition-colors" data-path="audit-log-sarpras" href="#"><span class="material-symbols-outlined text-[20px]">history_edu</span><span class="font-body-md text-body-md">Audit Log Sarpras</span></a></nav></div></div><div class="p-space-md bg-inverse-surface/30 space-y-space-sm"><div class="p-space-sm rounded-lg bg-tertiary-container/40 space-y-1"><div class="flex items-center gap-2 text-tertiary-fixed-dim"><span class="material-symbols-outlined text-[16px]">corporate_fare</span><span class="font-label-sm text-label-sm font-semibold uppercase tracking-wider">Zona Yurisdiksi</span></div><p class="font-label-md text-label-md text-on-tertiary font-medium">Gedung FTII UHAMKA</p><p class="font-label-sm text-label-sm text-tertiary-fixed-dim">Lantai 1 s/d Lantai 4 • Bengkel • Lab</p></div><div class="flex items-center gap-3 px-space-sm py-space-xs"><div class="w-9 h-9 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-headline-sm font-semibold text-label-md shadow-sm">MF</div><div class="flex flex-col min-w-0"><span class="font-label-md text-label-md text-on-tertiary font-semibold truncate">Bpk. M. Fadli, S.T.</span><span class="font-label-sm text-label-sm text-tertiary-fixed-dim truncate">Staf Pengelola Sarpras FTII</span></div></div></div></aside><div class="pl-72"><header class="fixed top-0 left-72 right-0 h-16 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-gutter-lg"><div class="flex items-center gap-space-md"><img alt="logo-uhamka.png" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/ALJJyrAXPIkQbyWjror6OUQDD6l6xpXAn9rMjNt8pfqs_prjUFHctjo__csImsMDA9wSbzOLObrpzh5XH2uHChiynrVGaHt3cNFOGVtE_3YTgH16tcxmx6UbdUPA6VoVf5KMEGt_G1SE3jP5ZwGJx-i-RGtgHNN6jC4lHZKut6eEKI_Oe7EaUnts94UWokp4R_LRXspl__9R4kuQOdLnZi-syouQP_88bw5bhZvxbskGGp3PsSnl_Vu0Ro1VfV8A"/><div class="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md"><span class="font-semibold text-primary">Portal Admin Sarpras</span><span class="material-symbols-outlined text-[16px]">chevron_right</span><span class="text-on-surface font-medium">Sistem KlasiFas</span></div><span class="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm font-semibold"><span class="w-2 h-2 rounded-full bg-secondary-container"></span>Mode Operasional Penuh</span></div><div class="flex items-center gap-space-md"><div class="hidden md:flex flex-col items-end"><span class="font-label-sm text-label-sm text-on-surface-variant">Sesi Aktif</span><span class="font-label-md text-label-md text-on-surface font-semibold">Gedung A, FTII</span></div><div class="flex items-center gap-2"><button class="p-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span></button><button class="p-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">help_outline</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="relative w-full pt-16 bg-surface min-h-screen px-gutter-lg py-space-lg"><div class="flex flex-col w-full space-y-space-lg">
+<!-- Action Bar & Command Header -->
+<div class="flex flex-col lg:flex-row lg:items-end justify-between gap-space-md bg-surface-container-lowest p-space-lg rounded-xl shadow-sm">
+<div class="space-y-1.5 max-w-2xl">
+<div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-surface-container-high text-primary">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider font-semibold">Triage Otomatis Naive Bayes Multi-Kelas</span>
+</div>
+<h1 class="font-display-md text-display-md text-on-surface tracking-tight">Antrean Keluhan &amp; Tiket Sarpras FTII</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">
+        Manajemen dan alur operasional sarana prasarana Gedung FTII UHAMKA (Lantai 1 s/d 4). Data simulasi operasional terpadu.
+      </p>
+</div>
+<div class="flex items-center gap-space-sm shrink-0">
+<button class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>Ekspor Rekap Harian</span>
+</button>
+<button class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md transition-all shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">sync</span>
+<span>Sinkronisasi Antrean</span>
+</button>
+</div>
+</div>
+<!-- KPI Metric Cards Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-gutter">
+<!-- KPI 1: Total Masuk -->
+<div class="flex flex-col justify-between p-space-lg bg-surface-container-lowest rounded-xl shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Total Masuk</span>
+<div class="flex items-baseline gap-2">
+<span class="font-metric-num text-metric-num text-on-surface">148</span>
+<span class="font-label-md text-label-md text-on-surface-variant font-medium">Tiket</span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-lg bg-surface-container-high text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">all_inbox</span>
+</div>
+</div>
+<div class="mt-4 pt-3 flex items-center justify-between text-on-surface-variant">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Akumulasi Periode Berjalan</span>
+<span class="font-label-sm text-label-sm text-primary font-semibold flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>+12.4%
+        </span>
+</div>
+<div class="absolute top-0 left-0 right-0 h-1 bg-surface-container-high"></div>
+</div>
+<!-- KPI 2: Tiket Baru (Perlu Verifikasi - High Attention) -->
+<div class="flex flex-col justify-between p-space-lg bg-surface-container-lowest rounded-xl shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<div class="flex items-center gap-1.5">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider font-semibold">Tiket Baru</span>
+<span class="px-1.5 py-0.2 rounded bg-secondary-container/20 text-secondary font-label-sm text-label-sm font-bold">Atensi</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-metric-num text-metric-num text-secondary">4</span>
+<span class="font-label-md text-label-md text-secondary font-medium">Perlu Verifikasi</span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-lg bg-secondary-fixed/40 text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">notification_important</span>
+</div>
+</div>
+<div class="mt-4 pt-3 flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface-variant">SLA Respons &lt; 2 Jam</span>
+<span class="font-label-sm text-label-sm text-secondary font-bold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-secondary-container animate-ping"></span>Segera Tinjau
+        </span>
+</div>
+<div class="absolute top-0 left-0 right-0 h-1 bg-secondary-container"></div>
+</div>
+<!-- KPI 3: Sedang Ditangani -->
+<div class="flex flex-col justify-between p-space-lg bg-surface-container-lowest rounded-xl shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Sedang Ditangani</span>
+<div class="flex items-baseline gap-2">
+<span class="font-metric-num text-metric-num text-primary">23</span>
+<span class="font-label-md text-label-md text-on-surface-variant font-medium">Tiket Aktif</span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-lg bg-primary-fixed/40 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">engineering</span>
+</div>
+</div>
+<div class="mt-4 pt-3 flex items-center justify-between text-on-surface-variant">
+<span class="font-body-sm text-body-sm">8 Terverifikasi • 15 Ditangani</span>
+<div class="w-16 bg-surface-container rounded-full h-1.5 overflow-hidden">
+<div class="bg-primary h-1.5 rounded-full" style="width: 65%"></div>
+</div>
+</div>
+<div class="absolute top-0 left-0 right-0 h-1 bg-primary"></div>
+</div>
+<!-- KPI 4: Selesai Tervalidasi -->
+<div class="flex flex-col justify-between p-space-lg bg-surface-container-lowest rounded-xl shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Selesai Tervalidasi</span>
+<div class="flex items-baseline gap-2">
+<span class="font-metric-num text-metric-num text-on-surface">121</span>
+<span class="font-label-md text-label-md text-on-surface-variant font-medium">Tiket</span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-lg bg-surface-container-high text-on-surface flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">task_alt</span>
+</div>
+</div>
+<div class="mt-4 pt-3 flex items-center justify-between text-on-surface-variant">
+<span class="font-body-sm text-body-sm">81.8% Rasio Penyelesaian</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Sampel MVP</span>
+</div>
+<div class="absolute top-0 left-0 right-0 h-1 bg-tertiary-fixed-dim"></div>
+</div>
+</div>
+<!-- Operational Context Strip: Gedung FTII Overview & Quick Visual Insight -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Floor Distribution Summary -->
+<div class="p-space-lg bg-surface-container-lowest rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">layers</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Sebaran Tiket per Lantai</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Gedung FTII</span>
+</div>
+<div class="space-y-2.5">
+<div>
+<div class="flex justify-between font-label-md text-label-md mb-1">
+<span class="text-on-surface font-medium">Lantai 3 (Lab Komputer &amp; AI)</span>
+<span class="text-primary font-semibold">14 Tiket (52%)</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2 overflow-hidden">
+<div class="bg-primary h-2 rounded-full" style="width: 52%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-md text-label-md mb-1">
+<span class="text-on-surface font-medium">Lantai 2 (Ruang Kuliah Teori)</span>
+<span class="text-on-surface-variant font-semibold">6 Tiket (22%)</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2 overflow-hidden">
+<div class="bg-surface-tint h-2 rounded-full" style="width: 22%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-md text-label-md mb-1">
+<span class="text-on-surface font-medium">Lantai 1 (Lobby, Bengkel, Fasilitas)</span>
+<span class="text-on-surface-variant font-semibold">4 Tiket (15%)</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2 overflow-hidden">
+<div class="bg-tertiary-container h-2 rounded-full" style="width: 15%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-md text-label-md mb-1">
+<span class="text-on-surface font-medium">Lantai 4 (Auditorium &amp; Seminar)</span>
+<span class="text-on-surface-variant font-semibold">3 Tiket (11%)</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2 overflow-hidden">
+<div class="bg-outline-variant h-2 rounded-full" style="width: 11%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Classification Model Confidence Spark -->
+<div class="p-space-lg bg-surface-container-lowest rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">psychology</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Akurasi Naive Bayes</span>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container text-primary font-label-sm text-label-sm font-semibold">Live Model</span>
+</div>
+<div class="flex items-center gap-4 my-2">
+<div class="relative w-16 h-16 shrink-0 flex items-center justify-center">
+<svg class="w-16 h-16 transform -rotate-90" viewbox="0 0 36 36">
+<path class="text-surface-container" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
+<path class="text-primary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="92.4, 100" stroke-linecap="round" stroke-width="3.5"></path>
+</svg>
+<span class="absolute font-headline-sm text-headline-sm font-bold text-on-surface">92%</span>
+</div>
+<div class="space-y-0.5">
+<p class="font-headline-sm text-headline-sm text-on-surface">Klasifikasi Tepat Sasaran</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Dari 148 tiket laporan, 137 kategori sistem selaras dengan temuan fisik tim lapangan.</p>
+</div>
+</div>
+<div class="pt-2 flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>Dataset Latih: 840 Dokumen FTII</span>
+<span class="text-primary font-semibold">F1-Score: 0.91</span>
+</div>
+</div>
+<!-- Active Field Technicians On Duty -->
+<div class="p-space-lg bg-surface-container-lowest rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">badge</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Teknisi Bertugas Hari Ini</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">4 Personel</span>
+</div>
+<div class="space-y-2">
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-label-sm text-label-sm font-bold">HB</div>
+<div>
+<p class="font-label-md text-label-md font-semibold text-on-surface">Pak Hendra B.</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Spesialis Jaringan &amp; IT</p>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-primary font-label-sm text-label-sm font-semibold">2 Tiket Aktif</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-full bg-secondary-container text-on-secondary flex items-center justify-center font-label-sm text-label-sm font-bold">BS</div>
+<div>
+<p class="font-label-md text-label-md font-semibold text-on-surface">Pak Bambang S.</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Spesialis Sanitasi &amp; ME</p>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-primary font-label-sm text-label-sm font-semibold">3 Tiket Aktif</span>
+</div>
+</div>
+<div class="pt-2 text-right">
+<a class="font-label-sm text-label-sm text-primary hover:text-primary-container font-semibold inline-flex items-center gap-1" href="#">
+<span>Kelola Distribusi Beban</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Main Data Workspace: Ticket Queue Table Container -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
+<!-- Workspace Table Header & Interactive Filter Bar -->
+<div class="p-space-lg space-y-space-md bg-surface-container-lowest">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-sm">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Daftar Antrean Tiket Aktif Sarpras</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Monitoring real-time tiket kerusakan sarana Gedung FTII dengan verifikasi klasifikasi NLP Naive Bayes.</p>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Filter Aktif:</span>
+<span class="px-2 py-1 rounded-md bg-surface-container text-on-surface font-label-sm text-label-sm font-semibold">Semua Lantai</span>
+<span class="px-2 py-1 rounded-md bg-surface-container text-on-surface font-label-sm text-label-sm font-semibold">Semua Status</span>
+</div>
+</div>
+<!-- Filters & Search Toolbar -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-space-sm items-center">
+<!-- Search Input -->
+<div class="md:col-span-4 relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low rounded-lg font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:bg-surface-container-lowest focus:outline-none transition-all" placeholder="Cari kode tiket, uraian keluhan, atau ruangan..." type="text"/>
+</div>
+<!-- Filter Kategori -->
+<div class="md:col-span-3">
+<div class="relative">
+<select class="w-full appearance-none pl-3 pr-8 py-2 bg-surface-container-low rounded-lg font-body-sm text-body-sm text-on-surface focus:outline-none cursor-pointer">
+<option value="">Kategori: Semua Layanan</option>
+<option value="ac">AC &amp; Pendingin Ruangan</option>
+<option value="listrik">Kelistrikan Lab</option>
+<option value="jaringan">Jaringan &amp; Wi-Fi</option>
+<option value="sanitasi">Sanitasi &amp; Air Bersih</option>
+<option value="meubelair">Meubelair / Sarana Kelas</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant text-[18px]">expand_more</span>
+</div>
+</div>
+<!-- Filter Lantai -->
+<div class="md:col-span-2">
+<div class="relative">
+<select class="w-full appearance-none pl-3 pr-8 py-2 bg-surface-container-low rounded-lg font-body-sm text-body-sm text-on-surface focus:outline-none cursor-pointer">
+<option value="">Lantai: Semua (1-4)</option>
+<option value="1">Lantai 1</option>
+<option value="2">Lantai 2</option>
+<option value="3">Lantai 3</option>
+<option value="4">Lantai 4</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant text-[18px]">expand_more</span>
+</div>
+</div>
+<!-- Filter Status -->
+<div class="md:col-span-2">
+<div class="relative">
+<select class="w-full appearance-none pl-3 pr-8 py-2 bg-surface-container-low rounded-lg font-body-sm text-body-sm text-on-surface focus:outline-none cursor-pointer">
+<option value="">Status: Semua Status</option>
+<option value="baru">Baru</option>
+<option value="terverifikasi">Terverifikasi</option>
+<option value="diproses">Diproses</option>
+<option value="selesai">Selesai</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant text-[18px]">expand_more</span>
+</div>
+</div>
+<!-- Reset Button -->
+<div class="md:col-span-1 flex justify-end">
+<button class="p-2 w-full flex items-center justify-center rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface transition-colors" title="Reset Filter" type="button">
+<span class="material-symbols-outlined text-[20px]">filter_alt_off</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Data Table Responsive Wrapper -->
+<div class="overflow-x-auto w-full">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+<th class="py-3.5 px-space-md">Kode &amp; Waktu</th>
+<th class="py-3.5 px-space-md">Ringkasan Keluhan &amp; Bukti</th>
+<th class="py-3.5 px-space-md">Lokasi Ruangan</th>
+<th class="py-3.5 px-space-md">Kategori Pelapor</th>
+<th class="py-3.5 px-space-md">Rekomendasi NLP</th>
+<th class="py-3.5 px-space-md text-center">Status Resmi</th>
+<th class="py-3.5 px-space-md text-right">Tindakan Admin</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-high/40 font-body-sm text-body-sm text-on-surface">
+<!-- Row 1: Tiket #TK-2025-052 (BARU - High Urgency) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors group">
+<td class="py-space-md px-space-md align-top">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm font-bold text-primary">#TK-2025-052</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Hari ini, 09:15 WIB</span>
+<span class="font-label-sm text-label-sm text-secondary font-semibold mt-0.5">25 mnt lalu</span>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top max-w-xs">
+<div class="flex items-start gap-2.5">
+<img class="w-12 h-12 rounded-lg object-cover shrink-0 bg-surface-container" data-alt="Close up photograph of a wall-mounted commercial air conditioning split unit leaking drops of water onto an academic student computer table inside a university laboratory room, natural morning daylight, sharp institutional photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAS_J1NcDajalJRl7uoJSBdgSSprcJ4QfaGJNCunD0fK3msreEyOv7ns-_RRo7MT4699oBIc2qjh8z_9JLO2U7ydOUOXLoMJQbF_c_HB7TlDCA_vsSFxOf4TdS9G3Iom8SqB-fTPMCefh681OFTTuC16sRBlLhhNZavCxZ8K7OY5M-PZrLCrqLm71H-6vcOfKz18KCBLItJiBTGmblLnQjLnEP5iQrvxUALutKO20lp"/>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold line-clamp-1">AC Split bocor menetes ke meja praktikum</span>
+<p class="text-on-surface-variant font-body-sm text-body-sm line-clamp-2 mt-0.5">
+                    Tetesan air cukup deras di atas workstation nomor 14. Dikhawatirkan membasahi stop kontak dan CPU lab.
+                  </p>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Lantai 3</span>
+<span class="text-on-surface-variant font-body-sm text-body-sm">Lab Multimedia &amp; AI</span>
+<span class="font-label-sm text-label-sm text-outline">Gedung FTII Sayap Timur</span>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container font-label-sm text-label-sm text-on-surface font-medium">
+<span class="material-symbols-outlined text-[14px] text-primary">mode_fan</span>
+                AC &amp; Pendingin
+              </span>
+</td>
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<div class="flex flex-col gap-1">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-primary-fixed/50 text-on-primary-fixed-variant font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">psychology</span>
+<span>AC &amp; Pendingin</span>
+<span class="font-bold text-primary">96%</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline">Keyword: bocor, menetes, ac</span>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top text-center whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-container/20 text-secondary font-label-sm text-label-sm font-semibold uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container animate-pulse"></span>
+                Baru
+              </span>
+</td>
+<td class="py-space-md px-space-md align-top text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-sm text-label-sm font-semibold transition-colors shadow-sm" type="button">
+                  Verifikasi &amp; Tugaskan
+                </button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Lihat Detail Tiket" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Tiket #TK-2025-051 (BARU - Kelistrikan) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors group">
+<td class="py-space-md px-space-md align-top">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm font-bold text-primary">#TK-2025-051</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Hari ini, 08:30 WIB</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">1 jam 10 mnt lalu</span>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top max-w-xs">
+<div class="flex items-start gap-2.5">
+<img class="w-12 h-12 rounded-lg object-cover shrink-0 bg-surface-container" data-alt="Documentary photo of a scorched electric wall socket on a university classroom lecture desk, showing slight burn marks and a disconnected loose cable, ambient institutional interior lighting, realistic detail." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaYqCgEAaEMOFeeYh5z24XvU68Lxip6W1Ns0tIzkSDjzteR5c_5U8dTzULNpZXo0xU-s9WciOkb4m7PNj7DMrV4YEZmBwXLL2s_6_xNTq2VlYTD3Lhotx1CtwIiEqVvu8R1Rw48a25c5RMwkZsfrfFKVf1wNYj8v0YPThSFf6m_AHnfiEFJ_KdAENW4alMkXjQ1_M_rK7mwYts2Pxy3eX2uRPgdk442mr3s9XlYps5"/>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold line-clamp-1">Stop kontak meja dosen korsleting</span>
+<p class="text-on-surface-variant font-body-sm text-body-sm line-clamp-2 mt-0.5">
+                    Sempat tercium bau hangus saat laptop dosen dicolokkan ke terminal podium tengah.
+                  </p>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Lantai 2</span>
+<span class="text-on-surface-variant font-body-sm text-body-sm">Ruang Kuliah Teori 204</span>
+<span class="font-label-sm text-label-sm text-outline">Gedung FTII Sayap Barat</span>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container font-label-sm text-label-sm text-on-surface font-medium">
+<span class="material-symbols-outlined text-[14px] text-primary">electric_bolt</span>
+                Kelistrikan Lab
+              </span>
+</td>
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<div class="flex flex-col gap-1">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-primary-fixed/50 text-on-primary-fixed-variant font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">psychology</span>
+<span>Kelistrikan</span>
+<span class="font-bold text-primary">92%</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline">Keyword: korsleting, stop kontak</span>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top text-center whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-container/20 text-secondary font-label-sm text-label-sm font-semibold uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container animate-pulse"></span>
+                Baru
+              </span>
+</td>
+<td class="py-space-md px-space-md align-top text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-sm text-label-sm font-semibold transition-colors shadow-sm" type="button">
+                  Verifikasi &amp; Tugaskan
+                </button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Lihat Detail Tiket" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Tiket #TK-2025-049 (TERVERIFIKASI - Jaringan) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors group">
+<td class="py-space-md px-space-md align-top">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm font-bold text-primary">#TK-2025-049</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Kemarin, 14:10 WIB</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">3 Feb 2025</span>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top max-w-xs">
+<div class="flex items-start gap-2.5">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[24px]">wifi_off</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold line-clamp-1">Akses access point Wi-Fi FTII loss sinyal</span>
+<p class="text-on-surface-variant font-body-sm text-body-sm line-clamp-2 mt-0.5">
+                    SSID @FTII-Academic tidak memancarkan DHCP IP ke 30 komputer praktikan jaringan.
+                  </p>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Lantai 3</span>
+<span class="text-on-surface-variant font-body-sm text-body-sm">Lab Jaringan Komputer</span>
+<span class="font-label-sm text-label-sm text-outline">Gedung FTII Ruang 308</span>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container font-label-sm text-label-sm text-on-surface font-medium">
+<span class="material-symbols-outlined text-[14px] text-primary">wifi</span>
+                Jaringan &amp; Wi-Fi
+              </span>
+</td>
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<div class="flex flex-col gap-1">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-primary-fixed/50 text-on-primary-fixed-variant font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">psychology</span>
+<span>Jaringan</span>
+<span class="font-bold text-primary">89%</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline">Keyword: access point, wifi, dhcp</span>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top text-center whitespace-nowrap">
+<div class="flex flex-col items-center gap-1">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-fixed/60 text-primary font-label-sm text-label-sm font-semibold uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                  Terverifikasi
+                </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Teknisi: Pak Hendra</span>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm font-semibold transition-colors" type="button">
+                  Ubah Status
+                </button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Lihat Detail Tiket" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4: Tiket #TK-2025-047 (DIPROSES - Sanitasi) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors group">
+<td class="py-space-md px-space-md align-top">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm font-bold text-primary">#TK-2025-047</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">2 Feb 2025, 11:05 WIB</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">2 hari lalu</span>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top max-w-xs">
+<div class="flex items-start gap-2.5">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[24px]">plumbing</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold line-clamp-1">Kran wastafel toilet pria patah &amp; bocor</span>
+<p class="text-on-surface-variant font-body-sm text-body-sm line-clamp-2 mt-0.5">
+                    Tuas putar patah menyebabkan air mengalir terus-menerus ke saluran pembuangan utama.
+                  </p>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Lantai 1</span>
+<span class="text-on-surface-variant font-body-sm text-body-sm">Toilet Pria Sayap Barat</span>
+<span class="font-label-sm text-label-sm text-outline">Dekat Musholla FTII</span>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container font-label-sm text-label-sm text-on-surface font-medium">
+<span class="material-symbols-outlined text-[14px] text-primary">water_drop</span>
+                Sanitasi &amp; Air
+              </span>
+</td>
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<div class="flex flex-col gap-1">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-primary-fixed/50 text-on-primary-fixed-variant font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">psychology</span>
+<span>Sanitasi</span>
+<span class="font-bold text-primary">91%</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline">Keyword: wastafel, bocor, kran</span>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top text-center whitespace-nowrap">
+<div class="flex flex-col items-center gap-1">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-tertiary-fixed text-tertiary font-label-sm text-label-sm font-semibold uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                  Diproses
+                </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Teknisi: Pak Bambang</span>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm font-semibold transition-colors" type="button">
+                  Update Pengerjaan
+                </button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Lihat Detail Tiket" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 5: Tiket #TK-2025-045 (DIPROSES - Sarana & Perabot) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors group">
+<td class="py-space-md px-space-md align-top">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm font-bold text-primary">#TK-2025-045</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">1 Feb 2025, 16:40 WIB</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">3 hari lalu</span>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top max-w-xs">
+<div class="flex items-start gap-2.5">
+<img class="w-12 h-12 rounded-lg object-cover shrink-0 bg-surface-container" data-alt="Interior snapshot of a wooden lab instrument cabinet with a loose sagging hinge and ajar door in a university engineering faculty office, focused realistic lighting, collegiate atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkM8eObAnYLZXNSE7UQ0xhEOZCJgZ19nuknUqx2pfy70DHMsCoO2v4hS9m_cecSypRxNvYgLt1iMTQpXPnLjueNqQqvxkTidzm6dFsl_b8tu44AMZKXH_PGIRhffSNPFWyC66zbFSNM64mMr1dBS0RAEqQz67CXPPBR9oBhXCijIErrSYlXmfCy0jQIE2oAE-inteWfUFQCKWCiqX_nazkUXAwgmVcWWGzrvMoG1FQ"/>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold line-clamp-1">Pintu engsel lemari alat lab prodi kendur</span>
+<p class="text-on-surface-variant font-body-sm text-body-sm line-clamp-2 mt-0.5">
+                    Baut engsel terlepas dari dinding partisi triplek lemari penyimpanan mikrokontroler.
+                  </p>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Lantai 3</span>
+<span class="text-on-surface-variant font-body-sm text-body-sm">Ruang Asisten Lab</span>
+<span class="font-label-sm text-label-sm text-outline">Gedung FTII Ruang 312</span>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container font-label-sm text-label-sm text-on-surface font-medium">
+<span class="material-symbols-outlined text-[14px] text-primary">chair</span>
+                Sarana &amp; Perabot
+              </span>
+</td>
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<div class="flex flex-col gap-1">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-primary-fixed/50 text-on-primary-fixed-variant font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">psychology</span>
+<span>Sarana/Perabot</span>
+<span class="font-bold text-primary">88%</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline">Keyword: engsel, lemari, alat lab</span>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top text-center whitespace-nowrap">
+<div class="flex flex-col items-center gap-1">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-tertiary-fixed text-tertiary font-label-sm text-label-sm font-semibold uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                  Diproses
+                </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Tim Tukang Kayu</span>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm font-semibold transition-colors" type="button">
+                  Update Pengerjaan
+                </button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Lihat Detail Tiket" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 6: Tiket #TK-2025-042 (SELESAI - Kelistrikan / Proyektor) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors group">
+<td class="py-space-md px-space-md align-top">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm font-bold text-primary">#TK-2025-042</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">30 Jan 2025, 10:20 WIB</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">5 hari lalu</span>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top max-w-xs">
+<div class="flex items-start gap-2.5">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[24px]">videocam_off</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold line-clamp-1">Proyektor ruang seminar mati mendadak</span>
+<p class="text-on-surface-variant font-body-sm text-body-sm line-clamp-2 mt-0.5">
+                    Lampu proyektor mati dan kipas pendingin overheating sebelum sidang skripsi dimulai.
+                  </p>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Lantai 4</span>
+<span class="text-on-surface-variant font-body-sm text-body-sm">Auditorium &amp; Seminar</span>
+<span class="font-label-sm text-label-sm text-outline">Gedung FTII Ruang Utama</span>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container font-label-sm text-label-sm text-on-surface font-medium">
+<span class="material-symbols-outlined text-[14px] text-primary">electric_bolt</span>
+                Kelistrikan Lab
+              </span>
+</td>
+<td class="py-space-md px-space-md align-top whitespace-nowrap">
+<div class="flex flex-col gap-1">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-primary-fixed/50 text-on-primary-fixed-variant font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">psychology</span>
+<span>Kelistrikan</span>
+<span class="font-bold text-primary">95%</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline">Keyword: proyektor, mati, overheat</span>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top text-center whitespace-nowrap">
+<div class="flex flex-col items-center gap-1">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm font-semibold uppercase tracking-wider">
+<span class="material-symbols-outlined text-[14px] text-primary">check_circle</span>
+                  Selesai
+                </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Validated 31 Jan</span>
+</div>
+</td>
+<td class="py-space-md px-space-md align-top text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm font-semibold transition-colors" type="button">
+                  Arsip BAP
+                </button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Lihat Detail Tiket" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer & Strict Pagination Controls -->
+<div class="p-space-md bg-surface-container-low/40 flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-center gap-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant">
+          Menampilkan <strong class="text-on-surface">1 - 6</strong> dari <strong class="text-on-surface">27</strong> tiket aktif (Total 148 Riwayat)
+        </span>
+<span class="hidden sm:inline-block text-outline-variant">•</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Halaman 1 dari 5</span>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-2 rounded-lg text-outline cursor-not-allowed bg-surface-container/50" disabled="" type="button">
+<span class="material-symbols-outlined text-[18px]">first_page</span>
+</button>
+<button class="p-2 rounded-lg text-outline cursor-not-allowed bg-surface-container/50" disabled="" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-primary text-on-primary font-label-sm text-label-sm font-semibold flex items-center justify-center" type="button">1</button>
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container text-on-surface font-label-sm text-label-sm font-semibold flex items-center justify-center transition-colors" type="button">2</button>
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container text-on-surface font-label-sm text-label-sm font-semibold flex items-center justify-center transition-colors" type="button">3</button>
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container text-on-surface font-label-sm text-label-sm font-semibold flex items-center justify-center transition-colors" type="button">4</button>
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container text-on-surface font-label-sm text-label-sm font-semibold flex items-center justify-center transition-colors" type="button">5</button>
+<button class="p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+<button class="p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">last_page</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Operational Protocol Legend & Compliance Banner -->
+<div class="p-space-md rounded-xl bg-surface-container-high/40 flex flex-col md:flex-row items-start md:items-center justify-between gap-space-sm text-on-surface-variant">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-[20px]">policy</span>
+<div class="font-body-sm text-body-sm">
+<strong class="text-on-surface">Prosedur Standar Triase Sarpras FTII:</strong>
+        Tiket baru wajib diverifikasi dalam 120 menit operasional. Rekomendasi NLP berfungsi sebagai pendukung keputusan admin.
+      </div>
+</div>
+<div class="flex items-center gap-4 text-xs font-label-sm text-label-sm shrink-0">
+<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-secondary-container"></span>Baru: Butuh Verifikasi</span>
+<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-primary"></span>Terverifikasi: Disposisi</span>
+<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-tertiary"></span>Diproses: Pengerjaan Fisik</span>
+<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-outline"></span>Selesai: Validasi BAP</span>
+</div>
+</div>
+</div></main></div></body></html>

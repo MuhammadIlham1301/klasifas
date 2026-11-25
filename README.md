@@ -202,11 +202,11 @@ Aplikasi dapat diakses melalui:
 
 `http://127.0.0.1:5000`
 
-Halaman pelaporan publik tersedia pada `/lapor`, sedangkan halaman login staf tersedia pada `/auth/login`.
+Halaman utama `/` diarahkan ke login pelapor. Halaman pelaporan publik tersedia pada `/lapor`, halaman login staf pada `/auth/login`, dan halaman login pelapor pada `/auth/pelapor/login`.
 
-### 7.1 Provisioning Akun Staf
+### 7.1 Provisioning Akun Staf dan Pelapor
 
-Akun staf dibuat melalui CLI lokal menggunakan perintah `create-staff`.
+Akun staf dan pelapor dibuat melalui CLI lokal menggunakan perintah `create-staff` dan `create-reporter`.
 
 Contoh:
 
@@ -215,9 +215,13 @@ flask --app "app:create_app('development')" create-staff `
   --username nama.staf `
   --role admin_sarpras `
   --full-name "Nama Lengkap Staf"
+
+flask --app "app:create_app('development')" create-reporter `
+  --username nama.pelapor `
+  --full-name "Nama Lengkap Pelapor"
 ```
 
-Role yang tersedia:
+Role staf yang tersedia:
 
 - `admin_sarpras`
 - `teknisi`
@@ -225,7 +229,7 @@ Role yang tersedia:
 
 Password dimasukkan melalui prompt tersembunyi, bukan sebagai argumen perintah. Panjang minimal password adalah 12 karakter.
 
-Tidak tersedia registrasi akun staf publik.
+Tidak tersedia registrasi akun publik.
 
 ## 8. Pengujian
 

@@ -16,10 +16,27 @@
             </span>
             <span class="kf-report-context__meta">Gedung FTII UHAMKA</span>
         </div>
+        {% if g.reporter %}
+        <div class="kf-report-context__session">
+            <span class="kf-report-context__identity">
+                <i class="bi bi-person-check" aria-hidden="true"></i>
+                <span>{{ g.reporter.full_name }}</span>
+                <span class="kf-report-context__role">Pelapor</span>
+            </span>
+            <form method="post" action="{{ url_for('auth.reporter_logout') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="kf-report-context__logout">
+                    <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+                    Logout
+                </button>
+            </form>
+        </div>
+        {% else %}
         <span class="kf-report-context__pill">
             <i class="bi bi-shield-check" aria-hidden="true"></i>
             Tanpa login
         </span>
+        {% endif %}
     </div>
 
     <section class="kf-report-hero" aria-labelledby="report-hero-title">
@@ -37,7 +54,11 @@
             <h1 id="report-hero-title" class="kf-report-hero__title">Laporkan keluhan fasilitas Gedung FTII</h1>
             <p class="kf-report-hero__sub">
                 Layanan resmi pelaporan gangguan dan kerusakan sarana prasarana Gedung FTII UHAMKA.
+                {% if g.reporter %}
+                Laporan yang Anda kirim akan tercatat pada akun pelapor.
+                {% else %}
                 Tanpa login, pantau tindak lanjut perbaikan dengan kode tiket dan token akses.
+                {% endif %}
             </p>
         </div>
     </section>

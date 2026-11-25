@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+
+<html lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "primary-fixed": "#dde1ff",
+          "on-tertiary-fixed": "#0e1c2f",
+          "primary-fixed-dim": "#b8c4ff",
+          "on-tertiary-fixed-variant": "#3a475c",
+          "surface-container-highest": "#d5e3fc",
+          "secondary-container": "#fe932c",
+          "on-background": "#0d1c2e",
+          "surface": "#f8f9ff",
+          "on-surface-variant": "#444653",
+          "surface-container-low": "#eff4ff",
+          "surface-tint": "#3755c3",
+          "surface-variant": "#d5e3fc",
+          "primary-container": "#1e40af",
+          "on-secondary-fixed-variant": "#6e3900",
+          "on-secondary-fixed": "#2f1500",
+          "secondary-fixed-dim": "#ffb77d",
+          "tertiary-container": "#3f4c61",
+          "inverse-surface": "#233144",
+          "primary": "#00288e",
+          "on-primary-fixed-variant": "#173bab",
+          "surface-container": "#e6eeff",
+          "surface-container-high": "#dce9ff",
+          "tertiary-fixed-dim": "#bac7e1",
+          "on-error-container": "#93000a",
+          "on-tertiary": "#ffffff",
+          "inverse-on-surface": "#eaf1ff",
+          "secondary": "#904d00",
+          "on-primary-container": "#a8b8ff",
+          "on-tertiary-container": "#afbcd6",
+          "outline-variant": "#c4c5d5",
+          "error-container": "#ffdad6",
+          "surface-dim": "#ccdbf3",
+          "error": "#ba1a1a",
+          "on-secondary": "#ffffff",
+          "tertiary": "#28354a",
+          "tertiary-fixed": "#d6e3fe",
+          "on-secondary-container": "#663500",
+          "secondary-fixed": "#ffdcc3",
+          "on-primary-fixed": "#001453",
+          "background": "#f8f9ff",
+          "surface-container-lowest": "#ffffff",
+          "on-error": "#ffffff",
+          "on-primary": "#ffffff",
+          "surface-bright": "#f8f9ff",
+          "inverse-primary": "#b8c4ff",
+          "on-surface": "#0d1c2e",
+          "outline": "#757684"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.25rem",
+          "lg": "0.5rem",
+          "xl": "0.75rem",
+          "full": "9999px"
+        },
+        "spacing": {
+          "space-lg": "1.5rem",
+          "gutter-lg": "1.5rem",
+          "space-xs": "0.25rem",
+          "space-md": "1rem",
+          "gutter": "1.25rem",
+          "margin": "1.5rem",
+          "space-xl": "2rem",
+          "space-sm": "0.5rem",
+          "margin-lg": "2rem"
+        },
+        "fontFamily": {
+          "headline-sm": [
+            "Plus Jakarta Sans"
+          ],
+          "body-sm": [
+            "Inter"
+          ],
+          "headline-lg": [
+            "Plus Jakarta Sans"
+          ],
+          "headline-md": [
+            "Plus Jakarta Sans"
+          ],
+          "metric-num": [
+            "Plus Jakarta Sans"
+          ],
+          "display-md": [
+            "Plus Jakarta Sans"
+          ],
+          "body-md": [
+            "Inter"
+          ],
+          "display-lg": [
+            "Plus Jakarta Sans"
+          ],
+          "label-sm": [
+            "Inter"
+          ],
+          "headline-lg-mobile": [
+            "Plus Jakarta Sans"
+          ],
+          "label-md": [
+            "Inter"
+          ],
+          "body-lg": [
+            "Inter"
+          ]
+        },
+        "fontSize": {
+          "headline-sm": [
+            "16px",
+            {
+              "lineHeight": "24px",
+              "letterSpacing": "-0.005em",
+              "fontWeight": "600"
+            }
+          ],
+          "body-sm": [
+            "13px",
+            {
+              "lineHeight": "18px",
+              "letterSpacing": "0.005em",
+              "fontWeight": "400"
+            }
+          ],
+          "headline-lg": [
+            "24px",
+            {
+              "lineHeight": "32px",
+              "letterSpacing": "-0.015em",
+              "fontWeight": "600"
+            }
+          ],
+          "headline-md": [
+            "20px",
+            {
+              "lineHeight": "28px",
+              "letterSpacing": "-0.01em",
+              "fontWeight": "600"
+            }
+          ],
+          "metric-num": [
+            "28px",
+            {
+              "lineHeight": "32px",
+              "letterSpacing": "-0.03em",
+              "fontWeight": "700"
+            }
+          ],
+          "display-md": [
+            "32px",
+            {
+              "lineHeight": "40px",
+              "letterSpacing": "-0.02em",
+              "fontWeight": "700"
+            }
+          ],
+          "body-md": [
+            "14px",
+            {
+              "lineHeight": "22px",
+              "letterSpacing": "0em",
+              "fontWeight": "400"
+            }
+          ],
+          "display-lg": [
+            "40px",
+            {
+              "lineHeight": "48px",
+              "letterSpacing": "-0.02em",
+              "fontWeight": "700"
+            }
+          ],
+          "label-sm": [
+            "11px",
+            {
+              "lineHeight": "14px",
+              "letterSpacing": "0.05em",
+              "fontWeight": "600"
+            }
+          ],
+          "headline-lg-mobile": [
+            "20px",
+            {
+              "lineHeight": "28px",
+              "letterSpacing": "-0.01em",
+              "fontWeight": "600"
+            }
+          ],
+          "label-md": [
+            "12px",
+            {
+              "lineHeight": "16px",
+              "letterSpacing": "0.02em",
+              "fontWeight": "600"
+            }
+          ],
+          "body-lg": [
+            "16px",
+            {
+              "lineHeight": "26px",
+              "letterSpacing": "0em",
+              "fontWeight": "400"
+            }
+          ]
+        }
+      },
+    },
+  }</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-72 bg-tertiary text-on-tertiary z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex flex-col"><div class="px-space-lg pt-space-lg pb-space-md bg-inverse-surface/40 flex items-center gap-3"><img alt="logo-uhamka.png" class="h-10 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/ALJJyrAXPIkQbyWjror6OUQDD6l6xpXAn9rMjNt8pfqs_prjUFHctjo__csImsMDA9wSbzOLObrpzh5XH2uHChiynrVGaHt3cNFOGVtE_3YTgH16tcxmx6UbdUPA6VoVf5KMEGt_G1SE3jP5ZwGJx-i-RGtgHNN6jC4lHZKut6eEKI_Oe7EaUnts94UWokp4R_LRXspl__9R4kuQOdLnZi-syouQP_88bw5bhZvxbskGGp3PsSnl_Vu0Ro1VfV8A"/><div class="flex flex-col min-w-0"><span class="font-headline-sm text-headline-sm text-on-tertiary tracking-tight font-bold truncate">KlasiFas</span><span class="font-label-sm text-label-sm text-tertiary-fixed-dim leading-none truncate">FTII UHAMKA</span></div></div><div class="px-space-lg py-space-sm"><div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-secondary-container/20 text-secondary-fixed border border-secondary-container/30"><span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed animate-pulse"></span><span class="font-label-sm text-label-sm tracking-wide font-semibold uppercase">Admin Sarpras (Full Access)</span></div></div><div class="px-space-md mt-space-sm"><div class="px-space-sm pb-space-xs"><span class="font-label-sm text-label-sm text-tertiary-fixed-dim/70 uppercase tracking-wider font-semibold">Modul Operasional</span></div><nav class="space-y-1" data-active-classes="bg-primary-container text-on-primary font-semibold"><a class="flex items-center gap-3 px-space-md py-space-sm rounded-lg text-tertiary-fixed-dim hover:bg-tertiary-container hover:text-on-tertiary transition-colors" data-path="antrean-tiket-dashboard" href="#"><span class="material-symbols-outlined text-[20px]">inbox</span><span class="font-body-md text-body-md">Antrean Tiket / Dashboard</span></a><a class="flex items-center gap-3 px-space-md py-space-sm rounded-lg text-tertiary-fixed-dim hover:bg-tertiary-container hover:text-on-tertiary transition-colors" data-path="verifikasi-penugasan" href="#"><span class="material-symbols-outlined text-[20px]">assignment_turned_in</span><span class="font-body-md text-body-md">Verifikasi &amp; Penugasan</span></a><a class="flex items-center gap-3 px-space-md py-space-sm rounded-lg text-tertiary-fixed-dim hover:bg-tertiary-container hover:text-on-tertiary transition-colors" data-path="audit-log-sarpras" href="#"><span class="material-symbols-outlined text-[20px]">history_edu</span><span class="font-body-md text-body-md">Audit Log Sarpras</span></a></nav></div></div><div class="p-space-md bg-inverse-surface/30 space-y-space-sm"><div class="p-space-sm rounded-lg bg-tertiary-container/40 space-y-1"><div class="flex items-center gap-2 text-tertiary-fixed-dim"><span class="material-symbols-outlined text-[16px]">corporate_fare</span><span class="font-label-sm text-label-sm font-semibold uppercase tracking-wider">Zona Yurisdiksi</span></div><p class="font-label-md text-label-md text-on-tertiary font-medium">Gedung FTII UHAMKA</p><p class="font-label-sm text-label-sm text-tertiary-fixed-dim">Lantai 1 s/d Lantai 4 • Bengkel • Lab</p></div><div class="flex items-center gap-3 px-space-sm py-space-xs"><div class="w-9 h-9 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-headline-sm font-semibold text-label-md shadow-sm">MF</div><div class="flex flex-col min-w-0"><span class="font-label-md text-label-md text-on-tertiary font-semibold truncate">Bpk. M. Fadli, S.T.</span><span class="font-label-sm text-label-sm text-tertiary-fixed-dim truncate">Staf Pengelola Sarpras FTII</span></div></div></div></aside><div class="pl-72"><header class="fixed top-0 left-72 right-0 h-16 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-gutter-lg"><div class="flex items-center gap-space-md"><img alt="logo-uhamka.png" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/ALJJyrAXPIkQbyWjror6OUQDD6l6xpXAn9rMjNt8pfqs_prjUFHctjo__csImsMDA9wSbzOLObrpzh5XH2uHChiynrVGaHt3cNFOGVtE_3YTgH16tcxmx6UbdUPA6VoVf5KMEGt_G1SE3jP5ZwGJx-i-RGtgHNN6jC4lHZKut6eEKI_Oe7EaUnts94UWokp4R_LRXspl__9R4kuQOdLnZi-syouQP_88bw5bhZvxbskGGp3PsSnl_Vu0Ro1VfV8A"/><div class="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md"><span class="font-semibold text-primary">Portal Admin Sarpras</span><span class="material-symbols-outlined text-[16px]">chevron_right</span><span class="text-on-surface font-medium">Sistem KlasiFas</span></div><span class="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm font-semibold"><span class="w-2 h-2 rounded-full bg-secondary-container"></span>Mode Operasional Penuh</span></div><div class="flex items-center gap-space-md"><div class="hidden md:flex flex-col items-end"><span class="font-label-sm text-label-sm text-on-surface-variant">Sesi Aktif</span><span class="font-label-md text-label-md text-on-surface font-semibold">Gedung A, FTII</span></div><div class="flex items-center gap-2"><button class="p-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span></button><button class="p-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-lg transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">help_outline</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="relative w-full pt-16 bg-surface min-h-screen px-gutter-lg py-space-lg"><div class="flex flex-col w-full space-y-space-lg">
+<!-- Command Header & Breadcrumb Bar -->
+<section class="flex flex-col md:flex-row md:items-center justify-between gap-space-md bg-surface-container-lowest p-space-lg rounded-xl shadow-sm">
+<div class="flex flex-col space-y-1">
+<div class="flex items-center gap-2">
+<a class="inline-flex items-center gap-1 text-on-surface-variant hover:text-primary font-label-md text-label-md transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span>Antrean Tiket</span>
+</a>
+<span class="text-outline-variant font-label-sm text-label-sm">/</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Modul Verifikasi</span>
+</div>
+<div class="flex flex-wrap items-center gap-space-sm pt-1">
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight font-bold">Verifikasi &amp; Penugasan Tiket #TK-2025-052</h1>
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container/15 text-secondary font-label-sm text-label-sm font-semibold tracking-wide uppercase">
+<span class="w-2 h-2 rounded-full bg-secondary-container animate-ping"></span>
+          Status Saat Ini: BARU (Menunggu Verifikasi Admin)
+        </span>
+</div>
+</div>
+<!-- Quick Telemetry & Actions -->
+<div class="flex items-center gap-space-sm self-start md:self-auto">
+<div class="hidden sm:flex flex-col text-right pr-space-md border-r-0">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">SLA Respon Target</span>
+<span class="font-headline-sm text-headline-sm text-primary font-semibold">&lt; 30 Menit (Sisa 14m)</span>
+</div>
+<button class="inline-flex items-center gap-2 px-space-md py-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md font-semibold transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">print</span>
+<span>Cetak Lembar Kerja</span>
+</button>
+</div>
+</section>
+<!-- Two-Column Workspace Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+<!-- LEFT COLUMN: DETAIL PELAPOR & NLP NAIVE BAYES (60% ~ 7 cols) -->
+<div class="lg:col-span-7 flex flex-col space-y-space-lg">
+<!-- Primary Report Card -->
+<section class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col space-y-space-md">
+<div class="flex items-center justify-between pb-space-sm">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-primary-fixed text-primary flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-[20px]">assignment</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">Uraian &amp; Fakta Pelaporan</h2>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Data primer yang disubmit oleh civitas akademika</p>
+</div>
+</div>
+<span class="font-label-sm text-label-sm px-2.5 py-1 rounded bg-surface-container text-on-surface-variant font-mono">ID: #TK-2025-052</span>
+</div>
+<!-- Metadata Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md bg-surface-container-low p-space-md rounded-lg">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Waktu Masuk Tiket</span>
+<div class="flex items-center gap-1.5 mt-0.5 text-on-surface font-body-md text-body-md font-medium">
+<span class="material-symbols-outlined text-[18px] text-primary">schedule</span>
+<span>03 Februari 2025, 09:15 WIB</span>
+</div>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Lokasi Sarana</span>
+<div class="flex items-center gap-1.5 mt-0.5 text-on-surface font-body-md text-body-md font-medium">
+<span class="material-symbols-outlined text-[18px] text-primary">location_on</span>
+<span>Lantai 3 • Lab Komputer &amp; Multimedia 302</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Gedung FTII UHAMKA (Sayap Barat)</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Identitas Pelapor</span>
+<div class="flex items-center gap-1.5 mt-0.5 text-on-surface font-body-md text-body-md font-medium">
+<span class="material-symbols-outlined text-[18px] text-primary">badge</span>
+<span>Mahasiswa Teknik Informatika</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5 font-mono">NIM: 210401**** [Privasi Terproteksi]</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Kanal Pengaduan</span>
+<div class="flex items-center gap-1.5 mt-0.5 text-on-surface font-body-md text-body-md font-medium">
+<span class="material-symbols-outlined text-[18px] text-primary">devices</span>
+<span>Web Mobile KlasiFas (SSO UHAMKA)</span>
+</div>
+</div>
+</div>
+<!-- Issue Statement -->
+<div class="flex flex-col space-y-1.5 pt-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Deskripsi Keluhan Lapangan</span>
+<div class="p-space-md rounded-lg bg-surface-container-high/60 text-on-surface font-body-lg text-body-lg leading-relaxed">
+            “AC split di sisi kanan ruang lab 302 meneteskan air cukup deras mengenai kabel meja praktikum. Suhu ruangan juga tidak dingin, membahayakan perangkat komputer yang sedang dipakai kuliah.”
+          </div>
+</div>
+<!-- Media Photographic Evidence -->
+<div class="flex flex-col space-y-2 pt-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Bukti Dokumentasi Visual</span>
+<span class="font-label-sm text-label-sm text-primary font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+              Metadata Kamera Tervalidasi
+            </span>
+</div>
+<div class="relative group rounded-xl overflow-hidden bg-surface-container aspect-video max-h-72 flex items-center justify-center">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Interior of an academic multimedia computer lab at FTII UHAMKA with multiple desktop computers on desks, showing a white wall-mounted split air conditioner unit leaking clear water droplets onto the edge of a student workstation with cable management trays, natural cool daylight mixed with institutional fluorescent lighting, realistic architectural photo, clean compositional focus on the dripping AC." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6YML0xUqb_pj4Qq1dKaCFgN7INSN23NOFZpBkho53xKKVfykfDKkBWu-Tpzpxjmdl-3oNnv2fR8p0UwVt5s5pTLnq3bSYi7DG1ZpKdsTWzT8DUyA0cOFy2QDFE11DgyqWVI9XE1n_ME7iWfpB-ngyvF5-VyhmPWQtBfaA320ugAzvp1nBnT50Gt-PPw83kMfCZJvqYgN_PQ3hFSiSmKNOzdOFZdqo9_C40bQCJRRz"/>
+<div class="absolute inset-0 bg-gradient-to-t from-on-surface/80 via-transparent to-transparent opacity-80"></div>
+<div class="absolute bottom-3 left-4 right-4 flex items-center justify-between text-on-primary">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">photo_camera</span>
+<span class="font-label-sm text-label-sm font-mono">IMG_LAB302_AC_LEAK_0914.JPG</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-on-surface/60 backdrop-blur-sm">03 Feb 2025 09:14 WIB</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Naive Bayes NLP Classifier Decision Support Card -->
+<section class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col space-y-space-md relative overflow-hidden">
+<div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-secondary"></div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-primary-container text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">smart_toy</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Hasil Klasifikasi Otomatis Teks Keluhan</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant font-medium">Model Supervised Learning: Multinomial Naive Bayes (MVP Engine FTII)</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-surface-container-high text-primary font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">bolt</span>
+            Inferensi &lt; 80ms
+          </span>
+</div>
+<!-- Metric Display & Classification Target -->
+<div class="grid grid-cols-1 sm:grid-cols-12 gap-space-md p-space-md rounded-xl bg-surface-container-low items-center">
+<div class="sm:col-span-7 flex flex-col space-y-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Rekomendasi Kategori Prediksi</span>
+<div class="flex items-center gap-2">
+<span class="font-headline-md text-headline-md text-primary font-bold">AC &amp; Pendingin Ruangan</span>
+<span class="material-symbols-outlined text-primary text-[22px]">check_circle</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Probabilitas a posteriori tertinggi di antara 5 kategori sarpras yang tersedia.</p>
+</div>
+<div class="sm:col-span-5 flex flex-col items-start sm:items-end justify-center bg-surface-container-lowest p-space-md rounded-lg shadow-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Skor Keyakinan (Confidence)</span>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="font-metric-num text-metric-num text-primary font-bold">96.4%</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-highest text-primary font-semibold">Tinggi / Valid</span>
+</div>
+<!-- Confidence Meter -->
+<div class="w-full bg-surface-container-high h-2 rounded-full mt-2 overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 96.4%;"></div>
+</div>
+</div>
+</div>
+<!-- Tokenized NLP Features (Kata Kunci Terdeteksi) -->
+<div class="flex flex-col space-y-2">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Kata Kunci Terdeteksi (Tokenized Features)</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">TF-IDF Vectorizer (n-gram: 1-2)</span>
+</div>
+<div class="flex flex-wrap gap-2">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-primary-fixed text-on-primary-fixed-variant font-label-md text-label-md font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+              ac
+              <span class="text-on-primary-fixed-variant/70 font-mono text-[10px] ml-0.5">w: 0.384</span>
+</span>
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-primary-fixed text-on-primary-fixed-variant font-label-md text-label-md font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+              split
+              <span class="text-on-primary-fixed-variant/70 font-mono text-[10px] ml-0.5">w: 0.291</span>
+</span>
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-primary-fixed text-on-primary-fixed-variant font-label-md text-label-md font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+              meneteskan
+              <span class="text-on-primary-fixed-variant/70 font-mono text-[10px] ml-0.5">w: 0.245</span>
+</span>
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-primary-fixed text-on-primary-fixed-variant font-label-md text-label-md font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+              air
+              <span class="text-on-primary-fixed-variant/70 font-mono text-[10px] ml-0.5">w: 0.210</span>
+</span>
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-surface-container-high text-on-surface font-label-md text-label-md font-medium">
+              suhu
+              <span class="text-on-surface-variant font-mono text-[10px] ml-0.5">w: 0.188</span>
+</span>
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-surface-container-high text-on-surface font-label-md text-label-md font-medium">
+              dingin
+              <span class="text-on-surface-variant font-mono text-[10px] ml-0.5">w: 0.162</span>
+</span>
+</div>
+</div>
+<!-- System Governance Disclaimer -->
+<div class="flex items-start gap-2.5 p-space-sm rounded-lg bg-surface-container-low text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px] text-secondary mt-0.5">info</span>
+<p class="font-body-sm text-body-sm">
+<strong class="text-on-surface font-semibold">Prinsip Tata Kelola AI:</strong> Rekomendasi model bersifat pendukung keputusan (<em class="italic">decision support system</em>). Petugas Sarpras memegang otoritas validasi final sebelum penugasan diterbitkan.
+          </p>
+</div>
+</section>
+</div>
+<!-- RIGHT COLUMN: ACTION PANEL, VERIFICATION FORM & AUDIT LOG (40% ~ 5 cols) -->
+<div class="lg:col-span-5 flex flex-col space-y-space-lg">
+<!-- Verification & Assignment Interactive Form -->
+<section class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col space-y-space-md">
+<div class="flex items-center justify-between pb-space-xs">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">assignment_turned_in</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Formulir Verifikasi &amp; Disposisi</h3>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-semibold uppercase">Tahap 1 / Verifikasi</span>
+</div>
+<form class="space-y-space-md" id="form-verifikasi" onsubmit="event.preventDefault(); handleVerificationSubmit();">
+<!-- Pelapor's Initial Choice -->
+<div class="flex flex-col space-y-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Kategori Masukan Pelapor</label>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-high text-on-surface font-label-md text-label-md font-semibold">
+<span class="material-symbols-outlined text-[16px] text-primary">ac_unit</span>
+                AC &amp; Pendingin Ruangan
+              </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">(Sesuai prediksi NLP)</span>
+</div>
+</div>
+<!-- Official Validated Category Selection -->
+<div class="flex flex-col space-y-1">
+<label class="font-label-sm text-label-sm text-on-surface font-semibold flex items-center justify-between" for="kategori-valid">
+<span>Validasi Kategori Resmi Sarpras <span class="text-error">*</span></span>
+<span class="text-primary font-label-sm text-label-sm font-medium">Berdasarkan Tinjauan Bukti</span>
+</label>
+<div class="relative">
+<select class="w-full bg-surface-container-low text-on-surface font-body-md text-body-md rounded-lg p-2.5 pr-8 appearance-none focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all font-medium" id="kategori-valid" name="kategori_valid">
+<option selected="" value="ac">AC &amp; Pendingin Ruangan (Terverifikasi)</option>
+<option value="listrik">Kelistrikan Lab &amp; Gedung FTII</option>
+<option value="jaringan">Infrastruktur Jaringan FTII</option>
+<option value="sanitasi">Sanitasi &amp; Pipa Air</option>
+<option value="perabot">Sarana / Mebel Meja Praktikum</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-3 text-[18px] text-on-surface-variant pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- Technician Assignment Selection -->
+<div class="flex flex-col space-y-1">
+<label class="font-label-sm text-label-sm text-on-surface font-semibold flex items-center justify-between" for="teknisi-sarpras">
+<span>Penugasan Teknisi Sarpras FTII <span class="text-error">*</span></span>
+<span class="text-on-surface-variant font-label-sm text-label-sm">Spesialisasi Gedung</span>
+</label>
+<div class="relative">
+<select class="w-full bg-surface-container-low text-on-surface font-body-md text-body-md rounded-lg p-2.5 pr-8 appearance-none focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all font-medium" id="teknisi-sarpras" name="teknisi">
+<option selected="" value="hendra">Bpk. Hendra S. (Teknisi Pendingin &amp; Listrik Gedung FTII)</option>
+<option value="bambang">Bpk. Bambang P. (Teknisi Umum &amp; Sarana Fisik)</option>
+<option value="external">Teknisi Jaringan &amp; Komputer Laboratorium</option>
+<option value="vendor">Vendor Luar / Garansi Khusus Unit AC</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-3 text-[18px] text-on-surface-variant pointer-events-none">expand_more</span>
+</div>
+<div class="flex items-center gap-1.5 pt-1 text-on-surface-variant font-label-sm text-label-sm">
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+<span>Bpk. Hendra S. saat ini memiliki <strong>1 tugas aktif</strong> di Lantai 2.</span>
+</div>
+</div>
+<!-- Official Status Progression (Radio Pills) -->
+<div class="flex flex-col space-y-1.5">
+<label class="font-label-sm text-label-sm text-on-surface font-semibold">Pengubahan Status Tiket</label>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+<!-- Baru (disabled for forward motion) -->
+<label class="relative flex items-center justify-center p-2 rounded-lg bg-surface-container-low opacity-60 cursor-not-allowed text-center">
+<input class="sr-only" disabled="" name="target_status" type="radio" value="baru"/>
+<span class="font-label-sm text-label-sm font-semibold text-on-surface-variant">1. Baru</span>
+</label>
+<!-- Terverifikasi (Default Target) -->
+<label class="relative flex items-center justify-center p-2 rounded-lg bg-primary-container text-on-primary cursor-pointer text-center ring-2 ring-primary/40 font-semibold shadow-sm">
+<input checked="" class="sr-only" name="target_status" type="radio" value="terverifikasi"/>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span class="font-label-sm text-label-sm">2. Verifikasi</span>
+</div>
+</label>
+<!-- Diproses -->
+<label class="relative flex items-center justify-center p-2 rounded-lg bg-surface-container hover:bg-surface-container-high cursor-pointer text-center text-on-surface font-medium transition-colors">
+<input class="sr-only" name="target_status" type="radio" value="diproses"/>
+<span class="font-label-sm text-label-sm">3. Diproses</span>
+</label>
+<!-- Selesai -->
+<label class="relative flex items-center justify-center p-2 rounded-lg bg-surface-container hover:bg-surface-container-high cursor-pointer text-center text-on-surface font-medium transition-colors">
+<input class="sr-only" name="target_status" type="radio" value="selesai"/>
+<span class="font-label-sm text-label-sm">4. Selesai</span>
+</label>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Tindakan ini memindahkan status tiket ke <strong>“Terverifikasi”</strong> dan memicu notifikasi instruksi kerja ke teknisi.</p>
+</div>
+<!-- Admin Notes -->
+<div class="flex flex-col space-y-1">
+<label class="font-label-sm text-label-sm text-on-surface font-semibold" for="admin-notes">Instruksi &amp; Catatan Khusus Sarpras</label>
+<textarea class="w-full bg-surface-container-low text-on-surface font-body-md text-body-md rounded-lg p-2.5 focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all placeholder:text-on-surface-variant/60" id="admin-notes" placeholder="Tuliskan catatan teknis untuk teknisi bertugas..." rows="3">Telah diperiksa. Prioritas penanganan darurat agar tidak merusak PC Lab 302. Teknisi ditugaskan membawa penampung air dan tangga lipat 3 meter.</textarea>
+</div>
+<!-- Form Actions -->
+<div class="flex flex-col sm:flex-row items-center gap-2 pt-space-xs">
+<button class="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-space-md py-3 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-semibold transition-all shadow-sm" id="btn-submit" type="submit">
+<span class="material-symbols-outlined text-[18px]">send</span>
+<span>Simpan Verifikasi &amp; Kirim Penugasan</span>
+</button>
+<button class="w-full sm:w-auto inline-flex items-center justify-center px-space-md py-3 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high font-label-md text-label-md font-semibold transition-all" type="button">
+              Batal
+            </button>
+</div>
+</form>
+</section>
+<!-- Ticket Activity Audit Timeline -->
+<section class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col space-y-space-md">
+<div class="flex items-center justify-between pb-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">history_edu</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Jejak Audit Tiket</h3>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">Immutable Log</span>
+</div>
+<div class="relative pl-6 space-y-space-md before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-surface-container-high">
+<!-- Event 1 -->
+<div class="relative flex flex-col space-y-0.5">
+<div class="absolute -left-6 top-1 w-2.5 h-2.5 rounded-full bg-secondary ring-4 ring-surface-container-lowest"></div>
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">Laporan Dibuat (Tiket Masuk)</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">03 Feb • 09:15</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Civitas akademika (Mahasiswa TI) mengisi form keluhan via portal mobile. Status awal diset ke <strong class="text-on-surface">BARU</strong>.</p>
+</div>
+<!-- Event 2 -->
+<div class="relative flex flex-col space-y-0.5">
+<div class="absolute -left-6 top-1 w-2.5 h-2.5 rounded-full bg-primary ring-4 ring-surface-container-lowest"></div>
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">Klasifikasi NLP Berjalan</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">03 Feb • 09:16</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Sistem Naive Bayes mendeteksi keluhan masuk domain <strong class="text-primary font-medium">“AC &amp; Pendingin Ruangan”</strong> dengan tingkat keyakinan 96.4%.</p>
+</div>
+<!-- Event 3: Pending Step -->
+<div class="relative flex flex-col space-y-0.5">
+<div class="absolute -left-6 top-1 w-2.5 h-2.5 rounded-full bg-outline-variant animate-pulse ring-4 ring-surface-container-lowest"></div>
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">Menunggu Verifikasi &amp; Disposisi</span>
+<span class="font-label-sm text-label-sm text-secondary font-semibold uppercase">Saat Ini</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Bpk. M. Fadli, S.T. (Staf Pengelola Sarpras) sedang mereviu dokumen dan kelengkapan bukti fasilitas.</p>
+</div>
+</div>
+</section>
+</div>
+</div>
+<!-- Notification Banner / Micro-Interaction Sandbox (Simulated Save Action) -->
+<div class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 max-w-md bg-inverse-surface text-inverse-on-surface p-space-md rounded-xl shadow-xl flex items-start gap-3" id="toast-success">
+<span class="material-symbols-outlined text-[24px] text-secondary-fixed">check_circle</span>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md font-bold text-inverse-on-surface">Tiket Berhasil Diverifikasi!</span>
+<p class="font-body-sm text-body-sm text-inverse-on-surface/80 mt-0.5">Status diubah menjadi TERVERIFIKASI. Notifikasi disposisi otomatis telah dikirimkan ke perangkat teknisi Bpk. Hendra S.</p>
+</div>
+</div>
+<script>
+    function handleVerificationSubmit() {
+      const btn = document.getElementById('btn-submit');
+      const toast = document.getElementById('toast-success');
+      
+      // Visual feedback loading
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span><span>Menyimpan &amp; Menugaskan...</span>';
+      btn.disabled = true;
+
+      setTimeout(() => {
+        btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">done_all</span><span>Disposisi Terkirim!</span>';
+        btn.classList.remove('bg-primary');
+        btn.classList.add('bg-secondary');
+
+        // Show Toast
+        toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+        toast.classList.add('translate-y-0', 'opacity-100');
+
+        setTimeout(() => {
+          toast.classList.remove('translate-y-0', 'opacity-100');
+          toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+        }, 5000);
+      }, 900);
+    }
+  </script>
+</div></main></div></body></html>

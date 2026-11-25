@@ -101,6 +101,19 @@ def _invoke(runner, username, role, full_name, password_inputs):
     )
 
 
+def _invoke_reporter(runner, username, full_name, password_inputs):
+    return runner.invoke(
+        args=[
+            "create-reporter",
+            "--username",
+            username,
+            "--full-name",
+            full_name,
+        ],
+        input="\n".join(password_inputs) + "\n",
+    )
+
+
 # ==============================================================================
 # 1. Pembuatan akun per role
 # ==============================================================================
@@ -137,6 +150,35 @@ def test_created_staff_can_complete_login_flow(runner, app):
 
     with client.session_transaction() as sess:
         assert sess.get("user_id") is not None
+
+
+def test_created_reporter_can_complete_login_flow(runner, app):
+    username = _unique_username("reporter")
+    result = _invoke_reporter(
+        runner,
+        username,
+        "Pelapor Login",
+        [VALID_PASSWORD, VALID_PASSWORD],
+    )
+
+    assert result.exit_code == 0, result.output
+    user = _find_user(username)
+    assert user is not None
+    assert user.role == "reporter"
+    assert user.password_hash
+    assert verify_password(user.password_hash, VALID_PASSWORD)
+    assert f"Akun pelapor dibuat: {username}" in result.output
+
+    client = app.test_client()
+    login = client.post(
+        "/auth/pelapor/login",
+        data={"username": username, "password": VALID_PASSWORD},
+    )
+    assert login.status_code == 302
+
+    with client.session_transaction() as sess:
+        assert sess.get("reporter_id") is not None
+        assert "user_id" not in sess
 
 
 # ==============================================================================

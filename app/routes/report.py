@@ -3,6 +3,7 @@ from flask import (
     Blueprint,
     current_app,
     flash,
+    g,
     make_response,
     redirect,
     render_template,
@@ -68,8 +69,8 @@ def _remove_stored_photo(stored_photo):
 
 @report_bp.get("/")
 def root():
-    """Alihkan halaman root publik ke formulir pelaporan."""
-    return redirect(url_for("report.report_form"))
+    """Alihkan halaman root publik ke login pelapor."""
+    return redirect(url_for("auth.reporter_login"))
 
 
 @report_bp.route("/lapor", methods=["GET", "POST"])
@@ -111,8 +112,11 @@ def report_form():
                     current_app.config["UPLOAD_FOLDER"],
                 )
 
+            reporter = getattr(g, "reporter", None)
             ticket, access_token = create_ticket_with_token(
-                data, stored_photo
+                data,
+                stored_photo,
+                reporter_id=reporter.id if reporter is not None else None,
             )
             db.session.commit()
         except PhotoStorageError:

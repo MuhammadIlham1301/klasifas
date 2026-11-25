@@ -77,6 +77,11 @@ class SlidingWindowRateLimiter:
         for k in stale_keys:
             del self._requests[k]
 
+    def clear(self, key: str) -> None:
+        """Hapus riwayat satu kunci setelah autentikasi berhasil."""
+        with self._lock:
+            self._requests.pop(key, None)
+
     def reset(self) -> None:
         """Kosongkan seluruh riwayat rate limiter (berguna untuk isolasi pengujian)."""
         with self._lock:

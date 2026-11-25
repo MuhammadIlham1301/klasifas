@@ -6,9 +6,9 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
 
-# Peran resmi. Pelapor tidak pernah didaftarkan publik; nilai ``reporter``
-# disediakan untuk kompatibilitas matriks RBAC, tetapi akun reporter boleh
-# tidak memiliki password hash.
+# Peran resmi. Akun reporter dibuat melalui CLI lokal, bukan registrasi publik.
+# Baris reporter lama boleh tanpa password hash, tetapi login reporter
+# mewajibkan hash yang valid.
 USER_ROLES = ("reporter", "admin_sarpras", "teknisi", "pimpinan")
 
 ROLE_CHECK_SQL = (

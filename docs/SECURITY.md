@@ -296,29 +296,31 @@ Ketentuan tambahan:
 
 ### 4.3 Pembatasan Percobaan Login
 
-Endpoint autentikasi perlu dilindungi dari brute-force dan credential stuffing.
+Endpoint login staf dan pelapor dilindungi dari brute-force dan credential stuffing.
 
-Usulan awal:
+Ketentuan saat ini:
 
-- Maksimum lima percobaan login gagal dalam periode lima menit.
-- Pembatasan mempertimbangkan akun dan alamat IP.
+- Maksimum lima percobaan login per lima menit untuk setiap kombinasi akun dan alamat IP.
+- Maksimum 50 percobaan login per lima menit untuk setiap alamat IP sebagai perlindungan tambahan terhadap penyemprotan akun.
+- Bucket staf dan pelapor dipisahkan agar percobaan pada satu portal tidak memblokir portal lain.
 - Pesan kesalahan tidak boleh mengungkap apakah username atau password yang salah.
 - Aktivitas login mencurigakan dapat dicatat tanpa merekam kredensial.
+- Rate limiter bersifat in-memory per proses; batas multi-worker dan restart dicatat pada utilitas rate limiter.
 
-Angka dan mekanisme pembatasan masih perlu diuji dan disetujui kelompok.
+Pembatasan global per akun lintas alamat IP masih menjadi backlog dan angka di atas masih perlu diuji dengan beban nyata.
 
-### 4.4 Provisioning dan Pengelolaan Akun Staf
+### 4.4 Provisioning dan Pengelolaan Akun Staf serta Pelapor
 
-Provisioning akun staf dilakukan melalui CLI lokal, bukan melalui halaman manajemen akun.
+Provisioning akun staf dan pelapor dilakukan melalui CLI lokal, bukan melalui halaman manajemen akun.
 
 Ketentuan:
 
-- CLI saat ini hanya menyediakan perintah `create-staff` untuk membuat akun awal dan akun berikutnya.
+- CLI menyediakan `create-staff` untuk akun staf dan `create-reporter` untuk akun pelapor.
 - Perubahan role, penonaktifan akun, dan reset password belum tersedia melalui CLI dan dicatat sebagai backlog pengembangan lanjutan.
 - Password dimasukkan secara interaktif. Password tidak boleh diberikan melalui argumen command, dicatat pada log, atau disimpan dalam bentuk plaintext.
 - Password disimpan menggunakan `generate_password_hash` dengan algoritma scrypt sesuai Bagian 4.1.
-- Role yang didukung CLI hanya `admin_sarpras`, `teknisi`, dan `pimpinan`.
-- Akun `reporter` tidak dibuat melalui CLI ini.
+- Role staf yang didukung `create-staff` hanya `admin_sarpras`, `teknisi`, dan `pimpinan`.
+- Akun `reporter` hanya dibuat melalui `create-reporter`; login pelapor mewajibkan password hash yang valid.
 - Tidak ada registrasi publik.
 - Tidak ada halaman manajemen akun dalam MVP.
 - CLI hanya dijalankan oleh operator lokal yang berwenang dengan konfigurasi lingkungan yang sesuai.

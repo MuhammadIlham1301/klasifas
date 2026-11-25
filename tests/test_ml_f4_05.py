@@ -352,7 +352,7 @@ def test_report_submission_integrates_fallback_and_preserves_raw_description(cli
         },
     )
     assert response.status_code == 200
-    assert "Laporan berhasil dikirim" in response.get_data(as_text=True)
+    assert "Laporan Berhasil Terkirim!" in response.get_data(as_text=True)
 
     # Verifikasi data tiket di database
     ticket = db.session.scalar(

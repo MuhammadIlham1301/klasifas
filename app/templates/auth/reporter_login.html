@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}Login Pelapor - KlasiFas{% endblock %}
+{% block body_class %} kf-login-page-body{% endblock %}
+
+{% block content %}
+<div class="kf-login-page">
+    <div class="kf-login-strip">
+        <div class="kf-login-strip__inner">
+            <div class="kf-login-strip__identity">
+                <span class="kf-login-strip__badge">
+                    <span class="kf-login-strip__dot" aria-hidden="true"></span>
+                    Portal Autentikasi Pelapor
+                </span>
+                <span class="kf-login-strip__brand">KLASIFAS FTII UHAMKA</span>
+            </div>
+            <span class="kf-login-strip__meta">Layanan Pelaporan Fasilitas Kampus</span>
+        </div>
+    </div>
+
+    <main class="kf-login-main">
+        <div class="kf-login-banner">
+            <div class="kf-login-banner__logo">
+                <img src="{{ url_for('static', filename='img/logo-uhamka.png') }}" alt="Logo Resmi UHAMKA">
+            </div>
+            <span class="kf-login-banner__badge">
+                <i class="bi bi-person-check" aria-hidden="true"></i>
+                Portal Pelapor Fasilitas FTII UHAMKA
+            </span>
+            <h1 class="kf-login-banner__title">KlasiFas</h1>
+            <p class="kf-login-banner__sub">
+                Fakultas Teknologi Industri &amp; Informatika &middot;
+                Universitas Muhammadiyah Prof. DR. HAMKA
+            </p>
+        </div>
+
+        {% if reporter %}
+            <section class="kf-login-status" aria-labelledby="reporter-status-title">
+                <div class="kf-login-status__icon" aria-hidden="true">
+                    <i class="bi bi-person-check"></i>
+                </div>
+                <h2 id="reporter-status-title">Anda sudah login sebagai</h2>
+                <p class="kf-login-status__name">{{ reporter.full_name }}</p>
+                <p class="kf-login-status__role">(Pelapor)</p>
+                <div class="d-flex flex-wrap gap-2 justify-content-center mb-3">
+                    <a href="{{ url_for('report.report_form') }}" class="btn kf-btn-primary">
+                        <i class="bi bi-pencil-square me-1" aria-hidden="true"></i>
+                        Buat Laporan
+                    </a>
+                    <a href="{{ url_for('report.track') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-search me-1" aria-hidden="true"></i>
+                        Lacak Tiket
+                    </a>
+                </div>
+                <form method="post" action="{{ url_for('auth.reporter_logout') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn kf-btn-primary kf-login-status__logout">
+                        <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i>
+                        Logout
+                    </button>
+                </form>
+            </section>
+        {% else %}
+            <div class="kf-login-card">
+                <section class="kf-login-context" aria-labelledby="reporter-context-title">
+                    <div class="kf-login-context__glow" aria-hidden="true"></div>
+                    <div>
+                        <span class="kf-login-context__badge">Portal Pelapor</span>
+                        <h2 id="reporter-context-title">Sampaikan dan pantau keluhan fasilitas kampus</h2>
+                        <p class="kf-login-context__sub">
+                            Akun pelapor menghubungkan laporan yang Anda kirim dengan
+                            riwayat penanganan fasilitas FTII UHAMKA.
+                        </p>
+
+                        <div class="kf-login-roles">
+                            <span class="kf-login-roles__label">Yang Dapat Anda Lakukan</span>
+                            <div class="kf-login-role">
+                                <span class="kf-login-role__dot kf-login-role__dot--blue" aria-hidden="true"></span>
+                                <div>
+                                    <strong>Buat Laporan</strong>
+                                    <span>Kirim keluhan fasilitas melalui formulir resmi</span>
+                                </div>
+                            </div>
+                            <div class="kf-login-role">
+                                <span class="kf-login-role__dot kf-login-role__dot--green" aria-hidden="true"></span>
+                                <div>
+                                    <strong>Lacak Tiket</strong>
+                                    <span>Pantau status dengan kode laporan dan token akses</span>
+                                </div>
+                            </div>
+                            <div class="kf-login-role">
+                                <span class="kf-login-role__dot kf-login-role__dot--amber" aria-hidden="true"></span>
+                                <div>
+                                    <strong>Akun Terhubung</strong>
+                                    <span>Laporan yang dikirim saat login tercatat pada akun Anda</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kf-login-context__notice">
+                        <i class="bi bi-info-circle" aria-hidden="true"></i>
+                        <p>
+                            <strong>Perhatian:</strong> Akun pelapor dibuat oleh pengelola
+                            KlasiFas. Tidak ada pendaftaran akun secara mandiri.
+                            Jika tidak memiliki akun, gunakan
+                            <a href="{{ url_for('report.report_form') }}">Laporkan tanpa login</a>.
+                        </p>
+                    </div>
+                </section>
+
+                <section class="kf-login-form-panel" aria-labelledby="reporter-form-title">
+                    <div>
+                        <div class="kf-login-form-panel__header">
+                            <h2 id="reporter-form-title">Login Pelapor KlasiFas</h2>
+                            <p>Gunakan akun pelapor yang diberikan oleh pengelola KlasiFas.</p>
+                        </div>
+
+                        <form method="post" action="{{ url_for('auth.reporter_login') }}" class="kf-login-form">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                            <div class="kf-login-field">
+                                <label for="username" class="form-label">
+                                    Username
+                                    <span class="kf-required" aria-hidden="true">*</span>
+                                    <span class="visually-hidden">(wajib)</span>
+                                </label>
+                                <div class="kf-login-input">
+                                    <i class="bi bi-person-badge kf-login-input__glyph" aria-hidden="true"></i>
+                                    <input
+                                        id="username"
+                                        name="username"
+                                        type="text"
+                                        autocomplete="username"
+                                        required
+                                        class="form-control"
+                                        placeholder="Masukkan username pelapor"
+                                        aria-describedby="username-help"
+                                    >
+                                </div>
+                                <div id="username-help" class="form-text">
+                                    Gunakan akun pelapor yang terdaftar pada sistem KlasiFas FTII UHAMKA.
+                                </div>
+                            </div>
+
+                            <div class="kf-login-field">
+                                <div class="kf-login-field__label-row">
+                                    <label for="password" class="form-label">
+                                        Kata Sandi
+                                        <span class="kf-required" aria-hidden="true">*</span>
+                                        <span class="visually-hidden">(wajib)</span>
+                                    </label>
+                                    <span class="kf-login-field__meta">Sensitif huruf besar/kecil</span>
+                                </div>
+                                <div class="kf-login-input kf-login-input--password">
+                                    <i class="bi bi-lock kf-login-input__glyph" aria-hidden="true"></i>
+                                    <input
+                                        id="password"
+                                        name="password"
+                                        type="password"
+                                        autocomplete="current-password"
+                                        required
+                                        class="form-control"
+                                        placeholder="Masukkan kata sandi"
+                                        aria-describedby="password-help"
+                                    >
+                                    <button
+                                        type="button"
+                                        class="kf-login-password-toggle"
+                                        data-token-toggle
+                                        aria-controls="password"
+                                        aria-pressed="false"
+                                        aria-label="Tampilkan atau sembunyikan kata sandi"
+                                    >
+                                        <i class="bi bi-eye" data-token-toggle-icon aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                                <div id="password-help" class="form-text">
+                                    Pastikan kerahasiaan kata sandi Anda.
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn kf-btn-primary kf-login-submit">
+                                <span>Masuk ke Portal Pelapor</span>
+                                <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                            </button>
+                        </form>
+
+                        <p class="kf-login-switch-link">
+                            <span>Anda staf internal?</span>
+                            <a id="staff-login-link" href="{{ url_for('auth.login') }}">
+                                <i class="bi bi-person-lock" aria-hidden="true"></i>
+                                Login sebagai Staf
+                            </a>
+                        </p>
+                    </div>
+
+                    <div class="kf-login-security">
+                        <span class="kf-login-security__dot" aria-hidden="true"></span>
+                        <span>Sesi pelapor terpisah dari portal staf internal.</span>
+                        <span class="kf-login-security__meta">Flask Auth</span>
+                    </div>
+                </section>
+            </div>
+        {% endif %}
+    </main>
+
+    <footer class="kf-login-footer">
+        <div class="kf-login-footer__inner">
+            <span>KlasiFas &middot; FTII UHAMKA | Universitas Muhammadiyah Prof. DR. HAMKA</span>
+            <span>Sistem Klasifikasi &amp; Penanganan Fasilitas</span>
+        </div>
+    </footer>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/portal.js') }}"></script>
+{% endblock %}

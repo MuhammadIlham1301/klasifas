@@ -1,4 +1,4 @@
-"""Dekorator otorisasi RBAC untuk area staf internal."""
+"""Dekorator otorisasi RBAC untuk area staf dan pelapor."""
 from functools import wraps
 
 from flask import abort, g, redirect, url_for
@@ -6,6 +6,7 @@ from flask import abort, g, redirect, url_for
 from app.models.user import USER_ROLES
 
 STAFF_ROLES = frozenset(USER_ROLES) - {"reporter"}
+REPORTER_ROLE = "reporter"
 
 
 def _validate_staff_roles(allowed_roles):
@@ -30,6 +31,17 @@ def login_required(view):
     def wrapped(*args, **kwargs):
         if getattr(g, "current_user", None) is None:
             return redirect(url_for("auth.login"))
+        return view(*args, **kwargs)
+
+    return wrapped
+
+
+def reporter_required(view):
+    """Pastikan request memiliki sesi pelapor yang sudah divalidasi loader."""
+    @wraps(view)
+    def wrapped(*args, **kwargs):
+        if getattr(g, "reporter", None) is None:
+            return redirect(url_for("auth.reporter_login"))
         return view(*args, **kwargs)
 
     return wrapped

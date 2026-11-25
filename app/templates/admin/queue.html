@@ -17,402 +17,460 @@
 {% block title %}Antrean Tiket Sarpras — KlasiFas{% endblock %}
 
 {% block content %}
-<div class="row align-items-center g-2 mb-4">
-    <div class="col-12 col-md-8">
-        <div class="kf-page-heading">
-            <p class="kf-page-heading__eyebrow mb-2">Portal Admin Sarpras</p>
-            <h1 class="kf-page-heading__title">Antrean Keluhan Fasilitas</h1>
-            <p class="kf-page-heading__sub mb-0">Verifikasi kategori keluhan fasilitas dan transisi status operasional (FR-04).</p>
+<div class="kf-queue-page">
+    <section class="kf-queue-hero" aria-labelledby="queue-title">
+        <div class="kf-queue-hero__body">
+            <p class="kf-page-heading__eyebrow kf-queue-hero__eyebrow mb-2">
+                <span class="kf-status-dot" aria-hidden="true"></span>
+                Operasional Sarpras &middot; Gedung FTII
+            </p>
+            <h1 class="kf-page-heading__title kf-queue-hero__title" id="queue-title">Antrean Tiket Sarpras</h1>
+            <p class="kf-page-heading__sub kf-queue-hero__sub mb-0">
+                Tinjau keluhan fasilitas, verifikasi kategori, dan pantau perpindahan status tiket dalam satu workspace operasional.
+            </p>
         </div>
-    </div>
-    <div class="col-12 col-md-4">
-        <div class="kf-kpi kf-kpi--status-pill d-flex flex-wrap align-items-center justify-content-md-end gap-2 px-3 py-2 rounded">
-            <span class="kf-status-dot" aria-hidden="true"></span>
-            <span class="small fw-semibold text-primary">Verifikasi Manual Aktif</span>
-            <span class="text-secondary" aria-hidden="true">&middot;</span>
-            <span class="small text-secondary">Gedung FTII (Lt. 1&ndash;4)</span>
+        <div class="kf-queue-hero__side">
+            <div class="kf-queue-status-pill">
+                <span class="kf-status-dot" aria-hidden="true"></span>
+                <span>
+                    <span class="kf-queue-status-pill__title">Verifikasi Manual Aktif</span>
+                    <span class="kf-queue-status-pill__meta">Gedung FTII &middot; Lantai 1&ndash;4</span>
+                </span>
+            </div>
+            <a href="{{ url_for('admin.ticket_queue', status='Baru') }}" class="btn btn-primary btn-sm kf-queue-cta">
+                <i class="bi bi-inbox me-1" aria-hidden="true"></i>Tinjau {{ status_counts['Baru'] }} Tiket Baru
+            </a>
         </div>
-    </div>
-</div>
+    </section>
 
-<!-- KPI Agregat Status (data nyata dari basis data) -->
-<div class="row g-2 g-md-3 mb-4">
-    {% set kpi_items = [
-        ('Total Tiket', status_counts.total, 'Seluruh laporan tercatat', 'kpi-total', 'bi-inbox'),
-        ('Baru', status_counts['Baru'], 'Perlu verifikasi awal', 'kpi-new', 'bi-plus-circle'),
-        ('Terverifikasi', status_counts['Terverifikasi'], 'Menunggu penugasan', 'kpi-verified', 'bi-clipboard-check'),
-        ('Diproses', status_counts['Diproses'], 'Sedang ditangani teknisi', 'kpi-progress', 'bi-tools'),
-        ('Selesai', status_counts['Selesai'], 'Pekerjaan tuntas', 'kpi-done', 'bi-check2-circle')
-    ] %}
-    {% for label, value, caption, tone, kpi_icon in kpi_items %}
-    <div class="{% if loop.first %}col-12 col-md-4 col-xl{% else %}col-6 col-md-4 col-xl{% endif %}">
-        <div class="card border-0 shadow-sm h-100 kf-kpi kf-kpi-modern kf-kpi--{{ tone }}">
-            <div class="card-body p-3 pb-2">
-                <div class="kf-kpi-modern__header kf-kpi__header">
-                    <span class="kf-kpi-modern__label kf-kpi__label">{{ label }}</span>
-                    <div class="kf-kpi-modern__icon-wrap bg-light kf-kpi__icon" aria-hidden="true">
-                        <i class="bi {{ kpi_icon }}"></i>
+    <!-- KPI Agregat Status (data nyata dari basis data) -->
+    <section class="kf-queue-kpis mb-4" aria-label="Ringkasan status tiket">
+        <div class="row g-2 g-md-3">
+            {% set kpi_items = [
+                ('Total Tiket', status_counts.total, 'Seluruh laporan tercatat', 'kpi-total', 'bi-inbox'),
+                ('Baru', status_counts['Baru'], 'Perlu verifikasi awal', 'kpi-new', 'bi-plus-circle'),
+                ('Terverifikasi', status_counts['Terverifikasi'], 'Menunggu penugasan', 'kpi-verified', 'bi-clipboard-check'),
+                ('Diproses', status_counts['Diproses'], 'Sedang ditangani teknisi', 'kpi-progress', 'bi-tools'),
+                ('Selesai', status_counts['Selesai'], 'Pekerjaan tuntas', 'kpi-done', 'bi-check2-circle')
+            ] %}
+            {% for label, value, caption, tone, kpi_icon in kpi_items %}
+            <div class="{% if loop.first %}col-12 col-md-4 col-xl{% else %}col-6 col-md-4 col-xl{% endif %}">
+                <div class="card border-0 shadow-sm h-100 kf-kpi kf-kpi-modern kf-kpi--{{ tone }}">
+                    <div class="card-body p-3 pb-2">
+                        <div class="kf-kpi-modern__header kf-kpi__header">
+                            <span class="kf-kpi-modern__label kf-kpi__label">{{ label }}</span>
+                            <div class="kf-kpi-modern__icon-wrap kf-kpi__icon" aria-hidden="true">
+                                <i class="bi {{ kpi_icon }}"></i>
+                            </div>
+                        </div>
+                        <div class="fs-3 fw-bold kf-kpi-modern__value kf-kpi__value">{{ value }}</div>
                     </div>
+                    <div class="kf-kpi__footer small text-secondary px-3 pb-3">{{ caption }}</div>
                 </div>
-                <div class="fs-3 fw-bold kf-kpi-modern__value kf-kpi__value">{{ value }}</div>
             </div>
-            <div class="kf-kpi__footer small text-secondary px-3 pb-3">{{ caption }}</div>
+            {% endfor %}
         </div>
-    </div>
-    {% endfor %}
-</div>
+    </section>
 
-<!-- Panel Pencarian dan Filter Multi-Kriteria -->
-<div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-white border-bottom-0 py-3 d-flex justify-content-between align-items-center gap-2 flex-wrap">
-        <h2 class="h6 fw-bold mb-0 text-dark">
-            <i class="bi bi-funnel me-1"></i> Filter & Pencarian Tiket
-        </h2>
-        <span class="small text-secondary">
-            Total: <strong>{{ pagination.total if pagination else tickets|length }}</strong> tiket ditemukan
-        </span>
-    </div>
-    <div class="card-body pt-0 pb-3">
-        <form method="GET" action="{{ url_for('admin.ticket_queue') }}" class="row g-2 align-items-end">
-            <!-- Kata Kunci -->
-            <div class="col-12 col-md-4">
-                <label for="filter_keyword" class="form-label small text-secondary mb-1">Kata Kunci (Kode / Deskripsi)</label>
-                <input type="text" class="form-control form-control-sm" id="filter_keyword" name="keyword"
-                       value="{{ active_filters.keyword if active_filters else '' }}"
-                       placeholder="Misal: KF-2A3B4C atau AC bocor">
+    <section class="card border-0 shadow-sm kf-queue-panel" aria-labelledby="queue-list-title">
+        <div class="kf-queue-panel__head">
+            <div class="kf-queue-panel__intro">
+                <p class="kf-queue-panel__eyebrow mb-1">Manajemen Antrean</p>
+                <h2 class="kf-queue-panel__title" id="queue-list-title">Daftar Antrean Tiket Aktif</h2>
+                <p class="kf-queue-panel__sub mb-0">Pantau tiket yang masuk, saring berdasarkan kriteria, lalu lanjutkan ke verifikasi atau penugasan.</p>
             </div>
-
-            <!-- Status Tiket -->
-            <div class="col-6 col-md-2">
-                <label for="filter_status" class="form-label small text-secondary mb-1">Status</label>
-                <select class="form-select form-select-sm" id="filter_status" name="status">
-                    <option value="all" {{ 'selected' if current_status in ['all', 'semua'] else '' }}>Semua Status</option>
-                    {% for s in statuses %}
-                    <option value="{{ s }}" {{ 'selected' if current_status == s else '' }}>{{ s }}</option>
-                    {% endfor %}
-                </select>
+            <div class="kf-queue-panel__summary">
+                <span class="kf-queue-count">
+                    <i class="bi bi-collection" aria-hidden="true"></i>
+                    <strong>{{ pagination.total if pagination else tickets|length }}</strong> tiket ditemukan
+                </span>
             </div>
+        </div>
 
-            <!-- Kategori Resmi -->
-            <div class="col-6 col-md-3">
-                <label for="filter_category" class="form-label small text-secondary mb-1">Kategori Resmi</label>
-                <select class="form-select form-select-sm" id="filter_category" name="category_id">
-                    <option value="">Semua Kategori</option>
-                    {% for cat in categories %}
-                    <option value="{{ cat.id }}" {{ 'selected' if active_filters and active_filters.category_id == cat.id|string else '' }}>
-                        {{ cat.code }} - {{ cat.name }}
-                    </option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <!-- Lantai Gedung -->
-            <div class="col-6 col-md-3">
-                <label for="filter_floor" class="form-label small text-secondary mb-1">Lantai Gedung FTII</label>
-                <select class="form-select form-select-sm" id="filter_floor" name="floor_number">
-                    <option value="">Semua Lantai</option>
-                    <option value="1" {{ 'selected' if active_filters and active_filters.floor_number == '1' else '' }}>Lantai 1</option>
-                    <option value="2" {{ 'selected' if active_filters and active_filters.floor_number == '2' else '' }}>Lantai 2</option>
-                    <option value="3" {{ 'selected' if active_filters and active_filters.floor_number == '3' else '' }}>Lantai 3</option>
-                    <option value="4" {{ 'selected' if active_filters and active_filters.floor_number == '4' else '' }}>Lantai 4</option>
-                </select>
-            </div>
-
-            <!-- Nama Ruangan -->
-            <div class="col-6 col-md-3">
-                <label for="filter_room" class="form-label small text-secondary mb-1">Nama / Nomor Ruangan</label>
-                <input type="text" class="form-control form-control-sm" id="filter_room" name="room_name"
-                       value="{{ active_filters.room_name if active_filters else '' }}"
-                       placeholder="Misal: Lab 301, R. Dosen">
-            </div>
-
-            <!-- Tanggal Awal -->
-            <div class="col-12 col-sm-6 col-md-3">
-                <label for="filter_date_from" class="form-label small text-secondary mb-1">Dari Tanggal</label>
-                <input type="date" class="form-control form-control-sm" id="filter_date_from" name="date_from"
-                       value="{{ active_filters.date_from if active_filters else '' }}">
-            </div>
-
-            <!-- Tanggal Akhir -->
-            <div class="col-12 col-sm-6 col-md-3">
-                <label for="filter_date_to" class="form-label small text-secondary mb-1">Sampai Tanggal</label>
-                <input type="date" class="form-control form-control-sm" id="filter_date_to" name="date_to"
-                       value="{{ active_filters.date_to if active_filters else '' }}">
-            </div>
-
-            <!-- Tombol Aksi -->
-            <div class="col-12 col-md-3 d-flex gap-2">
-                <button type="submit" class="btn btn-sm btn-primary flex-grow-1">
-                    <i class="bi bi-search me-1"></i> Terapkan
-                </button>
-                <a href="{{ url_for('admin.ticket_queue') }}" class="btn btn-sm btn-outline-secondary" title="Kembalikan ke antrean awal">
-                    Reset
+        <div class="kf-queue-toolbar">
+            <div class="kf-queue-tabs" role="group" aria-label="Filter Status Tiket">
+                <a href="{{ url_for('admin.ticket_queue', status='all') }}"
+                   class="kf-queue-tab {{ 'is-active' if current_status in ['all', 'semua'] else '' }}"
+                   {{ 'aria-current="true"' if current_status in ['all', 'semua'] else '' }}>
+                    Semua <span class="kf-queue-tab__count">{{ status_counts.total }}</span>
+                </a>
+                <a href="{{ url_for('admin.ticket_queue', status='Baru') }}"
+                   class="kf-queue-tab {{ 'is-active' if current_status == 'Baru' else '' }}"
+                   {{ 'aria-current="true"' if current_status == 'Baru' else '' }}>
+                    Baru <span class="kf-queue-tab__count">{{ status_counts['Baru'] }}</span>
+                </a>
+                <a href="{{ url_for('admin.ticket_queue', status='Terverifikasi') }}"
+                   class="kf-queue-tab {{ 'is-active' if current_status == 'Terverifikasi' else '' }}"
+                   {{ 'aria-current="true"' if current_status == 'Terverifikasi' else '' }}>
+                    Terverifikasi <span class="kf-queue-tab__count">{{ status_counts['Terverifikasi'] }}</span>
+                </a>
+                <a href="{{ url_for('admin.ticket_queue', status='Diproses') }}"
+                   class="kf-queue-tab {{ 'is-active' if current_status == 'Diproses' else '' }}"
+                   {{ 'aria-current="true"' if current_status == 'Diproses' else '' }}>
+                    Diproses <span class="kf-queue-tab__count">{{ status_counts['Diproses'] }}</span>
+                </a>
+                <a href="{{ url_for('admin.ticket_queue', status='Selesai') }}"
+                   class="kf-queue-tab {{ 'is-active' if current_status == 'Selesai' else '' }}"
+                   {{ 'aria-current="true"' if current_status == 'Selesai' else '' }}>
+                    Selesai <span class="kf-queue-tab__count">{{ status_counts['Selesai'] }}</span>
                 </a>
             </div>
-        </form>
-    </div>
+            {% if current_status not in ['all', 'semua'] %}
+            <a href="{{ url_for('admin.ticket_queue', status='all') }}" class="kf-queue-clear">
+                Tampilkan semua status
+            </a>
+            {% endif %}
+        </div>
 
-    <!-- Quick Status Tabs -->
-    <div class="card-footer bg-light border-top p-2 d-flex flex-wrap align-items-center justify-content-between gap-2">
-        <div class="d-flex flex-wrap gap-1" role="group" aria-label="Filter Status Tiket">
-            <a href="{{ url_for('admin.ticket_queue', status='Baru') }}"
-               class="btn btn-sm rounded {{ 'btn-primary' if current_status == 'Baru' else 'btn-outline-secondary' }}">
-               Baru (Antrean)
-            </a>
-            <a href="{{ url_for('admin.ticket_queue', status='Terverifikasi') }}"
-               class="btn btn-sm rounded {{ 'btn-primary' if current_status == 'Terverifikasi' else 'btn-outline-secondary' }}">
-               Terverifikasi
-            </a>
-            <a href="{{ url_for('admin.ticket_queue', status='Diproses') }}"
-               class="btn btn-sm rounded {{ 'btn-primary' if current_status == 'Diproses' else 'btn-outline-secondary' }}">
-               Diproses
-            </a>
-            <a href="{{ url_for('admin.ticket_queue', status='Selesai') }}"
-               class="btn btn-sm rounded {{ 'btn-primary' if current_status == 'Selesai' else 'btn-outline-secondary' }}">
-               Selesai
-            </a>
-            <a href="{{ url_for('admin.ticket_queue', status='all') }}"
-               class="btn btn-sm rounded {{ 'btn-primary' if current_status in ['all', 'semua'] else 'btn-outline-secondary' }}">
-               Semua Status
-            </a>
-        </div>
-        {% if pagination and pagination.pages > 1 %}
-        <div class="small text-secondary">
-            Halaman <strong>{{ pagination.page }}</strong> dari <strong>{{ pagination.pages }}</strong>
-        </div>
-        {% endif %}
-    </div>
-</div>
-
-{% if not tickets %}
-<div class="card border-0 shadow-sm kf-empty-state">
-    <div class="card-body text-center py-5 px-3 px-sm-4">
-        <div class="kf-empty-state__icon-wrap d-inline-flex align-items-center justify-content-center rounded-circle bg-light text-primary p-3 mb-3" aria-hidden="true">
-            <i class="bi bi-inbox fs-3"></i>
-        </div>
-        <h2 class="h5 fw-semibold mb-2">Tidak ada tiket ditemukan</h2>
-        <p class="text-secondary small mb-4">
-            Tidak ada tiket pada status atau filter yang dipilih. Ubah kriteria pencarian atau kembalikan filter untuk melihat seluruh antrean.
-        </p>
-        <a href="{{ url_for('admin.ticket_queue') }}" class="btn btn-sm btn-primary">
-            <i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i>Kembalikan Filter Default
-        </a>
-    </div>
-</div>
-{% else %}
-<div class="d-lg-none vstack gap-3">
-    {% for t in tickets %}
-    <article class="card border-0 shadow-sm">
-        <div class="card-body">
-            <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
-                <div>
-                    <code class="fs-6">{{ t.ticket_code }}</code>
-                    <div class="small text-secondary">
-                        {{ t.created_at.strftime('%d/%m/%Y %H:%M') if t.created_at else '-' }}
-                    </div>
-                </div>
-                {{ status_badge(t.status) }}
+        <div class="kf-queue-filter">
+            <div class="kf-queue-filter__head d-flex justify-content-between align-items-center gap-2 flex-wrap">
+                <h2 class="h6 fw-bold mb-0 text-dark">
+                    <i class="bi bi-funnel me-1" aria-hidden="true"></i> Filter &amp; Pencarian Tiket
+                </h2>
+                <span class="small text-secondary">Gunakan filter untuk mempersempit antrean aktif.</span>
             </div>
 
-            <p class="mb-3 kf-text-clamp-2" title="{{ t.description }}">{{ t.description }}</p>
+            <form method="GET" action="{{ url_for('admin.ticket_queue') }}" class="row g-2 align-items-end">
+                <!-- Kata Kunci -->
+                <div class="col-12 col-md-6 col-xl-4">
+                    <label for="filter_keyword" class="form-label small text-secondary mb-1">Kata Kunci (Kode / Deskripsi)</label>
+                    <div class="input-group input-group-sm kf-queue-search">
+                        <span class="input-group-text" aria-hidden="true"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" id="filter_keyword" name="keyword"
+                               value="{{ active_filters.keyword if active_filters else '' }}"
+                               placeholder="Misal: KF-2A3B4C atau AC bocor">
+                    </div>
+                </div>
 
-            <dl class="row g-2 small mb-3">
-                <div class="col-6">
-                    <dt class="text-secondary fw-semibold">Lokasi</dt>
-                    <dd class="mb-0">
-                        <strong>{{ t.room_name }}</strong><br>
-                        {{ t.building_name }}, Lt. {{ t.floor_number }}
-                    </dd>
+                <!-- Status Tiket -->
+                <div class="col-6 col-md-3 col-xl-2">
+                    <label for="filter_status" class="form-label small text-secondary mb-1">Status</label>
+                    <select class="form-select form-select-sm" id="filter_status" name="status">
+                        <option value="all" {{ 'selected' if current_status in ['all', 'semua'] else '' }}>Semua Status</option>
+                        {% for s in statuses %}
+                        <option value="{{ s }}" {{ 'selected' if current_status == s else '' }}>{{ s }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
-                <div class="col-6">
-                    <dt class="text-secondary fw-semibold">Kategori Pelapor</dt>
-                    <dd class="mb-0">
-                        {% if t.reporter_category %}
-                            <span class="badge bg-light text-dark border">{{ t.reporter_category.code }} - {{ t.reporter_category.name }}</span>
-                        {% else %}
-                            <span class="text-muted">-</span>
-                        {% endif %}
-                    </dd>
-                </div>
-                <div class="col-6">
-                    <dt class="text-secondary fw-semibold">Rekomendasi ML</dt>
-                    <dd class="mb-0">
-                        {% if t.needs_manual_verification %}
-                            {% if t.predicted_category %}
-                                <div class="d-flex flex-column align-items-start gap-1">
-                                    <span class="badge bg-info text-dark" title="Perlu verifikasi manusia">
-                                        {{ t.predicted_category.code }}
-                                    </span>
-                                    {{ manual_verification_badge() }}
-                                </div>
-                            {% else %}
-                                <span class="badge bg-secondary" title="Model ML belum aktif / gagal inferensi">
-                                    Verifikasi Manual (Fallback)
-                                </span>
-                            {% endif %}
-                        {% elif t.predicted_category %}
-                            <span class="badge bg-info text-dark">
-                                {{ t.predicted_category.code }} - {{ t.predicted_category.name }}
-                            </span>
-                        {% else %}
-                            <span class="text-muted">-</span>
-                        {% endif %}
-                    </dd>
-                </div>
-                <div class="col-6">
-                    <dt class="text-secondary fw-semibold">Kategori Resmi</dt>
-                    <dd class="mb-0">
-                        {% if t.official_category %}
-                            <span class="fw-semibold text-success">{{ t.official_category.code }} - {{ t.official_category.name }}</span>
-                        {% else %}
-                            <em class="text-muted">Belum ditetapkan</em>
-                        {% endif %}
-                    </dd>
-                </div>
-                <div class="col-12">
-                    <dt class="text-secondary fw-semibold">Teknisi</dt>
-                    <dd class="mb-0">
-                        {% if t.assigned_technician %}
-                            <span class="badge bg-light text-dark border">
-                                {{ t.assigned_technician.full_name }}
-                                {% if not t.assigned_technician.is_active %}
-                                    <span class="text-danger small">(Nonaktif)</span>
-                                {% endif %}
-                            </span>
-                        {% else %}
-                            <span class="text-muted fst-italic">Belum ditugaskan</span>
-                        {% endif %}
-                    </dd>
-                </div>
-            </dl>
 
-            <div class="d-grid">{{ queue_action(t, 'w-100') }}</div>
+                <!-- Kategori Resmi -->
+                <div class="col-6 col-md-3 col-xl-3">
+                    <label for="filter_category" class="form-label small text-secondary mb-1">Kategori Resmi</label>
+                    <select class="form-select form-select-sm" id="filter_category" name="category_id">
+                        <option value="">Semua Kategori</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.id }}" {{ 'selected' if active_filters and active_filters.category_id == cat.id|string else '' }}>
+                            {{ cat.code }} - {{ cat.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Lantai Gedung -->
+                <div class="col-6 col-md-3 col-xl-3">
+                    <label for="filter_floor" class="form-label small text-secondary mb-1">Lantai Gedung FTII</label>
+                    <select class="form-select form-select-sm" id="filter_floor" name="floor_number">
+                        <option value="">Semua Lantai</option>
+                        <option value="1" {{ 'selected' if active_filters and active_filters.floor_number == '1' else '' }}>Lantai 1</option>
+                        <option value="2" {{ 'selected' if active_filters and active_filters.floor_number == '2' else '' }}>Lantai 2</option>
+                        <option value="3" {{ 'selected' if active_filters and active_filters.floor_number == '3' else '' }}>Lantai 3</option>
+                        <option value="4" {{ 'selected' if active_filters and active_filters.floor_number == '4' else '' }}>Lantai 4</option>
+                    </select>
+                </div>
+
+                <!-- Nama Ruangan -->
+                <div class="col-12 col-md-6 col-xl-4">
+                    <label for="filter_room" class="form-label small text-secondary mb-1">Nama / Nomor Ruangan</label>
+                    <input type="text" class="form-control form-control-sm" id="filter_room" name="room_name"
+                           value="{{ active_filters.room_name if active_filters else '' }}"
+                           placeholder="Misal: Lab 301, R. Dosen">
+                </div>
+
+                <!-- Tanggal Awal -->
+                <div class="col-6 col-md-3 col-xl-3">
+                    <label for="filter_date_from" class="form-label small text-secondary mb-1">Dari Tanggal</label>
+                    <input type="date" class="form-control form-control-sm" id="filter_date_from" name="date_from"
+                           value="{{ active_filters.date_from if active_filters else '' }}">
+                </div>
+
+                <!-- Tanggal Akhir -->
+                <div class="col-6 col-md-3 col-xl-3">
+                    <label for="filter_date_to" class="form-label small text-secondary mb-1">Sampai Tanggal</label>
+                    <input type="date" class="form-control form-control-sm" id="filter_date_to" name="date_to"
+                           value="{{ active_filters.date_to if active_filters else '' }}">
+                </div>
+
+                <!-- Tombol Aksi -->
+                <div class="col-12 col-md-6 col-xl-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-sm btn-primary flex-grow-1">
+                        <i class="bi bi-search me-1" aria-hidden="true"></i> Terapkan
+                    </button>
+                    <a href="{{ url_for('admin.ticket_queue') }}" class="btn btn-sm btn-outline-secondary" title="Kembalikan ke antrean awal">
+                        Reset
+                    </a>
+                </div>
+            </form>
         </div>
-    </article>
-    {% endfor %}
-</div>
 
-<div class="card border-0 shadow-sm d-none d-lg-block">
-    <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0 kf-table-dense">
-            <thead class="table-light">
-                <tr>
-                    <th scope="col" class="kf-table-col-min-110">Kode Tiket</th>
-                    <th scope="col" class="kf-table-col-min-140">Tanggal</th>
-                    <th scope="col" class="kf-table-col-min-200">Keluhan</th>
-                    <th scope="col" class="kf-table-col-min-180">Lokasi</th>
-                    <th scope="col" class="kf-table-col-min-140">Kategori Pelapor</th>
-                    <th scope="col" class="kf-table-col-min-200">Rekomendasi ML</th>
-                    <th scope="col" class="kf-table-col-min-180">Kategori Resmi</th>
-                    <th scope="col" class="kf-table-col-min-140">Teknisi</th>
-                    <th scope="col" class="kf-table-col-min-110">Status</th>
-                    <th scope="col" class="text-end kf-table-col-min-120">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for t in tickets %}
-                <tr>
-                    <td class="fw-semibold">
-                        <code>{{ t.ticket_code }}</code>
-                    </td>
-                    <td class="small text-secondary">
-                        {{ t.created_at.strftime('%d/%m/%Y %H:%M') if t.created_at else '-' }}
-                    </td>
-                    <td class="small">
-                        <span class="d-block kf-text-clamp-2" title="{{ t.description }}">{{ t.description }}</span>
-                    </td>
-                    <td class="small">
-                        <strong>{{ t.room_name }}</strong><br>
-                        <span class="text-secondary">{{ t.building_name }}, Lt. {{ t.floor_number }}</span>
-                    </td>
-                    <td class="small">
-                        {% if t.reporter_category %}
-                            <span class="badge bg-light text-dark border">{{ t.reporter_category.code }} - {{ t.reporter_category.name }}</span>
-                        {% else %}
-                            <span class="text-muted">-</span>
-                        {% endif %}
-                    </td>
-                    <td class="small">
-                        {% if t.needs_manual_verification %}
-                            {% if t.predicted_category %}
-                                <div class="d-flex flex-column align-items-start gap-1">
-                                    <span class="badge bg-info text-dark" title="Perlu verifikasi manusia">
-                                        {{ t.predicted_category.code }}
-                                    </span>
-                                    {{ manual_verification_badge() }}
-                                </div>
-                            {% else %}
-                                <span class="badge bg-secondary" title="Model ML belum aktif / gagal inferensi">
-                                    Verifikasi Manual (Fallback)
-                                </span>
-                            {% endif %}
-                        {% elif t.predicted_category %}
-                            <span class="badge bg-info text-dark">
-                                {{ t.predicted_category.code }} - {{ t.predicted_category.name }}
-                            </span>
-                        {% else %}
-                            <span class="text-muted">-</span>
-                        {% endif %}
-                    </td>
-                    <td class="small">
-                        {% if t.official_category %}
-                            <span class="fw-semibold text-success">{{ t.official_category.code }} - {{ t.official_category.name }}</span>
-                        {% else %}
-                            <em class="text-muted">Belum ditetapkan</em>
-                        {% endif %}
-                    </td>
-                    <td class="small">
-                        {% if t.assigned_technician %}
-                            <span class="badge bg-light text-dark border">
-                                {{ t.assigned_technician.full_name }}
-                                {% if not t.assigned_technician.is_active %}
-                                    <span class="text-danger small">(Nonaktif)</span>
-                                {% endif %}
-                            </span>
-                        {% else %}
-                            <span class="text-muted fst-italic">Belum ditugaskan</span>
-                        {% endif %}
-                    </td>
-                    <td>
+        {% if not tickets %}
+        <div class="kf-empty-state kf-queue-empty">
+            <div class="card-body text-center py-5 px-3 px-sm-4">
+                <div class="kf-empty-state__icon-wrap d-inline-flex align-items-center justify-content-center rounded-circle bg-light text-primary p-3 mb-3" aria-hidden="true">
+                    <i class="bi bi-inbox fs-3"></i>
+                </div>
+                <h2 class="h5 fw-semibold mb-2">Tidak ada tiket ditemukan</h2>
+                <p class="text-secondary small mb-4 kf-empty-state__message mx-auto">
+                    Tidak ada tiket pada status atau filter yang dipilih. Ubah kriteria pencarian atau kembalikan filter untuk melihat seluruh antrean.
+                </p>
+                <a href="{{ url_for('admin.ticket_queue') }}" class="btn btn-sm btn-primary">
+                    <i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i>Kembalikan Filter Default
+                </a>
+            </div>
+        </div>
+        {% else %}
+        <div class="d-lg-none vstack gap-3 kf-queue-mobile p-3">
+            {% for t in tickets %}
+            <article class="card border-0 shadow-sm kf-queue-card">
+                <div class="card-body">
+                    <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
+                        <div>
+                            <code class="fs-6">{{ t.ticket_code }}</code>
+                            <div class="small text-secondary">
+                                {{ t.created_at.strftime('%d/%m/%Y %H:%M') if t.created_at else '-' }}
+                            </div>
+                        </div>
                         {{ status_badge(t.status) }}
-                    </td>
-                    <td class="text-end">{{ queue_action(t) }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                    </div>
+
+                    <p class="mb-3 kf-text-clamp-2" title="{{ t.description }}">{{ t.description }}</p>
+
+                    <dl class="row g-2 small mb-3">
+                        <div class="col-6">
+                            <dt class="text-secondary fw-semibold">Lokasi</dt>
+                            <dd class="mb-0">
+                                <strong>{{ t.room_name }}</strong><br>
+                                {{ t.building_name }}, Lt. {{ t.floor_number }}
+                            </dd>
+                        </div>
+                        <div class="col-6">
+                            <dt class="text-secondary fw-semibold">Kategori Pelapor</dt>
+                            <dd class="mb-0">
+                                {% if t.reporter_category %}
+                                    <span class="badge bg-light text-dark border">{{ t.reporter_category.code }} - {{ t.reporter_category.name }}</span>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </dd>
+                        </div>
+                        <div class="col-6">
+                            <dt class="text-secondary fw-semibold">Rekomendasi ML</dt>
+                            <dd class="mb-0">
+                                {% if t.needs_manual_verification %}
+                                    {% if t.predicted_category %}
+                                        <div class="d-flex flex-column align-items-start gap-1">
+                                            <span class="badge bg-info text-dark" title="Perlu verifikasi manusia">
+                                                {{ t.predicted_category.code }}
+                                            </span>
+                                            {{ manual_verification_badge() }}
+                                        </div>
+                                    {% else %}
+                                        <span class="badge bg-secondary" title="Model ML belum aktif / gagal inferensi">
+                                            Verifikasi Manual (Fallback)
+                                        </span>
+                                    {% endif %}
+                                {% elif t.predicted_category %}
+                                    <span class="badge bg-info text-dark">
+                                        {{ t.predicted_category.code }} - {{ t.predicted_category.name }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </dd>
+                        </div>
+                        <div class="col-6">
+                            <dt class="text-secondary fw-semibold">Kategori Resmi</dt>
+                            <dd class="mb-0">
+                                {% if t.official_category %}
+                                    <span class="fw-semibold text-success">{{ t.official_category.code }} - {{ t.official_category.name }}</span>
+                                {% else %}
+                                    <em class="text-muted">Belum ditetapkan</em>
+                                {% endif %}
+                            </dd>
+                        </div>
+                        <div class="col-12">
+                            <dt class="text-secondary fw-semibold">Teknisi</dt>
+                            <dd class="mb-0">
+                                {% if t.assigned_technician %}
+                                    <span class="badge bg-light text-dark border">
+                                        {{ t.assigned_technician.full_name }}
+                                        {% if not t.assigned_technician.is_active %}
+                                            <span class="text-danger small">(Nonaktif)</span>
+                                        {% endif %}
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted fst-italic">Belum ditugaskan</span>
+                                {% endif %}
+                            </dd>
+                        </div>
+                    </dl>
+
+                    <div class="d-grid">{{ queue_action(t, 'w-100') }}</div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+
+        <div class="card border-0 shadow-sm d-none d-lg-block kf-queue-table-card">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 kf-table-dense kf-queue-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col" class="kf-table-col-min-140">Kode &amp; Waktu</th>
+                            <th scope="col" class="kf-table-col-min-200">Ringkasan Keluhan</th>
+                            <th scope="col" class="kf-table-col-min-180">Lokasi</th>
+                            <th scope="col" class="kf-table-col-min-140">Kategori Pelapor</th>
+                            <th scope="col" class="kf-table-col-min-180">Rekomendasi ML</th>
+                            <th scope="col" class="kf-table-col-min-180">Kategori Resmi</th>
+                            <th scope="col" class="kf-table-col-min-140">Teknisi</th>
+                            <th scope="col" class="kf-table-col-min-110">Status</th>
+                            <th scope="col" class="text-end kf-table-col-min-120">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in tickets %}
+                        <tr>
+                            <td>
+                                <div class="kf-queue-code-wrap">
+                                    <code class="kf-queue-code">{{ t.ticket_code }}</code>
+                                    <span class="kf-queue-time">{{ t.created_at.strftime('%d/%m/%Y %H:%M') if t.created_at else '-' }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="kf-queue-ticket">
+                                    {% if t.photo_filename %}
+                                    <img class="kf-queue-thumb" src="{{ url_for('admin.ticket_photo', ticket_id=t.id) }}"
+                                         alt="Foto bukti {{ t.ticket_code }}" width="44" height="44" loading="lazy">
+                                    {% else %}
+                                    <span class="kf-queue-thumb kf-queue-thumb--empty" aria-hidden="true">
+                                        <i class="bi bi-ticket-detailed"></i>
+                                    </span>
+                                    {% endif %}
+                                    <div class="kf-queue-ticket__body">
+                                        <span class="kf-queue-ticket__desc kf-text-clamp-2" title="{{ t.description }}">{{ t.description }}</span>
+                                        {% if t.location_detail %}
+                                        <span class="kf-queue-ticket__meta">{{ t.location_detail }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="small">
+                                <span class="kf-queue-location">
+                                    <i class="bi bi-geo-alt" aria-hidden="true"></i>
+                                    <span>
+                                        <strong>{{ t.room_name }}</strong><br>
+                                        <span class="text-secondary">{{ t.building_name }}, Lt. {{ t.floor_number }}</span>
+                                    </span>
+                                </span>
+                            </td>
+                            <td class="small">
+                                {% if t.reporter_category %}
+                                    <span class="badge bg-light text-dark border">{{ t.reporter_category.code }} - {{ t.reporter_category.name }}</span>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td class="small">
+                                {% if t.needs_manual_verification %}
+                                    {% if t.predicted_category %}
+                                        <div class="d-flex flex-column align-items-start gap-1">
+                                            <span class="badge bg-info text-dark" title="Perlu verifikasi manusia">
+                                                {{ t.predicted_category.code }}
+                                            </span>
+                                            {{ manual_verification_badge() }}
+                                        </div>
+                                    {% else %}
+                                        <span class="badge bg-secondary" title="Model ML belum aktif / gagal inferensi">
+                                            Verifikasi Manual (Fallback)
+                                        </span>
+                                    {% endif %}
+                                {% elif t.predicted_category %}
+                                    <span class="badge bg-info text-dark">
+                                        {{ t.predicted_category.code }} - {{ t.predicted_category.name }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td class="small">
+                                {% if t.official_category %}
+                                    <span class="fw-semibold text-success">{{ t.official_category.code }} - {{ t.official_category.name }}</span>
+                                {% else %}
+                                    <em class="text-muted">Belum ditetapkan</em>
+                                {% endif %}
+                            </td>
+                            <td class="small">
+                                {% if t.assigned_technician %}
+                                    <span class="badge bg-light text-dark border">
+                                        {{ t.assigned_technician.full_name }}
+                                        {% if not t.assigned_technician.is_active %}
+                                            <span class="text-danger small">(Nonaktif)</span>
+                                        {% endif %}
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted fst-italic">Belum ditugaskan</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ status_badge(t.status) }}
+                            </td>
+                            <td class="text-end">{{ queue_action(t) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="kf-queue-panel__foot">
+            <p class="kf-queue-panel__meta mb-0">
+                Menampilkan <strong>{{ tickets|length }}</strong> tiket{% if pagination %} dari <strong>{{ pagination.total }}</strong> total{% endif %}.
+            </p>
+            {% if pagination and pagination.pages > 1 %}
+            <div class="kf-queue-panel__pagination">
+                <span class="small text-secondary d-none d-sm-inline">
+                    Halaman <strong>{{ pagination.page }}</strong> dari <strong>{{ pagination.pages }}</strong>
+                </span>
+                <nav aria-label="Paginasi Antrean Tiket">
+                    <ul class="pagination pagination-sm justify-content-center mb-0">
+                        <li class="page-item {{ 'disabled' if not pagination.has_prev else '' }}">
+                            {% if pagination.has_prev %}
+                            <a class="page-link" href="{{ url_for('admin.ticket_queue', page=pagination.prev_num, keyword=active_filters.keyword if active_filters else '', status=active_filters.status if active_filters else current_status, category_id=active_filters.category_id if active_filters else '', floor_number=active_filters.floor_number if active_filters else '', room_name=active_filters.room_name if active_filters else '', date_from=active_filters.date_from if active_filters else '', date_to=active_filters.date_to if active_filters else '', per_page=active_filters.per_page if active_filters else 15) }}">Sebelumnya</a>
+                            {% else %}
+                            <span class="page-link">Sebelumnya</span>
+                            {% endif %}
+                        </li>
+                        {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                            {% if p %}
+                                <li class="page-item {{ 'active' if p == pagination.page else '' }}">
+                                    <a class="page-link" href="{{ url_for('admin.ticket_queue', page=p, keyword=active_filters.keyword if active_filters else '', status=active_filters.status if active_filters else current_status, category_id=active_filters.category_id if active_filters else '', floor_number=active_filters.floor_number if active_filters else '', room_name=active_filters.room_name if active_filters else '', date_from=active_filters.date_from if active_filters else '', date_to=active_filters.date_to if active_filters else '', per_page=active_filters.per_page if active_filters else 15) }}">{{ p }}</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled"><span class="page-link">&hellip;</span></li>
+                            {% endif %}
+                        {% endfor %}
+                        <li class="page-item {{ 'disabled' if not pagination.has_next else '' }}">
+                            {% if pagination.has_next %}
+                            <a class="page-link" href="{{ url_for('admin.ticket_queue', page=pagination.next_num, keyword=active_filters.keyword if active_filters else '', status=active_filters.status if active_filters else current_status, category_id=active_filters.category_id if active_filters else '', floor_number=active_filters.floor_number if active_filters else '', room_name=active_filters.room_name if active_filters else '', date_from=active_filters.date_from if active_filters else '', date_to=active_filters.date_to if active_filters else '', per_page=active_filters.per_page if active_filters else 15) }}">Selanjutnya</a>
+                            {% else %}
+                            <span class="page-link">Selanjutnya</span>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </section>
 </div>
-
-{% if pagination and pagination.pages > 1 %}
-<nav aria-label="Paginasi Antrean Tiket" class="mt-4">
-    <ul class="pagination pagination-sm justify-content-center mb-0">
-        <li class="page-item {{ 'disabled' if not pagination.has_prev else '' }}">
-            {% if pagination.has_prev %}
-            <a class="page-link" href="{{ url_for('admin.ticket_queue', page=pagination.prev_num, keyword=active_filters.keyword if active_filters else '', status=active_filters.status if active_filters else current_status, category_id=active_filters.category_id if active_filters else '', floor_number=active_filters.floor_number if active_filters else '', room_name=active_filters.room_name if active_filters else '', date_from=active_filters.date_from if active_filters else '', date_to=active_filters.date_to if active_filters else '', per_page=active_filters.per_page if active_filters else 15) }}">Sebelumnya</a>
-            {% else %}
-            <span class="page-link">Sebelumnya</span>
-            {% endif %}
-        </li>
-        {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
-            {% if p %}
-                <li class="page-item {{ 'active' if p == pagination.page else '' }}">
-                    <a class="page-link" href="{{ url_for('admin.ticket_queue', page=p, keyword=active_filters.keyword if active_filters else '', status=active_filters.status if active_filters else current_status, category_id=active_filters.category_id if active_filters else '', floor_number=active_filters.floor_number if active_filters else '', room_name=active_filters.room_name if active_filters else '', date_from=active_filters.date_from if active_filters else '', date_to=active_filters.date_to if active_filters else '', per_page=active_filters.per_page if active_filters else 15) }}">{{ p }}</a>
-                </li>
-            {% else %}
-                <li class="page-item disabled"><span class="page-link">&hellip;</span></li>
-            {% endif %}
-        {% endfor %}
-        <li class="page-item {{ 'disabled' if not pagination.has_next else '' }}">
-            {% if pagination.has_next %}
-            <a class="page-link" href="{{ url_for('admin.ticket_queue', page=pagination.next_num, keyword=active_filters.keyword if active_filters else '', status=active_filters.status if active_filters else current_status, category_id=active_filters.category_id if active_filters else '', floor_number=active_filters.floor_number if active_filters else '', room_name=active_filters.room_name if active_filters else '', date_from=active_filters.date_from if active_filters else '', date_to=active_filters.date_to if active_filters else '', per_page=active_filters.per_page if active_filters else 15) }}">Selanjutnya</a>
-            {% else %}
-            <span class="page-link">Selanjutnya</span>
-            {% endif %}
-        </li>
-    </ul>
-</nav>
-{% endif %}
-{% endif %}
 {% endblock %}
-

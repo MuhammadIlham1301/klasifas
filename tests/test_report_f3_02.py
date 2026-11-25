@@ -396,8 +396,8 @@ def test_db_failure_removes_stored_photo(client, app, monkeypatch):
 
     original_create_ticket = report_routes.create_ticket_with_token
 
-    def failing_create_ticket(data, photo=None):
-        original_create_ticket(data, photo)
+    def failing_create_ticket(data, photo=None, **kwargs):
+        original_create_ticket(data, photo, **kwargs)
         raise SQLAlchemyError("simulated database failure")
 
     monkeypatch.setattr(

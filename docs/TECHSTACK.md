@@ -35,7 +35,8 @@ KlasiFas diimplementasikan sebagai **Modular Monolith** berbasis Flask dengan **
 |                                                                       |
 |  [Presentation Layer - app/routes/]                                   |
 |   ├── report.py    : "/", "/lapor", "/lapor/sukses", "/lacak"         |
-|   ├── auth.py      : "/auth/login", "/auth/logout"                    |
+|   ├── auth.py      : "/auth/login", "/auth/logout",                   |
+|   |                  "/auth/pelapor/login", "/auth/pelapor/logout"     |
 |   ├── admin.py     : "/admin/tiket", verifikasi, penugasan, foto,      |
 |   |                  "/admin/audit-log"                               |
 |   ├── technician.py: "/teknisi/tiket", detail, foto, update status    |
@@ -122,7 +123,7 @@ Tidak ada `app/routes/main.py` atau `app/routes/complaints.py`. Rute publik bera
 
 | Method | Path | Fungsi |
 | :--- | :--- | :--- |
-| GET | `/` | Redirect ke formulir pelaporan `/lapor`. |
+| GET | `/` | Redirect ke login pelapor `/auth/pelapor/login`. |
 | GET, POST | `/lapor` | Formulir dan penyimpanan laporan. |
 | GET | `/lapor/sukses` | Redirect kembali ke formulir pelaporan. |
 | GET, POST | `/lacak` | Pelacakan tiket dengan kode dan token akses. |
@@ -135,8 +136,10 @@ Endpoint `/lacak` menerapkan rate limiter pada seluruh percobaan `POST`, termasu
 | :--- | :--- | :--- |
 | GET, POST | `/auth/login` | Login staf internal. |
 | POST | `/auth/logout` | Logout staf; dilindungi `login_required`. |
+| GET, POST | `/auth/pelapor/login` | Login pelapor; sesi terpisah dari staf. |
+| POST | `/auth/pelapor/logout` | Logout pelapor; dilindungi `reporter_required`. |
 
-Blueprint memuat ulang pengguna dari session pada setiap request melalui hook `before_app_request`. Role aktif diambil dari database, bukan hanya dari session.
+Blueprint memuat ulang pengguna staf dan pelapor dari session terpisah pada setiap request melalui hook `before_app_request`. Role aktif diambil dari database, bukan hanya dari session. Login staf dan pelapor memakai rate limiter 5 percobaan per 5 menit per kombinasi akun dan alamat IP, ditambah batas 50 percobaan per 5 menit per alamat IP, dengan bucket staf dan pelapor terpisah.
 
 #### `app/routes/admin.py` (FR-04, FR-05, FR-08, FR-09)
 
@@ -321,7 +324,7 @@ Pembersihan angka hanya berlaku pada teks deskripsi yang dipakai untuk fitur NLP
 Klasifas/
 ├── app/                                  # Paket utama Flask
 │   ├── __init__.py                       # Application Factory & registrasi blueprint
-│   ├── cli.py                            # Perintah CLI create-staff
+│   ├── cli.py                            # Perintah CLI create-staff, create-reporter
 │   ├── config.py                         # Kelas konfigurasi & validasi environment
 │   ├── extensions.py                     # db, migrate, csrf
 │   ├── models/                           # Model SQLAlchemy
@@ -434,19 +437,21 @@ Catatan struktur:
 - Tidak ada `app/templates/public/`, `app/templates/complaints/`, atau `app/static/img/` seperti pada rancangan lama.
 - Nama file aktual adalah `report.py`, `klasifas.css`, `portal.js`, dan `favicon.svg`.
 
-### 5.1 Provisioning Akun Staf (CLI)
+### 5.1 Provisioning Akun Staf dan Pelapor (CLI)
 
-Akun staf internal dibuat melalui Flask CLI, bukan halaman registrasi publik:
+Akun staf dan pelapor dibuat melalui Flask CLI, bukan halaman registrasi publik:
 
 ```powershell
 flask --app "app:create_app('development')" create-staff --username <username> --role <role> --full-name "<nama>"
+flask --app "app:create_app('development')" create-reporter --username <username> --full-name "<nama>"
 ```
 
 Ketentuan implementasi `app/cli.py`:
 
 - Perintah didaftarkan melalui `register_cli(app)` di `create_app()`.
 - Username dinormalisasi ke huruf kecil dan divalidasi dengan pola `^[a-z0-9._-]{3,64}$`.
-- Role yang diterima: `admin_sarpras`, `teknisi`, `pimpinan`.
+- Role staf yang diterima `create-staff`: `admin_sarpras`, `teknisi`, `pimpinan`.
+- `create-reporter` hanya membuat role `reporter`.
 - Password dimasukkan melalui prompt tersembunyi dengan konfirmasi.
 - Password minimal 12 karakter dan tidak boleh sama dengan username.
 - Password tidak pernah menjadi argumen CLI dan tidak dicetak.
